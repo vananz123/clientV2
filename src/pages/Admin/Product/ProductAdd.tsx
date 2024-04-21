@@ -1,0 +1,40 @@
+import ProductForm from '@/conponents/ProductForm';
+import * as productServices from '@/api/productServices';
+import React, { useEffect } from 'react';
+import {Button, notification, Space } from 'antd';
+type NotificationType = 'success' | 'error';
+import { Product } from './ProductList';
+import { useParams,useNavigate } from 'react-router-dom';
+import { Skeleton } from 'antd';
+import type { StatusForm } from '../Category/Type';
+function ProductAdd() {
+    const [product, setProduct] = React.useState<Product>();
+    const [status,setStatus] = React.useState<StatusForm>('loading')
+    const [api, contextHolder] = notification.useNotification();
+    const navigate = useNavigate()
+    const openNotificationWithIcon = (type: NotificationType) => {
+        api[type]({
+            message: 'Notification Title',
+            description:type == 'success' ? 'Sucsess!' : 'error',
+        });
+    };
+    useEffect(() => {
+        if(status == 'success'){
+            openNotificationWithIcon('success')
+            navigate(`/admin/product`)
+            
+        }
+        if(status == 'error'){
+            openNotificationWithIcon('error')
+        }
+        setStatus('loading')
+    }, [status]);
+    return (
+        <div>
+            {contextHolder}
+            <ProductForm product={product} onSetState={setProduct} onSetStatus={setStatus}/>
+        </div>
+    );
+}
+
+export default ProductAdd;
