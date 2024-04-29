@@ -1,26 +1,23 @@
 import { Table, Space, Pagination, Modal, Button, Flex } from 'antd';
 import type { TableProps } from 'antd';
-import type { PaginationProps } from 'antd';
-import * as categoryServices from '@/api/categoryServices';
+import * as promotionServices from '@/api/promotionServices';
 import React, { useEffect } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { addCateAsync, selectCate } from '@/feature/category/cateSlice';
 import SearchC from '@/conponents/SearchC';
 import { Link } from 'react-router-dom';
-import { Category } from '../Product/ProductList';
+import type { Promotion } from '@/api/ResType';
 
-function CategoriesList() {
+function PromotionList() {
     const dispatch = useAppDispatch();
-    const [data, setData] = React.useState<Category[]>();
-    const dataGlobal = useAppSelector(selectCate);
-    const [currentId, setCurrentId] = React.useState<string>('');
+    const [data, setData] = React.useState<Promotion[]>();
+    const [currentId, setCurrentId] = React.useState<number>(0);
     const [open, setOpen] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [modalText, setModalText] = React.useState('Do you want delete!');
-    const [context,setContext] = React.useState<string>('OK');
+    const [context, setContext] = React.useState<string>('OK');
 
-    const columns: TableProps<Category>['columns'] = [
+    const columns: TableProps<Promotion>['columns'] = [
         {
             title: 'Id',
             dataIndex: 'id',
@@ -30,72 +27,84 @@ function CategoriesList() {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            
         },
         {
-            title: 'seoTitle',
+            title: 'Title',
             dataIndex: 'seoTitle',
-            key: 'seoTitle',
-            
+            key: 'name',
         },
         {
-            title: 'status',
-            dataIndex: 'status',
-            key: 'status',
-            
+            title: 'Discount Rate',
+            dataIndex: 'discountRate',
+            key: 'name',
+        },
+        {
+            title: 'Start Date',
+            dataIndex: 'startDate',
+            key: 'name',
+            render: (_, record) => <p>{new Date(record.startDate).toUTCString()}</p>,
+        },
+        {
+            title: 'End Date',
+            dataIndex: 'endDate',
+            key: 'name',
+            render: (_, record) => <p>{new Date(record.endDate).toUTCString()}</p>,
         },
         {
             title: 'Action',
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Link to={`/admin/category-edit/${record.id}`}>Edit</Link>
+                    <Link to={`/admin/promotion-edit/${record.id}`}>Edit</Link>
                     <a onClick={() => showModalDel(record.id, record.name)}>Delete</a>
                 </Space>
             ),
         },
     ];
-    useEffect(() => {
-        setData(dataGlobal);
-    }, [dataGlobal]);
-    const showModalDel = (id: string, name: string) => {
+    const showModalDel = (id: number, name: string) => {
         setModalText(`Do you want category ${name}!`);
         setCurrentId(id);
         setOpen(true);
     };
+    const getAllPromotion = async () => {
+        const res = await promotionServices.getAllPromotion();
+        console.log(res)
+        if (res.isSuccessed === true) {
+            setData(res.resultObj);
+        }
+    };
+    useEffect(() => {
+        getAllPromotion();
+    }, []);
     const handleOkDel = () => {
         setModalText('deleting!');
         setConfirmLoading(true);
-        setContext('')
+        setContext('');
         setTimeout(async () => {
-            const res = await categoryServices.deleteCate(currentId);
-            if (res.statusCode == 204) {
-              const ref = await categoryServices.getAllCate()
-              if(ref.statusCode ==200){
-                setData(ref.resultObj);
+            const res = await promotionServices.DeletaPromotion(currentId)
+            if (res.isSuccessed === true) {
+                getAllPromotion()
                 setOpen(false);
-                dispatch(addCateAsync(ref.resultObj))
                 setConfirmLoading(false);
-              }
             } else {
                 setModalText('error!');
                 setConfirmLoading(false);
                 setContext('OK')
             }
-        }, 500);
+        }, 300);
     };
     return (
         <div>
-            <Space direction="vertical" style={{width:"100%"}}>
+            <Space direction="vertical" style={{ width: '100%' }}>
                 <Flex justify="space-between">
-                    <Link to={'/admin/category-add'}>
+                    <Link to={'/admin/promotion-add'}>
                         <Button type="primary" icon={<PlusOutlined />} size="large">
                             Add
                         </Button>
                     </Link>
                     {/* <SearchC typeSearch={2} onSetState={setData} /> */}
                 </Flex>
-                <Table  pagination={{ position:['bottomLeft'], pageSize:4 }} columns={columns} dataSource={data} />
+                <Table pagination={{ position: ['bottomLeft'], pageSize: 4 }} columns={columns} dataSource={data} />
             </Space>
             <Modal
                 title="Delete"
@@ -111,4 +120,4 @@ function CategoriesList() {
     );
 }
 
-export default CategoriesList;
+export default PromotionList;

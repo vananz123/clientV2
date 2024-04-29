@@ -1,13 +1,15 @@
-import { Table, Input, Space, Pagination, Image, Modal, Upload, Button, Flex } from 'antd';
-import type { TableProps } from 'antd';
+import { Table, Input, Space, Pagination, Image, Modal, Upload, Button, Flex, Tooltip } from 'antd';
+import type { TableProps, TableColumnsType } from 'antd';
 import { Avatar, Col, Divider, Drawer, List, Row } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
 import * as productServices from '@/api/productServices';
 import React, { useEffect } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
-import SearchC from '@/conponents/SearchC';
+import { PlusOutlined, RetweetOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import type { BaseUrl } from '@/utils/request';
+import { TableRowSelection } from 'antd/es/table/interface';
+import type { ModePromotionType } from './ModePromotion';
+import ModePromotion from './ModePromotion';
 export type Category = {
     id: string;
     name: string;
@@ -43,12 +45,12 @@ export type Product = {
     name: string;
     categoryId: number;
     seoDescription: string;
-    discountRate:number;
-    price:number;
-    priceBeforeDiscount:number;
+    discountRate: number;
+    price: number;
+    priceBeforeDiscount: number;
     seoTitle: string;
     seoAlias: string;
-    file:any;
+    file: any;
     urlThumbnailImage: string;
     viewCount: number;
     status: number;
@@ -64,10 +66,12 @@ interface DescriptionItemProps {
 }
 
 const DescriptionItem = ({ title, content }: DescriptionItemProps) => {
-    return <div className="site-description-item-profile-wrapper">
-        <p className="site-description-item-profile-p-label">{title}:</p>
-        {content}
-    </div>
+    return (
+        <div className="site-description-item-profile-wrapper">
+            <p className="site-description-item-profile-p-label">{title}:</p>
+            {content}
+        </div>
+    );
 };
 const getBase64 = (file: FileType): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -76,21 +80,24 @@ const getBase64 = (file: FileType): Promise<string> =>
         reader.onload = () => resolve(reader.result as string);
         reader.onerror = (error) => reject(error);
     });
+
 function ProductList() {
-    const baseUrl: BaseUrl = 'https://localhost:7005';
+    const baseUrl =import.meta.env.VITE_BASE_URL
     const [data, setData] = React.useState<Product[]>();
     const [currentId, setCurrentId] = React.useState<number>(0);
     const [currentProductItem, setCurrentProductItem] = React.useState<Product>();
     const [modal2Open, setModal2Open] = React.useState(false);
     const [confirmLoadinModal2, setConfirmLoadingModal2] = React.useState(false);
+    const [openModalModePromotion, setModalModePromotion] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [modalText, setModalText] = React.useState('Do you want delete!');
     const [previewOpen, setPreviewOpen] = React.useState(false);
     const [previewImage, setPreviewImage] = React.useState('');
     const [fileList, setFileList] = React.useState<UploadFile[]>([]);
-
     const [openDrawer, setOpenDrawer] = React.useState(false);
+    const [modePromotion, setModePromotion] = React.useState<ModePromotionType>('EDIT');
+    const [listSelectRow, setListSelectRow] = React.useState<Product[]>([]);
     const showDrawer = (id: number) => {
         const loadProductDetail = async () => {
             const res = await productServices.getProductDetail(id);
@@ -105,20 +112,19 @@ function ProductList() {
     const onClose = () => {
         setOpenDrawer(false);
     };
-
+    const loadAllProduct = async () => {
+        const res = await productServices.getAllProduct();
+        console.log(res);
+        if (res.isSuccessed == true) {
+            const arrSort: Product[] = res.resultObj.sort((a: Product, b: Product) => {
+                let aa = new Date(a.dateCreated).getTime();
+                let bb = new Date(b.dateCreated).getTime();
+                return bb - aa;
+            });
+            setData(arrSort);
+        }
+    };
     useEffect(() => {
-        const loadAllProduct = async () => {
-            const res = await productServices.getAllProduct();
-            console.log(res);
-            if (res.isSuccessed == true) {
-                const arrSort: Product[] = res.resultObj.sort((a: Product, b: Product) => {
-                    let aa = new Date(a.dateCreated).getTime();
-                    let bb = new Date(b.dateCreated).getTime();
-                    return bb - aa;
-                });
-                setData(arrSort);
-            }
-        };
         loadAllProduct();
     }, []);
 
@@ -139,7 +145,7 @@ function ProductList() {
         </button>
     );
 
-    const columns: TableProps<Product>['columns'] = [
+    const columns: TableColumnsType<Product> = [
         {
             title: 'Id',
             dataIndex: 'id',
@@ -162,9 +168,9 @@ function ProductList() {
             ),
         },
         {
-            title: 'CategoryName',
-            dataIndex: 'categoryName',
-            key: 'categoryName',
+            title: 'Discount rate',
+            dataIndex: 'discountRate',
+            key: 'discountRate',
         },
         {
             title: 'Status',
@@ -190,6 +196,22 @@ function ProductList() {
             ),
         },
     ];
+    const rowSelection: TableRowSelection<Product> = {
+        onChange: (selectedRowKeys, selectedRows: Product[]) => {
+            setListSelectRow(selectedRows);
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        },
+        // onSelect: (record, selected, selectedRows) => {
+        //     console.log(record, selected, selectedRows);
+        //   },
+        //   onSelectAll: (selected, selectedRows, changeRows) => {
+        //     console.log(selected, selectedRows, changeRows);
+        //   },
+        getCheckboxProps: (record: Product) => ({
+            disabled: modePromotion === 'DEL' ? record.discountRate == undefined : false, // Column configuration not to be checked
+            name: record.name,
+        }),
+    };
     const showModalImage = (url: string, id: number) => {
         //setPreviewImage(`http://${url}`)
         //setPreviewOpen(true)
@@ -222,18 +244,15 @@ function ProductList() {
     };
     const uploadImageAPI = () => {
         setConfirmLoadingModal2(true);
-        // setTimeout(async () => {
-        //     const res = await productServices.uploadImage(currentId, fileList[0].originFileObj);
-        //     if (res != null) {
-        //         setConfirmLoadingModal2(false);
-        //         setModal2Open(false);
-        //         const res = await productServices.getAllProduct();
-        //         if (res.statusCode == 200) {
-        //             setData(res.resultObj);
-        //             setFileList([]);
-        //         }
-        //     }
-        // }, 1000);
+        setTimeout(async () => {
+            const res = await productServices.uploadThumbnailImage(currentId, fileList[0].originFileObj);
+            if (res != null) {
+                setConfirmLoadingModal2(false);
+                setModal2Open(false);
+                loadAllProduct();
+                setFileList([]);
+            }
+        }, 500);
     };
     console.log(fileList);
     return (
@@ -245,9 +264,54 @@ function ProductList() {
                             Add
                         </Button>
                     </Link>
-                    <SearchC typeSearch={1} onSetState={setData} />
+                    <Space>
+                        {listSelectRow.length > 0 ? (
+                            <>
+                                {modePromotion === 'EDIT' ? (
+                                    <Button 
+                                    onClick={()=>{
+                                        setModalModePromotion(true)
+                                    }}
+                                    type="primary" 
+                                    icon={<PlusOutlined />} 
+                                    size="large">
+                                        Edit promotion
+                                    </Button>
+                                ) : (
+                                    <Button onClick={()=>{
+                                        setModalModePromotion(true)
+                                    }} type="primary" icon={<PlusOutlined />} size="large">
+                                        Del
+                                    </Button>
+                                )}
+                            </>
+                        ) : (
+                            ''
+                        )}
+
+                        <Tooltip title="Promotion">
+                            <Button
+                                onClick={() => {
+                                    modePromotion === 'EDIT' ? setModePromotion('DEL') : setModePromotion('EDIT');
+                                }}
+                                type="primary"
+                                icon={<RetweetOutlined />}
+                                size="large"
+                            >
+                                {`Mode: ${modePromotion}`}
+                            </Button>
+                        </Tooltip>
+                    </Space>
+
+                    {/* <SearchC typeSearch={1} onSetState={setData} /> */}
                 </Flex>
-                <Table pagination={{ position: ['bottomLeft'], pageSize: 4 }} columns={columns} dataSource={data} />
+                <Table
+                    rowKey={(record) => record.id}
+                    rowSelection={{ type: 'checkbox', ...rowSelection }}
+                    pagination={{ position: ['bottomLeft'], pageSize: 4 }}
+                    columns={columns}
+                    dataSource={data}
+                />
             </Space>
 
             <Drawer width={640} placement="right" closable={false} onClose={onClose} open={openDrawer}>
@@ -369,6 +433,7 @@ function ProductList() {
             >
                 <p>{modalText}</p>
             </Modal>
+            <ModePromotion open={openModalModePromotion} setStateData={setData} setStateOpen={setModalModePromotion} modePromotion={modePromotion} listSelectRow={listSelectRow}/>
         </div>
     );
 }

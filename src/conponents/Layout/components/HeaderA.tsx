@@ -52,7 +52,7 @@ function HeaderA() {
     const Logout = async () => {
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
-        if (accessToken != null && refreshToken != null) {
+        if (accessToken != null) {
             localStorage.removeItem('accessToken');
                 //localStorage.removeItem('refreshToken');
                 dispatch(signOut())

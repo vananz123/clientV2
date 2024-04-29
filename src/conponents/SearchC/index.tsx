@@ -1,11 +1,14 @@
 import { useDebounce } from '@/hooks';
-import { Input } from 'antd';
+import { Input, Popover, Space } from 'antd';
 import { useAppSelector } from '@/app/hooks';
 import { selectCate } from '@/feature/category/cateSlice';
 import type { SearchProps } from 'antd/es/input/Search';
 import * as productServices from '@/api/productServices';
 import type { InputRef } from 'antd';
 import React, { SetStateAction, useEffect, useRef } from 'react';
+import { Product } from '@/pages/Admin/Product/ProductList';
+import { BaseUrl } from '@/utils/request';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 enum status {
     productName = 1,
     categoryName = 2,
@@ -13,34 +16,21 @@ enum status {
 const SearchC: React.FC<{
     typeSearch: number;
     onSetState: SetStateAction<any>;
-    
 }> = ({ typeSearch, onSetState }) => {
     const { Search } = Input;
+    const baseUrl: BaseUrl = 'https://localhost:7005';
     const [searchValue, setSearchValue] = React.useState('');
-    const cate = useAppSelector(selectCate);
+    const navigate = useNavigate()
+    const [data, setData] = React.useState<Product[]>([]);
     const inputRef = useRef<InputRef>(null);
     const debounce = useDebounce({ value: searchValue, deplay: 1000 });
     const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
         if (info?.source == 'input') {
-            if (status.productName == typeSearch) {
-                const result = await productServices.productSearch(value);
-                if (result.statusCode == 200) {
-                    onSetState(result.resultObj);
-                }
-            }
-            if (status.categoryName == typeSearch) {
-                console.log(cate);
-                const result = cate.filter((x) => x.name.includes(value) == true);
-                onSetState(result);
-            }
+            navigate(`/product/search/${value}`)
         }
         if (info?.source == 'clear') {
-            if (status.productName == typeSearch) {
-                const result = await productServices.getAllProduct();
-                if (result.statusCode == 200) {
-                    onSetState(result.resultObj);
-                }
-            }
+            setData([]);
+            onSetState([]);
         }
     };
     const onChangeInput: SearchProps['onChange'] = (value) => {
@@ -49,18 +39,10 @@ const SearchC: React.FC<{
     useEffect(() => {
         const Search = async () => {
             if (debounce != '') {
-                if (status.productName == typeSearch) {
-                    const result = await productServices.productSearch(debounce);
-                    if (result.statusCode == 200) {
-                        onSetState(result.resultObj);
-                    }
-                }
-            } else {
-                if (status.productName == typeSearch) {
-                    const result = await productServices.getAllProduct();
-                    if (result.statusCode == 200) {
-                        onSetState(result.resultObj);
-                    }
+                const result = await productServices.getProductPagingBySeoTitle(debounce, 1, 100);
+                if (result.statusCode == 200) {
+                    setData(result.resultObj.items);
+                    onSetState(result.resultObj.items);
                 }
             }
         };
@@ -68,17 +50,53 @@ const SearchC: React.FC<{
     }, [debounce]);
     return (
         <>
-            <Search
-                placeholder="name"
-                style={{ width: '400px' }}
-                allowClear
-                //enterButton="Search"
-                ref={inputRef}
-                size="large"
-                onSearch={onSearch}
-                onChange={onChangeInput}
-            />
+            <Popover
+                content={
+                    <>
+                        {data.length > 0 ? data?.map((e: Product) => (
+                        <div>
+                            <Space>
+                                <div>
+                                    <img style={{ width: 70 }} src={baseUrl + e.urlThumbnailImage} />
+                                </div>
+                                <div>
+                                    <p>{e.seoTitle}</p>
+                                    <p>{ChangeCurrence(e.price)}</p>
+                                </div>
+                                
+                            </Space>
+                        </div>
+                    )): <div style={{width:350,height:70,textAlign:'center'}} >Not found</div>}
+                    <div style={{width:350,textAlign:'center'}} ><Link to={`/product/search/${searchValue}`}>show more product</Link></div>
+                    </>
+                
+            }
+                title={'search'}
+                trigger={'click'}
+            >
+                <Search
+                    placeholder="Name product"
+                    style={{ display: 'block' }}
+                    allowClear
+                    //enterButton="Search"
+                    ref={inputRef}
+                    size="middle"
+                    onSearch={onSearch}
+                    onChange={onChangeInput}
+                />
+            </Popover>
         </>
     );
+};
+const ChangeCurrence = (number: number | undefined) => {
+    if (number) {
+        const formattedNumber = number.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+            currencyDisplay: 'code',
+        });
+        return formattedNumber;
+    }
+    return 0;
 };
 export default SearchC;

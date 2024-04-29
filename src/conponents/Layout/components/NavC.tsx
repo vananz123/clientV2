@@ -28,7 +28,7 @@ const NavC:React.FC<{}> = ({})=>{
         });
         return arr
     }
-    const item:MenuProps['items'] = [getItem('Home','/'),getItem('Product','product/all'),getItem('Category','cate','',renderSubItem())]
+    const item:MenuProps['items'] = [getItem('Home','/home'),getItem('Product','/product/all'),getItem('Category','cate','',renderSubItem())]
     const handleClick: MenuProps['onClick'] = (e) =>{
         Navigate(`${e.key}`)
     }

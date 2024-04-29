@@ -14,6 +14,9 @@ import {
     Col,
     Row,
 } from 'antd';
+import {  notification, Skeleton } from 'antd';
+import dayjs from 'dayjs';
+type NotificationType = 'success' | 'error';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Product, ProductItem } from '@/pages/Admin/Product/ProductList';
 import * as productServices from '@/api/productServices';
@@ -102,6 +105,8 @@ const ProductForm: React.FC<{
     onSetStatus: SetStateAction<any>;
 }> = ({ product, onSetState, onSetStatus }) => {
     const [form] = Form.useForm();
+    const baseUrl =import.meta.env.VITE_BASE_URL
+    form.setFieldsValue(product)
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [options, setOptions] = React.useState<SelectProps['options']>([]);
     const [isSize, setIsSize] = React.useState<boolean>(false);
@@ -109,6 +114,13 @@ const ProductForm: React.FC<{
     const [openProductItem, setOpenProductItem] = React.useState(false);
     const [openVariaton, setOpenVariaton] = React.useState(false);
     const [openUploadImages, setOpenUploadImages] = React.useState(false);
+    const [api, contextHolder] = notification.useNotification();
+    const openNotificationWithIcon = (type: NotificationType,mess:string) => {
+        api[type]({
+            message: 'Notification Title',
+            description:mess,
+        });
+    };
     const showDrawerProductItem = () => {
         setOpenProductItem(true);
     };
@@ -144,23 +156,28 @@ const ProductForm: React.FC<{
                 const res = await productServices.updateProduct(product.id, values);
                 if (res.statusCode == 200) {
                     if (values.file != undefined) {
-                        await productServices.uploadImage(res.resultObj.id, values.file[0].originFileObj);
+                        console.log(values.file)
+                        await productServices.uploadThumbnailImage(res.resultObj.id, values.file[0].originFileObj);
                     }
                     const status: StatusForm = 'success';
                     onSetState(res.resultObj);
                     onSetStatus(status);
+                    openNotificationWithIcon('success','Add Product success')
                 } else {
                     const status: StatusForm = 'error';
                     onSetStatus(status);
+                    openNotificationWithIcon('error','Add Product error')
                 }
                 setIsLoading(false);
-            }, 1000);
+            }, 500);
         } else {
             setTimeout(async () => {
                 const res = await productServices.addProduct(values);
                 if (res.statusCode == 201) {
                     if (values.file != undefined) {
-                        await productServices.uploadThumbnailImage(res.resultObj, values.file[0].originFileObj);
+                        console.log(values.file)
+                        await productServices.uploadThumbnailImage(res.resultObj.id, values.file[0].originFileObj);
+                       
                     }
                     const status: StatusForm = 'success';
                     onSetState(res.resultObj);
@@ -170,7 +187,7 @@ const ProductForm: React.FC<{
                     onSetStatus(status);
                 }
                 setIsLoading(false);
-            }, 1000);
+            }, 500);
         }
     };
     const onFinishVariation = (values: any) => {
@@ -178,8 +195,10 @@ const ProductForm: React.FC<{
         if (product != undefined) {
             setTimeout(async () => {
                 const res = await productServices.addVariation(product.id, values.variations);
-                if (res.isSuccessed == true) {
-                    alert('thanh cong');
+                if (res.isSuccessed === true) {
+                    onSetState(res.resultObj)
+                    setOpenVariaton(false)
+                    openNotificationWithIcon('success','Add variation success')
                 }
             }, 500);
         }
@@ -190,18 +209,22 @@ const ProductForm: React.FC<{
             if (isSize == true) {
                 setTimeout(async () => {
                     const res = await productServices.addProductSize(product.id, values.items);
-                    if (res.isSuccessed == true) {
-                        alert('thanh cong');
+                    if (res.isSuccessed === true) {
+                        onSetState(res.resultObj)
+                        setOpenProductItem(false)
+                        openNotificationWithIcon('success','Add Product item success')
                     }
-                }, 500);
+                }, 300);
             } else {
                 setTimeout(async () => {
                     const res = await productServices.addProductNoSize(product.id, values.price, values.stock);
                     if (res.isSuccessed == true) {
+                        onSetState(res.resultObj)
                         setIsSize(false);
-                        alert('thanh cong');
+                        setOpenProductItem(false)
+                        openNotificationWithIcon('success','Add Product item size success')
                     }
-                }, 500);
+                }, 300);
             }
         }
     };
@@ -210,14 +233,16 @@ const ProductForm: React.FC<{
     };
 
     const onFinishUploadImages = (values:any)=>{
+        console.log(values)
         if(product!= undefined){
             if(values.file != undefined){
                 setTimeout(async () => {
                     const res = await productServices.uploadImage(product.id, values.file);
                     if (res.isSuccessed == true) {
-                        alert('thanh cong');
+                        setOpenUploadImages(false)
+                        openNotificationWithIcon('success','Add Image success')
                     }
-                }, 500);
+                }, 300);
             }
         }
     }
@@ -237,7 +262,7 @@ const ProductForm: React.FC<{
                     label="Product name"
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
-                    initialValue={product?.name}
+                    //initialValue={product?.name}
                     rules={[{ required: true, message: 'Please input product name!', whitespace: true }]}
                 >
                     <Input />
@@ -245,7 +270,7 @@ const ProductForm: React.FC<{
                 <Form.Item<Product>
                     name="seoTitle"
                     label="Seo Title"
-                    initialValue={product?.seoTitle}
+                    //initialValue={product?.seoTitle}
                     rules={[{ required: true, message: 'Please input seo title' }]}
                 >
                     <Input.TextArea showCount maxLength={100} />
@@ -253,7 +278,7 @@ const ProductForm: React.FC<{
                 <Form.Item<Product>
                     name="seoDescription"
                     label="Seo Description"
-                    initialValue={product?.seoDescription}
+                    //initialValue={product?.seoDescription}
                     rules={[{ required: true, message: 'Please input seo description' }]}
                 >
                     <Input.TextArea showCount maxLength={100} />
@@ -269,7 +294,7 @@ const ProductForm: React.FC<{
                 <Form.Item<Product>
                     name="categoryId"
                     label="Category"
-                    initialValue={product?.categoryId}
+                    //initialValue={product?.categoryId}
                     rules={[{ required: true, message: 'Please select categories!' }]}
                 >
                     <Select size={'middle'} onChange={handleChange} style={{ width: 200 }} options={options} />
@@ -277,7 +302,7 @@ const ProductForm: React.FC<{
                 <Form.Item<Product>
                     name="status"
                     label="Status"
-                    initialValue={product?.status}
+                    initialValue={1}
                     rules={[{ required: true, message: 'Please select Status!' }]}
                 >
                     <Select
@@ -296,15 +321,17 @@ const ProductForm: React.FC<{
 
             {product != undefined ? (
                 <>
-                    <Button type="primary" onClick={showDrawUploadImages} icon={<PlusOutlined />}>
-                        Upload images
-                    </Button>
-                    <Button type="primary" onClick={showDrawerVariation} icon={<PlusOutlined />}>
-                        Add Variation
-                    </Button>
-                    <Button type="primary" onClick={showDrawerProductItem} icon={<PlusOutlined />}>
-                        Add Product Size
-                    </Button>
+                    <Space>
+                        <Button type="primary" onClick={showDrawUploadImages} icon={<PlusOutlined />}>
+                            Upload images
+                        </Button>
+                        <Button type="primary" onClick={showDrawerVariation} icon={<PlusOutlined />}>
+                            Config Variation
+                        </Button>
+                        <Button type="primary" onClick={showDrawerProductItem} icon={<PlusOutlined />}>
+                            Config product 
+                        </Button>
+                    </Space>
                 </>
             ) : (
                 ''
@@ -388,15 +415,16 @@ const ProductForm: React.FC<{
                 onClose={() => setOpenProductItem(false)}
                 open={openProductItem}
             >
-                <Switch
+                {typeof product !== 'undefined'? <><Switch
                     checked={isSize}
                     checkedChildren="size"
                     unCheckedChildren="No size"
                     onChange={() => {
                         setIsSize(!isSize);
                     }}
-                    disabled={product?.items != null && product.items.length > 0}
-                />
+                    disabled={product?.items.length > 0}
+                /></>:''}
+                
                 <Form
                     {...formItemLayout}
                     name="dynamic_form_nest_item"
@@ -404,7 +432,7 @@ const ProductForm: React.FC<{
                     style={{ maxWidth: 600, marginTop: 10 }}
                     autoComplete="off"
                 >
-                    {isSize == true ? (
+                    {isSize === true ? (
                         <Form.List name="items" initialValue={product?.items}>
                             {(fields, { add, remove }) => (
                                 <>
@@ -505,6 +533,7 @@ const ProductForm: React.FC<{
                     </Form.Item>
                 </Form>
             </Drawer>
+            {contextHolder}
         </div>
     );
 };

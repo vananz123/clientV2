@@ -1,8 +1,8 @@
 import { Button, Tooltip, Input, Space, Image } from 'antd';
 import { Flex, Layout, Menu, theme, Badge, Avatar, Dropdown } from 'antd';
-import { UserOutlined, DownOutlined ,ShoppingCartOutlined} from '@ant-design/icons';
-import { useAppSelector ,useAppDispatch} from '@/app/hooks';
-import { selectUser, selectStatus ,signOut} from '@/feature/user/userSlice';
+import { UserOutlined, DownOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { useAppSelector, useAppDispatch } from '@/app/hooks';
+import { selectUser, selectStatus, signOut } from '@/feature/user/userSlice';
 import { selectCart } from '@/feature/cart/cartSlice';
 import * as loginServices from '@/api/loginServices';
 import { Link } from 'react-router-dom';
@@ -22,17 +22,21 @@ function getItem(label: React.ReactNode, key: React.Key, children?: MenuItem[]):
 
 import { useNavigate } from 'react-router-dom';
 import './style.scss';
+import SearchC from '@/conponents/SearchC';
+import { Product } from '@/pages/Admin/Product/ProductList';
 function HeaderC() {
     const Navigate = useNavigate();
     const user = useAppSelector(selectUser);
-    const cart = useAppSelector(selectCart)
-    const dispatch = useAppDispatch()
+    const cart = useAppSelector(selectCart);
+    const [data, setData] = React.useState<Product[]>();
+    const dispatch = useAppDispatch();
+
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
     const items: MenuProps['items'] = [
         {
-            label: <a href="https://www.antgroup.com">Setting</a>,
+            label: <Link to={'/profile'}>Profile</Link>,
             key: '0',
         },
         {
@@ -54,11 +58,11 @@ function HeaderC() {
     const Logout = async () => {
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
-        if (accessToken != null && refreshToken != null) {
+        if (accessToken != null) {
             localStorage.removeItem('accessToken');
-                //localStorage.removeItem('refreshToken');
-                dispatch(signOut())
-                Navigate('/auth/login');
+            //localStorage.removeItem('refreshToken');
+            dispatch(signOut());
+            Navigate('/auth/login');
         }
     };
     return (
@@ -72,30 +76,33 @@ function HeaderC() {
             }}
         >
             <NavC></NavC>
-            {user != undefined ? (
-                <Space>
-                    <Dropdown menu={{ items }} trigger={['click']}>
-                        <a onClick={(e) => e.preventDefault()}>
-                            <Space>
-                                <Avatar size="large" icon={<UserOutlined />} />
-                                <div>{user?.userName}</div>
-                                <DownOutlined />
-                            </Space>
-                        </a>
-                    </Dropdown>
-                    <Link to={`/cart`}>
-                        <Badge count={cart.items.length} showZero>
-                            <Avatar  size="large" icon={<ShoppingCartOutlined />} />
-                        </Badge>
-                    </Link>
-                </Space>
-            ) : (
-                <Space>
-                    <Link to={'/auth/login'}>
-                        <Avatar size="large" icon={<UserOutlined />} />
-                    </Link>
-                </Space>
-            )}
+            <Space align="center">
+                <SearchC typeSearch={1} onSetState={setData} />
+                {typeof user !== 'undefined' ? (
+                    <div style={{paddingBottom:5}}>
+                        <Dropdown menu={{ items }} trigger={['click']}>
+                            <strong onClick={(e) => e.preventDefault()} style={{cursor:'pointer'}}>
+                                <Space>
+                                    <Avatar size="large" icon={<UserOutlined />} />
+                                    <div>{user?.userName}</div>
+                                    <DownOutlined />
+                                </Space>
+                            </strong>
+                        </Dropdown>
+                        <Link to={`/cart`} style={{marginLeft:5,marginBottom:5}}>
+                            <Badge count={cart.items.length} showZero>
+                                <Avatar size="large" icon={<ShoppingCartOutlined />} />
+                            </Badge>
+                        </Link>
+                    </div>
+                ) : (
+                    <div style={{paddingBottom:5}}>
+                        <Link to={'/auth/login'}>
+                            <Avatar size="large" icon={<UserOutlined />} />
+                        </Link>
+                    </div>
+                )}
+            </Space>
         </Header>
     );
 }

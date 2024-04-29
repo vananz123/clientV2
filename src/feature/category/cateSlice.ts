@@ -1,6 +1,7 @@
 import { createAppSlice } from '../../app/createAppSlice';
 import type { Category } from '@/pages/Admin/Product/ProductList';
 import { CateAPI } from './cateAPI';
+import { PayloadAction } from '@reduxjs/toolkit';
 export interface CateSliceState {
     data: Category[];
     status: 'idle' | 'loading' | 'failed';
@@ -32,41 +33,16 @@ export const cateSlice = createAppSlice({
                 },
             },
         ),
-        updateCate: create.asyncThunk(
-            async (cate)=>{
-                return cate
-            },
-            {
-                pending: (state) => {
-                    state.status = 'loading';
-                },
-                fulfilled: (state, action) => {
-                    state.status = 'idle';
-                    const index = state.data.findIndex(x => x.id == action.payload.id)
-                    state.data[index] = action.payload;
-                },
-                rejected: (state) => {
-                    state.status = 'failed';
-                },
-            },
-        ),deletaCate: create.asyncThunk(
-            async (cate)=>{
-                return cate
-            },
-            {
-                pending: (state) => {
-                    state.status = 'loading';
-                },
-                fulfilled: (state, action) => {
-                    state.status = 'idle';
-                    const dataNew = state.data.filter(x => x.id != action.payload.id)
-                    state.data = dataNew
-                },
-                rejected: (state) => {
-                    state.status = 'failed';
-                },
-            },
-        )
+        updateCate: create.reducer((state,action:PayloadAction<Category>)=>{
+            state.status = 'idle';
+            const index = state.data.findIndex(x => x.id ==action.payload.id)
+            state.data[index] = action.payload
+        })
+        ,deletaCate:  create.reducer((state,action:PayloadAction<Category>)=>{
+            state.status = 'idle';
+            const dataNew = state.data.filter(x => x.id != action.payload.id)
+            state.data = dataNew
+        })
     }),
     selectors: {
         selectCate: (cate) => cate.data,

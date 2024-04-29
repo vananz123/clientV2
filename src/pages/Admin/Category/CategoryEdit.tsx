@@ -32,7 +32,8 @@ function CategoryEdit() {
         if (status == 'error') {
             openNotificationWithIcon('error');
         }
-    }, [category]);
+        setStatus('loading')
+    }, [status]);
 
     return (
         <>

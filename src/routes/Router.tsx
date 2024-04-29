@@ -15,6 +15,12 @@ import RoleGuard from './RoleGuard';
 import Profile from '@/pages/Profile';
 import Cart from '@/pages/Cart';
 import Purchase from '@/pages/Purchase';
+import Checkout from '@/pages/Pay/Checkout';
+import CheckoutVnpay from '@/pages/Pay/CheckoutVnpay';
+import { OrderConfirm, OrderList } from '@/pages/Admin/Order';
+import ProductListSearch from '@/pages/ProductListSearch';
+import UserOrderDetail from '@/pages/UserOrderDetail';
+import { PromotionAdd, PromotionEdit, PromotionList } from '@/pages/Admin/Promotion';
 const Router: React.FC<{}> = () => {
     return useRoutes([
         {
@@ -47,11 +53,11 @@ const Router: React.FC<{}> = () => {
                     element: <Navigate to={'/'} replace />,
                 },
                 {
-                    path: '/',
+                    path: "/home",
                     element: <Home />,
                 },
                 {
-                    path: '/cart',
+                    path: 'cart',
                     element: (
                         <AuthGuard>
                             <RoleGuard role="customer">
@@ -60,7 +66,7 @@ const Router: React.FC<{}> = () => {
                         </AuthGuard>
                     ),
                 },{
-                    path: '/purchase',
+                    path: 'purchase',
                     element: (
                         <AuthGuard>
                             <RoleGuard role="customer">
@@ -78,7 +84,11 @@ const Router: React.FC<{}> = () => {
                     element: <ProductDetail />,
                 },
                 {
-                    path: '/profile',
+                    path: 'product/search/:keyword',
+                    element: <ProductListSearch />,
+                },
+                {
+                    path: 'profile',
                     element: (
                         <AuthGuard>
                             <RoleGuard role="customer">
@@ -86,7 +96,36 @@ const Router: React.FC<{}> = () => {
                             </RoleGuard>
                         </AuthGuard>
                     ),
+                },{
+                    path: 'profile/order-detail/:id',
+                    element: (
+                        <AuthGuard>
+                            <RoleGuard role="customer">
+                                <UserOrderDetail />
+                            </RoleGuard>
+                        </AuthGuard>
+                    ),
                 },
+                {
+                    path: 'checkout/:id',
+                    element: (
+                        <AuthGuard>
+                            <RoleGuard role="customer">
+                                <Checkout />
+                            </RoleGuard>
+                        </AuthGuard>
+                    ),
+                },
+                {
+                    path: 'checkout-vnpay',
+                    element: (
+                        <AuthGuard>
+                            <RoleGuard role="customer">
+                                <CheckoutVnpay />
+                            </RoleGuard>
+                        </AuthGuard>
+                    ),
+                }
             ],
         },
         {
@@ -131,6 +170,23 @@ const Router: React.FC<{}> = () => {
                     path: 'category-edit/:id',
                     element: <CategoryEdit />,
                 },
+                {
+                    path: 'order',
+                    element: <OrderList />,
+                },
+                {
+                    path: 'order/detail/:id',
+                    element: <OrderConfirm />,
+                },{
+                    path: 'promotion',
+                    element: <PromotionList />,
+                },{
+                    path: 'promotion-add',
+                    element: <PromotionAdd />,
+                },{
+                    path: 'promotion-edit/:id',
+                    element: <PromotionEdit />,
+                }
             ],
         },
     ]);

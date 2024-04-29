@@ -1,6 +1,8 @@
+import { Sort } from '@/pages/ProductListShow'
 import * as request from '../utils/request'
-import { PagingResult, Result } from './ResType'
+import { Order, PagingResult, Result } from './ResType'
 import { Product } from '@/pages/Admin/Product/ProductList'
+import { Filter } from '@/pages/ProductListShow/FilterType'
 export const getAllProduct = async()=>{
     try{
         const token = localStorage.getItem('accessToken')
@@ -53,10 +55,22 @@ export const getProductDetail = async(id:number)=>{
         return resError
     }
 }
-const pageSize = 4
-export const getProductByCategoryIdPaging = async(categoryId:number, page:number)=>{
+const pageSize = 8
+export const getProductByCategoryIdPaging = async(categoryId:number, filter:Filter)=>{
     try{
-        const res = await request.get(`/product/category/${encodeURIComponent(categoryId)}?PageIndex=${encodeURIComponent(page)}&PageSize=${encodeURIComponent(pageSize)}`)
+        let material:string = ""
+        filter.optionMaterial.forEach((e:string)=>{
+            material += e + ","
+        })
+        console.log(material)
+        const params ={
+            optionPrice:filter.optionPrice,
+            pageIndex: filter.page,
+            pageSize:pageSize,
+            MaterialName:material,
+            sortOder: filter.sortOder || 'ascending'
+        }
+        const res = await request.post(`/product/category/${encodeURIComponent(categoryId)}`,params)
         const resultObj :Product[] = res.resultObj.items
         const paging: PagingResult = {
             items: resultObj,
@@ -79,90 +93,23 @@ export const getProductByCategoryIdPaging = async(categoryId:number, page:number
         return resError
     }
 }
-export const getProductPaging = async(productName:any, page:number, pageSize:number)=>{
+export const getProductPagingBySeoTitle = async(seoTitle:any, page:number, pageSize:number)=>{
     try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
+        const res= await request.get(`/product/search?seoTitle=${encodeURIComponent(seoTitle)}&PageIndex=1&PageSize=100`)
+        const resultObj :Product[] = res.resultObj.items
+        const paging: PagingResult = {
+            items: resultObj,
+            pageIndex : res.resultObj.pageIndex,
+            pageCount:res.resultObj.pageCount,
+            pageSize:res.resultObj.pageSize,
+            totalRecords:res.resultObj.totalRecords
         }
-        const res:Product[] = await request.get(`/product?productName=${encodeURIComponent(productName)}&page=${encodeURIComponent(page)}&offset=${encodeURIComponent(pageSize)}`)
         const resp: Result ={
             error :'',
-            message:'Success',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
             statusCode:200,
-            resultObj : res
-        }
-        return resp
-    }catch(error:any){
-        console.log(error.response.data)
-        const resError: Result =error.response.data
-        return resError
-    }
-}
-export const getProductByUrlName = async(url:string)=>{
-    try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
-        const res:Product = await request.get(`/product/${encodeURIComponent(url)}`)
-        const resp: Result ={
-            error :'',
-            message:'Success',
-            statusCode:200,
-            resultObj : res
-        }
-        return resp
-    }catch(error:any){
-        console.log(error.response.data)
-        const resError: Result =error.response.data
-        return resError
-    }
-}
-export const getProductById = async(id:string)=>{
-    try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
-        const res:Product = await request.get(`/product/id/${encodeURIComponent(id)}`)
-        const resp: Result ={
-            error :'',
-            message:'Success',
-            statusCode:200,
-            resultObj : res
-        }
-        return resp
-    }catch(error:any){
-        console.log(error.response.data)
-        const resError: Result =error.response.data
-        return resError
-    }
-}
-export const productSearch = async(keyword:any)=>{
-    try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
-        const res:Product[] = await request.get(`/product?productName=${encodeURIComponent(keyword)}&page=1&offset=10`)
-        const resp: Result ={
-            error :'',
-            message:'Success',
-            statusCode:200,
-            resultObj : res
+            resultObj : paging,
         }
         return resp
     }catch(error:any){
@@ -260,17 +207,12 @@ export const deleteProduct = async(id:number)=>{
         return resError
     }
 }
-export const uploadThumbnailImage = async(id:string,data:any)=>{
+export const uploadThumbnailImage = async(id:number,data:any)=>{
     try{
         const token = localStorage.getItem('accessToken')
         const formData = new FormData()
         formData.append('ImageFile',data);
-        const option = {
-            headers: {  
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${token}`
-            }
-        }
+
         const res= await request.put(`/product/${encodeURIComponent(id)}/thumbnail-image`,formData)
         const resultObj   = res.resultObj
         const resp: Result ={
@@ -294,12 +236,6 @@ export const uploadImage = async(id:number,data:any)=>{
         data.forEach((element:any) => {
             formData.append('ImageFile',element.originFileObj);
         });
-        const option = {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${token}`
-            }
-        }
         const res= await request.put(`/product/${encodeURIComponent(id)}/images`,formData)
         const resultObj   = res.resultObj
         const resp: Result ={
@@ -326,7 +262,7 @@ export const addProductNoSize = async(id:number, price:number,stock:number)=>{
             }
         }
         const res= await request.post(`/product/${encodeURIComponent(id)}/product-item`,{price:price,stock:stock})
-        const resultObj   = res.resultObj
+        const resultObj :Product  = res.resultObj
         const resp: Result ={
             error :'',
             isSuccessed:res.isSuccessed,
@@ -367,7 +303,7 @@ export const addProductSize = async(id:number, data:any[])=>{
             pro.push(item)
         });
         const res= await request.post(`/product/${encodeURIComponent(id)}/product-item-size`,pro)
-        const resultObj   = res.resultObj
+        const resultObj:Product   = res.resultObj
         const resp: Result ={
             error :'',
             isSuccessed:res.isSuccessed,
@@ -402,7 +338,7 @@ export const addVariation = async(id:number, data:any[])=>{
             pro.push(item)
         });
         const res= await request.put(`/product/${encodeURIComponent(id)}/variation`,{variations:pro})
-        const resultObj   = res.resultObj
+        const resultObj :Product  = res.resultObj
         const resp: Result ={
             error :'',
             isSuccessed:res.isSuccessed,

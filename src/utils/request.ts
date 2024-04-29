@@ -1,12 +1,10 @@
 import axios from 'axios';
 import.meta.env.BASE_URL
-export type BaseUrl ='https://localhost:7005/api' | 'https://localhost:7005'
-const baseUrl :BaseUrl  ='https://localhost:7005/api'
+export type BaseUrl = 'https://localhost:7005'
+const baseUrl =import.meta.env.VITE_BASE_URL
 const request = axios.create({
-
-    baseURL:baseUrl
+    baseURL:`${baseUrl}/api`
 });
-console.log(import.meta.env.BASE_URL)
 request.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('accessToken');
@@ -60,7 +58,7 @@ export const post = async (path: string, data: any, options: object = {}) => {
     const response = await request.post(path, data, options);
     return response.data;
 };
-export const put = async (path: string, data: any, options: object = {}) => {
+export const put = async (path: string, data?: any, options: object = {}) => {
     const response = await request.put(path, data, options);
     return response.data;
 };

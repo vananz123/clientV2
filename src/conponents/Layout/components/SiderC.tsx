@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Layout, Menu, Button, theme } from 'antd';
 import type { MenuProps } from 'antd';
 const { Sider } = Layout;
@@ -14,11 +14,14 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
     } as MenuItem;
 }
 function SiderC() {
+    let loca = useLocation()
+    const arr = [loca.pathname]
+    console.log(arr)
     const Navigate = useNavigate();
     const onClick: MenuProps['onClick'] = (e) => {
-        Navigate(`/admin/${e.key}`);
+        Navigate(e.key);
     };
-    const items: MenuItem[] = [getItem('Dashboard', ''),getItem('Product', 'product'), getItem('Category', 'categories'), getItem('User', 'user')];
+    const items: MenuItem[] = [getItem('Dashboard', ''),getItem('Product', '/admin/product'), getItem('Category', '/admin/categories'), getItem('Order', '/admin/order'), getItem('Promotion', '/admin/promotion'), getItem('User', '/admin/user')];
     return (
         <Sider
             breakpoint="lg"
@@ -31,7 +34,7 @@ function SiderC() {
             }}
         >
             <div className="demo-logo-vertical" />
-            <Menu onClick={onClick} theme="dark" mode="inline" defaultSelectedKeys={['product']} items={items} />
+            <Menu onClick={onClick} theme="dark" mode="inline" selectedKeys={arr} items={items} />
         </Sider>
     );
 }

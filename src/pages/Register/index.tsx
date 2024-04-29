@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Checkbox, Form, type FormProps, Input, Space, Alert } from 'antd';
+import { Button, Checkbox, Form, type FormProps, Input, Space, Alert, Row, Col } from 'antd';
 import { UserOutlined, LockOutlined, InfoCircleOutlined, MailOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { signIn } from '@/feature/user/userSlice';
@@ -8,10 +8,13 @@ import * as userServices from '@/api/userServices';
 import { Result } from '@/api/ResType';
 import { Link, useNavigate } from 'react-router-dom';
 export type RegisterUser = {
+    firstName: string;
+    lastName: string;
+    userName: string;
     email: string;
-    name: string;
-    address: string;
+    phoneNumber: string;
     password: string;
+    confirmPassword: string;
 };
 
 function Register() {
@@ -21,8 +24,8 @@ function Register() {
     const onFinish: FormProps<RegisterUser>['onFinish'] = async (values) => {
         console.log(values);
         const register = await userServices.Register(values);
-        if(register.statusCode ==201){
-            navigator('/auth/login')
+        if (register.statusCode == 201) {
+            navigator('/auth/login');
         }
         setMessage(register);
     };
@@ -37,9 +40,25 @@ function Register() {
             <div>
                 {message != undefined ? (
                     message.error != '' ? (
-                        <Alert style={{ maxWidth: 600, width: 350}} message="Error" description={message.message} type="error" showIcon />
+                        <Alert
+                            style={{ maxWidth: 600, width: 350 }}
+                            message="Error"
+                            description={message.message}
+                            type="error"
+                            showIcon
+                        />
                     ) : (
-                        <Alert style={{ maxWidth: 600, width: 350}} message="Success" description={<div>{message.message} <Link to={'/auth/login'}>Login now</Link></div>} type="success" showIcon />
+                        <Alert
+                            style={{ maxWidth: 600, width: 350 }}
+                            message="Success"
+                            description={
+                                <div>
+                                    {message.message} <Link to={'/auth/login'}>Login now</Link>
+                                </div>
+                            }
+                            type="success"
+                            showIcon
+                        />
                     )
                 ) : (
                     ''
@@ -54,12 +73,32 @@ function Register() {
                     autoComplete="off"
                     size="large"
                 >
+                    <Row gutter={8}>
+                        <Col span={12}>
+                            <Form.Item<RegisterUser>
+                                name="firstName"
+                                tooltip="What do you want others to call you?"
+                                rules={[{ required: true, message: 'Please input first name!', whitespace: true }]}
+                            >
+                                <Input placeholder="First name" prefix={<UserOutlined />} />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item<RegisterUser>
+                                name="lastName"
+                                tooltip="What do you want others to call you?"
+                                rules={[{ required: true, message: 'Please input last name!', whitespace: true }]}
+                            >
+                                <Input placeholder="Last name" prefix={<UserOutlined />} />
+                            </Form.Item>
+                        </Col>
+                    </Row>
                     <Form.Item<RegisterUser>
-                        name="name"
+                        name="userName"
                         tooltip="What do you want others to call you?"
-                        rules={[{ required: true, message: 'Please input name!', whitespace: true }]}
+                        rules={[{ required: true, message: 'Please input userName!', whitespace: true }]}
                     >
-                        <Input placeholder="name" prefix={<UserOutlined />} />
+                        <Input placeholder="User name" prefix={<UserOutlined />} />
                     </Form.Item>
                     <Form.Item<RegisterUser>
                         name="email"
@@ -68,11 +107,11 @@ function Register() {
                         <Input placeholder="Email" prefix={<MailOutlined />} />
                     </Form.Item>
                     <Form.Item<RegisterUser>
-                        name="address"
+                        name="phoneNumber"
                         tooltip="What do you want others to call you?"
-                        rules={[{ required: true, message: 'Please input address!', whitespace: true }]}
+                        rules={[{ required: true, message: 'Please input phone number!', whitespace: true }]}
                     >
-                        <Input placeholder="address" prefix={<InfoCircleOutlined />} />
+                        <Input placeholder="Phone number" prefix={<InfoCircleOutlined />} />
                     </Form.Item>
                     <Form.Item<RegisterUser>
                         name="password"
@@ -81,7 +120,7 @@ function Register() {
                         <Input.Password placeholder="Password" prefix={<LockOutlined />} />
                     </Form.Item>
                     <Form.Item
-                        name="confirm"
+                        name="confirmPassword"
                         dependencies={['password']}
                         hasFeedback
                         rules={[
@@ -99,7 +138,7 @@ function Register() {
                             }),
                         ]}
                     >
-                        <Input.Password placeholder="Confirm Password" prefix={<LockOutlined />} />
+                        <Input.Password placeholder="Confirm password" prefix={<LockOutlined />} />
                     </Form.Item>
 
                     <Form.Item>

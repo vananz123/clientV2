@@ -1,5 +1,5 @@
 import React, { SetStateAction } from 'react';
-import { Button, type FormProps, Form, Input } from 'antd';
+import { Button, type FormProps, Form, Input, Select, SelectProps, Switch } from 'antd';
 import * as categoryServices from '@/api/categoryServices';
 import { Category } from '@/pages/Admin/Product/ProductList';
 import type { StatusForm } from '@/pages/Admin/Category/Type';
@@ -26,12 +26,27 @@ const tailFormItemLayout = {
         },
     },
 };
+let optionstStatus: SelectProps['options'] = [
+    {
+        value: 0,
+        label: 'Active',
+    },
+    {
+        value: 1,
+        label: 'InActive',
+    },
+    {
+        value: 2,
+        label: 'UnActive',
+    }
+];
 const CategoryForm: React.FC<{ category: Category | undefined; onSetState: SetStateAction<any> | undefined , onSetStatus:SetStateAction<any>}> = ({
     category,
     onSetState,
     onSetStatus,
 }) => {
     const [form] = Form.useForm();
+    form.setFieldsValue(category)
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [context,setContext] = React.useState<string>('Save');
     const onFinish: FormProps<Category>['onFinish'] = (values) => {
@@ -52,10 +67,11 @@ const CategoryForm: React.FC<{ category: Category | undefined; onSetState: SetSt
                 }
                 setIsLoading(false);
                 setContext('Save')
-            }, 500);
+            }, 300);
         }else{
             setTimeout(async () => {
-                const res = await categoryServices.addCate(values);
+                console.log(values)
+                const res = await categoryServices.createCate(values);
                     if (res.statusCode == 201) {
                         onSetState(res.resultObj);
                         const status : StatusForm ='success'
@@ -65,7 +81,7 @@ const CategoryForm: React.FC<{ category: Category | undefined; onSetState: SetSt
                         onSetStatus(status)
                     }
                 setIsLoading(false);
-            }, 500);
+            }, 300);
         }
     };
 
@@ -88,11 +104,50 @@ const CategoryForm: React.FC<{ category: Category | undefined; onSetState: SetSt
                 label="Category name"
                 tooltip="What do you want others to call you?"
                 //valuePropName='name'
-                initialValue={category?.name}
+                //initialValue={category?.name}
                 rules={[{ required: true, message: 'Please input category name!', whitespace: true }]}
             >
                 <Input />
             </Form.Item>
+            <Form.Item<Category>
+                name="seoTitle"
+                label="Seo title"
+                tooltip="What do you want others to call you?"
+                //valuePropName='name'
+                //initialValue={category?.seoTitle}
+                rules={[{ required: true, message: 'Please input category name!', whitespace: true }]}
+            >
+                <Input />
+            </Form.Item>
+            <Form.Item<Category>
+                name='seoDescription'
+                label="seoDescription"
+                tooltip="What do you want others to call you?"
+                //valuePropName='name'
+                //initialValue={category?.seoDescription}
+                rules={[{ required: true, message: 'Please input category name!', whitespace: true }]}
+            >
+                <Input />
+            </Form.Item>
+            <Form.Item<Category> 
+            name="isShow"
+            //initialValue={category?.isShow}
+            label="Switch">
+          <Switch />
+        </Form.Item>
+            <Form.Item<Category>
+                    name="status"
+                    label="Status"
+                    initialValue={0}
+                    rules={[{ required: true, message: 'Please select Status!' }]}
+                >
+                    <Select
+                        size={'middle'}
+                        //onChange={handleChange}
+                        style={{ width: 200 }}
+                        options={optionstStatus}
+                    />
+                </Form.Item>
             <Form.Item {...tailFormItemLayout}>
                 <Button type="primary" htmlType="submit" loading={isLoading} style={{width:'100px'}}>
                     {context}

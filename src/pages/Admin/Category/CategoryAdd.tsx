@@ -25,7 +25,7 @@ const Navigate =useNavigate()
             if (category != undefined) {
                 const getAllCate = async () => {
                     const ref = await categoryServices.getAllCate();
-                    if (ref.statusCode == 200) {
+                    if (ref.statusCode === 200) {
                         dispatch(addCateAsync(ref.resultObj));
                     }
                 };

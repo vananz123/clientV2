@@ -1,118 +1,82 @@
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams,useNavigate } from 'react-router-dom';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import * as productServices from '@/api/productServices';
+import * as categoryServices from '@/api/categoryServices';
 import React, { useEffect, useRef } from 'react';
 import { Category, Product } from '../Admin/Product/ProductList';
-import {
-    Button,
-    Card,
-    Col,
-    Flex,
-    Result,
-    Row,
-    Select,
-    SelectProps,
-    Skeleton,
-    Spin,
-    Breadcrumb,
-    Slider,
-    InputNumber,
-} from 'antd';
-import { ArrowLeftOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Flex, Result, Row, Select, SelectProps, Skeleton, Spin ,Breadcrumb } from 'antd';
+import {  ArrowLeftOutlined, LoadingOutlined } from '@ant-design/icons';
 import ProductCard from '@/conponents/ProductCard';
-import { optionsPrice ,optionsSort,optionsMaterial} from './FilterType';
-import type { Filter } from './FilterType';
-import { Space, Tooltip } from 'antd';
-export type Sort = 'ascending' | 'descending'
-function ProductListShow() {
-    const { id } = useParams();
+import { useDebounce } from '@/hooks';
+import { Input } from 'antd';
+import type { SearchProps } from 'antd/es/input/Search';
+import type { InputRef } from 'antd';
+const options: SelectProps['options'] = [
+    {
+        value: 6,
+        label: '6',
+    },
+    {
+        value: 8,
+        label: '8',
+    },
+    {
+        value: 12,
+        label: '12',
+    },
+];
+function ProductListSearch() {
+    const { keyword } = useParams();
     const [products, setProducts] = React.useState<Product[]>();
     const [pageSize, setPageSize] = React.useState<number>(6);
     const [page, setPage] = React.useState<number>(1);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [loadingPage, setLoadingPage] = React.useState<boolean>(false);
     const [loadingSearch, setLoadingSearch] = React.useState<boolean>(false);
-    const [sortOder,setSortOder]  =React.useState<Sort>('ascending')
-    const [optionPrice,setOptionPrice] = React.useState<number[]>([])
-    const [optionMaterial,setOptionMaterial] = React.useState<string[]>([])
-    const getProductPaging = async () => {
-        const filter:Filter = {
-            page:page,
-            sortOder:sortOder,
-            optionPrice:optionPrice,
-            optionMaterial:optionMaterial
-        }
-        const res = await productServices.getProductByCategoryIdPaging(Number(id),filter);
-        if (res.statusCode == 200) {
-            setProducts(res.resultObj.items);
-        }
-    };
-    useEffect(() => {
-        if (id != 'all' && id != undefined) {
-            getProductPaging();
-        } else {
-        }
-    }, [id]);
-    useEffect(() => {
-        getProductPaging();
-    }, [page,optionPrice,optionMaterial,sortOder]);
-    const handleChangeSort = (value: Sort) => {
-        setSortOder(value);
-    };
-    const onChangeOpPrice =(value:number[])=>{
-        if(typeof value !== 'undefined'){
-            setOptionPrice(value)
+    const getProductByNamePaging =async (name:any)=>{
+        if(keyword != undefined){
+            const result = await productServices.getProductPagingBySeoTitle(keyword, 1, 100);
+            console.log(result);
+            if (result.statusCode == 200) {
+                setProducts(result.resultObj.items);
+            }
         }
     }
-    const onChangeOpSize =(value:string[])=>{
-        if(typeof value !== 'undefined'){
-            setOptionMaterial(value)
-        }
-    }
+
+    useEffect(() => {
+        
+        getProductByNamePaging('333')
+    }, [keyword]);
+    const handleChangePage = (value: number) => {
+        const getProductPagingBegin = async () => {
+            // const res = await productServices.getProductPaging(debounce, 1, value);
+            // if (res.statusCode == 200) {
+            //     setProducts(res.resultObj);
+            // }
+        };
+        getProductPagingBegin();
+        setPageSize(value);
+    };
+
     return (
         <>
             <div style={{ width: '100%' }}>
+            
                 <Flex justify="space-between" style={{ marginBottom: '10px' }}>
-                    <Space>
-                        <Select
-                            mode="multiple"
-                            style={{ width: 150 }}
-                            options={optionsPrice}
-                            onChange={onChangeOpPrice}
-                            placeholder="Price"
-                            maxTagCount="responsive"
-                            maxTagPlaceholder={(omittedValues) => (
-                                <Tooltip title={omittedValues.map(({ label }) => label).join(', ')}>
-                                    <span>Hover Me</span>
-                                </Tooltip>
-                            )}
-                        />
-                        <Select
-                            mode="multiple"
-                            style={{ width: 150 }}
-                            options={optionsMaterial}
-                            onChange={onChangeOpSize}
-                            placeholder="Brand"
-                            maxTagCount="responsive"
-                            maxTagPlaceholder={(omittedValues) => (
-                                <Tooltip title={omittedValues.map(({ label }) => label).join(', ')}>
-                                    <span>Hover Me</span>
-                                </Tooltip>
-                            )}
-                        />
-                    </Space>
+                    
                     <Select
-                        value={sortOder}
-                        style={{ width: 100 }}
+                        defaultValue={pageSize}
+                        style={{ width: 120 }}
                         loading={loadingPage}
-                        onChange={handleChangeSort}
-                        options={optionsSort}
+                        onChange={handleChangePage}
+                        options={options}
                     />
                 </Flex>
                 <Spin spinning={loadingSearch} indicator={<LoadingOutlined style={{ fontSize: 24 }} />}>
                     {products != undefined ? (
                         <>
-                            {products.length > 0 ? (
-                                <Row gutter={[12, 12]}>
+                            {
+                                    products.length > 0 ? <Row gutter={[12, 12]}>
                                     {products.map((e: Product) => (
                                         <Col
                                             style={{ display: 'flex', justifyContent: 'center' }}
@@ -128,9 +92,15 @@ function ProductListShow() {
                                         </Col>
                                     ))}
                                 </Row>
-                            ) : (
-                                <Result title="No resulf" extra={<Button type="primary">See more</Button>} />
-                            )}
+                                : <Result
+                                title="No resulf"
+                                extra={
+                                    <Button type="primary">
+                                    See more
+                                  </Button>
+                                }
+                              />}
+                           
                         </>
                     ) : (
                         <Row gutter={[12, 12]}>
@@ -196,4 +166,4 @@ const ChangeCurrence = (number: number | undefined) => {
     }
     return 0;
 };
-export default ProductListShow;
+export default ProductListSearch;

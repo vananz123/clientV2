@@ -7,7 +7,7 @@ const RoleGuard: React.FC<{children:JSX.Element;role:Role}>=({children,role})=>{
     const user = useAppSelector(selectUser)
     const isAuthenticated = useAppSelector(selectIsAuthenticated)
     const isInitialized = useAppSelector(selectIsInitialized)
-    if(user?.roles[0] != role && isAuthenticated == true){
+    if(user?.roles[0] !== role && isAuthenticated === true){
         return <Result
         status="404"
         title="404"

@@ -5,7 +5,7 @@ import type { Product } from '@/pages/Admin/Product/ProductList';
 import { Link } from 'react-router-dom';
 import { BaseUrl } from '@/utils/request';
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
-    const baseUrl: BaseUrl = 'https://localhost:7005';
+    const baseUrl =import.meta.env.VITE_BASE_URL
     return (
         <Link to={`/product/detail/${product.id}`}>
             <Card hoverable style={{ width:'100%', maxWidth:'300px' }}  cover={<img alt="example" src={`${baseUrl+ product.urlThumbnailImage}`} />}>

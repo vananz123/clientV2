@@ -3,13 +3,6 @@ import { Result } from './ResType'
 import { Category } from '@/pages/Admin/Product/ProductList'
 export const getAllCate = async()=>{ 
     try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
         const res = await request.get(`/category`)
         const resultObj : Category[]  = res.resultObj
         const resp: Result ={
@@ -28,19 +21,14 @@ export const getAllCate = async()=>{
 }
 export const getCateById = async(id:string)=>{
     try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
-        const res:Category = await request.get(`/category/id/${encodeURIComponent(id)}?page=1&offset=10`,option)
+        const res = await request.get(`/category/id/${encodeURIComponent(id)}`)
+        const resultObj : Category  = res.resultObj
         const resp: Result ={
             error :'',
-            message:'Success',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
             statusCode:200,
-            resultObj : res
+            resultObj : resultObj
         }
         return resp
     }catch(error:any){
@@ -49,40 +37,23 @@ export const getCateById = async(id:string)=>{
         return resError
     }
 }
-export const getCateByName = async(name:string,productName:any, page:number, pageSize:number)=>{
+
+export const createCate = async(data:Category)=>{
     try{
-        const res:Category = await request.get(`/category/${encodeURIComponent(name)}?productName=${encodeURIComponent(productName)}&page=${encodeURIComponent(page)}&offset=${encodeURIComponent(pageSize)}`)
-        const resp: Result ={
-            error :'',
-            message:'Success',
-            statusCode:200,
-            resultObj : res
-        }
-        return resp
-    }catch(error:any){
-        console.log(error.response.data)
-        const resError: Result =error.response.data
-        return resError
-    }
-}
-export const addCate = async(data:Category)=>{
-    try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
         const cate = {
-            name:data.name
+            name:data.name,
+            isShow:data.isShow,
+            seoDescription:data.seoDescription,
+            seoTitle:data.seoTitle
         }
-        const res:Category = await request.post(`/category`,cate,option)
+        const res = await request.post(`/category`,cate)
+        const resultObj  = res.resultObj
         const resp: Result ={
             error :'',
-            message:'Success',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
             statusCode:201,
-            resultObj : res
+            resultObj : resultObj
         }
         return resp
     }catch(error:any){
@@ -93,22 +64,21 @@ export const addCate = async(data:Category)=>{
 }
 export const updateCate = async(id:string,data:Category)=>{
     try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
         const cate = {
-            name:data.name
+            id:id,
+            name:data.name,
+            isShow:data.isShow,
+            seoDescription:data.seoDescription,
+            seoTitle:data.seoTitle
         }
-        const res:Category = await request.patch(`/category/${encodeURIComponent(id)}`,cate,option)
+        const res = await request.put(`/category`,cate)
+        const resultObj:Category  = res.resultObj
         const resp: Result ={
             error :'',
-            message:'Success',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
             statusCode:200,
-            resultObj : res
+            resultObj : resultObj
         }
         return resp
     }catch(error:any){
@@ -119,19 +89,14 @@ export const updateCate = async(id:string,data:Category)=>{
 }
 export const deleteCate = async(id:string)=>{
     try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
-        const res:Category = await request.del(`/category/${encodeURIComponent(id)}`,option)
+        const res = await request.del(`/category/${encodeURIComponent(id)}`)
+        const resultObj  = res.resultObj
         const resp: Result ={
             error :'',
-            message:'Success',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
             statusCode:204,
-            resultObj : res
+            resultObj : resultObj
         }
         return resp
     }catch(error:any){

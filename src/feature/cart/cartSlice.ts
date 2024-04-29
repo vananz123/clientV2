@@ -11,6 +11,7 @@ const initialState: CartliceState = {
     data: {
         totalPrice:0,
         totalDiscount:0,
+        totalPriceBeforeDiscount:0,
         items:[]
     },
     status: 'loading',
@@ -41,6 +42,7 @@ export const cartSlice = createAppSlice({
         emptyCart: create.reducer((state)=>{
             let dataE: CartResult = {
                 totalPrice:0,
+                totalPriceBeforeDiscount:0,
                 totalDiscount:0,
                 items:[]
             }
