@@ -4,6 +4,7 @@ import { addToCart, selectCart, selectStatus } from '@/feature/cart/cartSlice';
 import { BaseUrl } from '@/utils/request';
 import { DeleteOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import {
+    Alert,
     Avatar,
     Button,
     Card,
@@ -47,7 +48,7 @@ function Cart() {
                 }
             }
             setConfirmLoading(false);
-        }, 500);
+        }, 200);
     };
 
     const handleCancel = () => {
@@ -55,18 +56,19 @@ function Cart() {
     };
     const increase = async (e: Cart) => {
         if (typeof e !== 'undefined') {
-            setLoadingHandleQuantity(true);
             let newQuantity = e?.quantity + 1;
-            setTimeout(async () => {
-                const res = await cartServices.updateCart(e?.id, newQuantity);
-                if (res.isSuccessed == true) {
-                    dispatch(addToCart(res.resultObj));
-                    setLoadingHandleQuantity(false)
-                }else{
-                    setLoadingHandleQuantity(false)
-                }
-            }, 200);
-            
+            if(newQuantity <= e?.stock){
+                setLoadingHandleQuantity(true);
+                setTimeout(async () => {
+                    const res = await cartServices.updateCart(e?.id, newQuantity);
+                    if (res.isSuccessed == true) {
+                        dispatch(addToCart(res.resultObj));
+                        setLoadingHandleQuantity(false)
+                    }else{
+                        setLoadingHandleQuantity(false)
+                    }
+                }, 200);
+            }
         }
     };
     const decline = async (e: Cart) => {
@@ -114,7 +116,8 @@ function Cart() {
                                                 <p>
                                                     {e?.name} {e?.value}
                                                 </p>
-    
+                                                {e.stock == 0? <Alert type='error' message="Product out of stock! Please delete proudct"/>: ''}
+                                                {e.stock < e.quantity ? <Alert type='error' message="Product kh đủ!"/>: ''}
                                                 <Space.Compact size='small'>
                                                     <Button
                                                         onClick={() => {
@@ -122,7 +125,7 @@ function Cart() {
                                                         }}
                                                         icon={ <MinusOutlined />}
                                                     />
-                                                    <InputNumber min={1} max={1000} style={{width:70}} value={e.quantity} />
+                                                    <InputNumber min={1} max={e?.stock} style={{width:70}} value={e.quantity} />
     
                                                     <Button
                                                         onClick={() => {
@@ -169,7 +172,7 @@ function Cart() {
                             <Descriptions.Item label="Total payment">{ChangeCurrence(cart.totalPrice)}</Descriptions.Item>
                         </Descriptions>
                         <Link to={`/purchase`}>
-                            <Button size="large" block type="primary" style={{ marginTop: 10 }}>
+                            <Button size="large" block type="primary" disabled={cart.items.length <=0 || cart.items.some(s=> s.stock ==0 || s.stock < s.quantity)} style={{ marginTop: 10 }}>
                                 Purchase now!
                             </Button>
                         </Link>

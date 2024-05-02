@@ -2,6 +2,8 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import * as productServices from '@/api/productServices';
 import React, { useEffect, useRef } from 'react';
 import { Category, Product } from '../Admin/Product/ProductList';
+import { useAppSelector } from '@/app/hooks';
+import { selectCate } from '@/feature/category/cateSlice';
 import {
     Button,
     Card,
@@ -16,61 +18,140 @@ import {
     Breadcrumb,
     Slider,
     InputNumber,
+    Switch,
+    Pagination,
+    PaginationProps,
 } from 'antd';
-import { ArrowLeftOutlined, LoadingOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, LoadingOutlined, SwapRightOutlined } from '@ant-design/icons';
 import ProductCard from '@/conponents/ProductCard';
-import { optionsPrice ,optionsSort,optionsMaterial} from './FilterType';
+import { optionsPrice, optionsSort, optionsMaterial } from './FilterType';
 import type { Filter } from './FilterType';
 import { Space, Tooltip } from 'antd';
-export type Sort = 'ascending' | 'descending'
+export type Sort = 'ascending' | 'descending';
 function ProductListShow() {
     const { id } = useParams();
     const [products, setProducts] = React.useState<Product[]>();
     const [pageSize, setPageSize] = React.useState<number>(6);
+    const cate = useAppSelector(selectCate);
     const [page, setPage] = React.useState<number>(1);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [loadingPage, setLoadingPage] = React.useState<boolean>(false);
     const [loadingSearch, setLoadingSearch] = React.useState<boolean>(false);
-    const [sortOder,setSortOder]  =React.useState<Sort>('ascending')
-    const [optionPrice,setOptionPrice] = React.useState<number[]>([])
-    const [optionMaterial,setOptionMaterial] = React.useState<string[]>([])
+    const [sortOder, setSortOder] = React.useState<Sort>('ascending');
+    const [optionPrice, setOptionPrice] = React.useState<number[]>([]);
+    const [optionMaterial, setOptionMaterial] = React.useState<string[]>([]);
+    const [isPromotion, setIsPromotion] = React.useState<boolean>(false);
+    const [titleContent, setTitleContent] = React.useState<string | undefined>('');
     const getProductPaging = async () => {
-        const filter:Filter = {
-            page:page,
-            sortOder:sortOder,
-            optionPrice:optionPrice,
-            optionMaterial:optionMaterial
+        const filter: Filter = {
+            categoryId: Number(id),
+            page: page,
+            sortOder: sortOder,
+            pageSize: pageSize,
+            optionPrice: optionPrice,
+            optionMaterial: optionMaterial,
+            isPromotion: isPromotion,
+        };
+        const res = await productServices.getProductPagingByFilter(filter);
+        if (res.statusCode == 200) {
+            setProducts(res.resultObj.items);
         }
-        const res = await productServices.getProductByCategoryIdPaging(Number(id),filter);
+    };
+    const getProductPromotionPaging = async () => {
+        const filter: Filter = {
+            page: page,
+            sortOder: sortOder,
+            pageSize: pageSize,
+            optionPrice: optionPrice,
+            optionMaterial: optionMaterial,
+            isPromotion: isPromotion,
+        };
+        const res = await productServices.getProductPagingByFilter(filter);
+        if (res.statusCode == 200) {
+            setProducts(res.resultObj.items);
+        }
+    };
+    const getProductPNPaging = async () => {
+        const filter: Filter = {
+            page: page,
+            sortOder: sortOder,
+            pageSize: pageSize,
+            productName: id,
+            optionPrice: optionPrice,
+            optionMaterial: optionMaterial,
+            isPromotion: isPromotion,
+        };
+        const res = await productServices.getProductPagingByFilter(filter);
+        if (res.statusCode == 200) {
+            setProducts(res.resultObj.items);
+        }
+    };
+    const getProductStatusPaging = async (status:number) => {
+        const filter: Filter = {
+            page: page,
+            sortOder: sortOder,
+            pageSize: pageSize,
+            optionPrice: optionPrice,
+            optionMaterial: optionMaterial,
+            isPromotion: isPromotion,
+            productStatus: status,
+        };
+        const res = await productServices.getProductPagingByFilter(filter);
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
         }
     };
     useEffect(() => {
-        if (id != 'all' && id != undefined) {
-            getProductPaging();
-        } else {
+        if (id != undefined) {
+            if (id === 'promotion') {
+                setIsPromotion(true);
+                setTitleContent('Khuyến mãi');
+                getProductPromotionPaging();
+            } else if (id === 'new') {
+                getProductStatusPaging(2);
+            } else if (id === 'hot') {
+                getProductStatusPaging(3);
+            }else {
+                try {
+                    const a: number = Number(id);
+                    if (!Number.isNaN(a)) {
+                        if (typeof cate !== 'undefined') {
+                            let name = cate.find((x) => x.id == a);
+                            setTitleContent(name?.name);
+                        }
+
+                        getProductPaging();
+                    } else {
+                        setTitleContent('Tìm kiếm: ' + id);
+                        getProductPNPaging();
+                    }
+                } catch {}
+            }
         }
-    }, [id]);
-    useEffect(() => {
-        getProductPaging();
-    }, [page,optionPrice,optionMaterial,sortOder]);
+    }, [id, page, optionPrice, optionMaterial, sortOder, isPromotion]);
+    // useEffect(() => {
+    //     getProductPaging();
+    // }, [page, optionPrice, optionMaterial, sortOder, isPromotion]);
     const handleChangeSort = (value: Sort) => {
         setSortOder(value);
     };
-    const onChangeOpPrice =(value:number[])=>{
-        if(typeof value !== 'undefined'){
-            setOptionPrice(value)
+    const onChangeOpPrice = (value: number[]) => {
+        if (typeof value !== 'undefined') {
+            setOptionPrice(value);
         }
-    }
-    const onChangeOpSize =(value:string[])=>{
-        if(typeof value !== 'undefined'){
-            setOptionMaterial(value)
+    };
+    const onChangeOpSize = (value: string[]) => {
+        if (typeof value !== 'undefined') {
+            setOptionMaterial(value);
         }
-    }
+    };
+    const onShowSizeChange: PaginationProps['onShowSizeChange'] = (current, pageSize) => {
+        setPage(current)
+      };
     return (
         <>
             <div style={{ width: '100%' }}>
+                <h3>{titleContent}</h3>
                 <Flex justify="space-between" style={{ marginBottom: '10px' }}>
                     <Space>
                         <Select
@@ -98,6 +179,15 @@ function ProductListShow() {
                                     <span>Hover Me</span>
                                 </Tooltip>
                             )}
+                        />
+                        <Switch
+                            checkedChildren="Khuyến mãi"
+                            unCheckedChildren="Mặc định"
+                            disabled={id === 'promotion'}
+                            checked={isPromotion}
+                            onChange={() => {
+                                setIsPromotion(!isPromotion);
+                            }}
                         />
                     </Space>
                     <Select
@@ -181,6 +271,9 @@ function ProductListShow() {
                         </Row>
                     )}
                 </Spin>
+                <div style={{marginTop:24, textAlign:'center'}}>
+                    <Pagination onShowSizeChange={onShowSizeChange} current={page} total={products?.length} />
+                </div>
             </div>
         </>
     );

@@ -21,11 +21,21 @@ import { OrderConfirm, OrderList } from '@/pages/Admin/Order';
 import ProductListSearch from '@/pages/ProductListSearch';
 import UserOrderDetail from '@/pages/UserOrderDetail';
 import { PromotionAdd, PromotionEdit, PromotionList } from '@/pages/Admin/Promotion';
+import ForgotPassword from '@/pages/ForgotPassword';
+import UserList from '@/pages/Admin/User/UserList';
 const Router: React.FC<{}> = () => {
     return useRoutes([
         {
             path: 'auth',
             children: [
+                {
+                    path: 'reset-password',
+                    element: (
+                        <GuestGuard>
+                            <ForgotPassword />
+                        </GuestGuard>
+                    ),
+                },
                 {
                     path: 'login',
                     element: (
@@ -186,6 +196,9 @@ const Router: React.FC<{}> = () => {
                 },{
                     path: 'promotion-edit/:id',
                     element: <PromotionEdit />,
+                },{
+                    path: 'user',
+                    element: <UserList />,
                 }
             ],
         },

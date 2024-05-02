@@ -9,10 +9,15 @@ type OptionBase ={
     value: string;
 }
 export type Filter={
-    optionPrice:number[],
+    categoryId?:number,
+    productName?:string,
+    optionPrice?:number[],
     page:number,
-    optionMaterial:string[],
-    sortOder:string
+    pageSize:number,
+    optionMaterial?:string[],
+    sortOder:string,
+    isPromotion?:boolean,
+    productStatus?:number
 }
 type OptionSort ={
     label: string;

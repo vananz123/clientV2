@@ -84,6 +84,7 @@ export type Review ={
     comment: string,
     feelback?: string,
     feelbackAt?: string
+    user:ResponseUser
 }
 export type OrderDetail={
     id: number;

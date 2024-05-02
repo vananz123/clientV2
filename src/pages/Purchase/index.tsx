@@ -34,9 +34,9 @@ import { selectUser } from '@/feature/user/userSlice';
 import AddressForm from '@/conponents/AddressForm';
 import { StatusForm } from '../Admin/Category/Type';
 const { Title } = Typography;
-export type TypeFormAddress = 'ADD' | 'EDIT'
+export type TypeFormAddress = 'ADD' | 'EDIT';
 function Purchase() {
-    const baseUrl =import.meta.env.VITE_BASE_URL
+    const baseUrl = import.meta.env.VITE_BASE_URL;
     const user = useAppSelector(selectUser);
     const navigate = useNavigate();
     const cart = useAppSelector(selectCart);
@@ -50,7 +50,7 @@ function Purchase() {
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [modalText, setModalText] = React.useState('Do you want to detele!');
     const [openDrawAddress, setOpenDrawAddress] = useState(false);
-    const [typeFormAddress, setTypeFormAddress] = React.useState<TypeFormAddress>('EDIT')
+    const [typeFormAddress, setTypeFormAddress] = React.useState<TypeFormAddress>('EDIT');
     const showDrawerAddress = () => {
         setOpenDrawAddress(true);
     };
@@ -70,6 +70,9 @@ function Purchase() {
             children: `${currentAddress?.streetNumber + ', ' + currentAddress?.wardCommune + ', ' + currentAddress?.urbanDistrict + ', ' + currentAddress?.city}`,
         },
     ];
+    if (typeof currentAddress === 'undefined') {
+        items = [];
+    }
     const handleChange = (value: string) => {
         setType(value);
     };
@@ -97,13 +100,13 @@ function Purchase() {
                 setAddresses(res.resultObj);
                 setCurrentAddress(res.resultObj[0]);
             }
-        }   
+        }
     };
     useEffect(() => {
         getPaymentType();
         getAddress();
-        if(status != 'loading'){
-            handleCancel()
+        if (status != 'loading') {
+            handleCancel();
         }
     }, [status]);
     const showModal = (cart: Cart) => {
@@ -154,16 +157,29 @@ function Purchase() {
                         items={items}
                         style={{ marginTop: 10 }}
                         bordered
-                        extra={
-                            <Button
-                                type="primary"
-                                onClick={() => {
-                                    showDrawerAddress();
-                                }}
-                            >
-                                Edit
-                            </Button>
-                        }
+                        extra={(
+                            typeof currentAddress !== 'undefined' ? (
+                                <Button
+                                    type="primary"
+                                    onClick={() => {
+                                        showDrawerAddress();
+                                    }}
+                                >
+                                    Edit
+                                </Button>
+                            ) : (
+                                <Button
+                                    type="primary"
+                                    onClick={() => {
+                                        setCurrentAddressForm(undefined);
+                                        setTypeFormAddress('ADD');
+                                        setOpen(true);
+                                    }}
+                                >
+                                    Add address
+                                </Button>
+                            )
+    )}
                     />
                 </Col>
                 <Col className="gutter-row" span={8} xs={24} md={8} lg={8} xl={8}>
@@ -208,6 +224,7 @@ function Purchase() {
                         block
                         type="primary"
                         style={{ marginTop: 10 }}
+                        disabled={cart.items.length <=0 || cart.items.some(s=> s.stock ==0 || s.stock < s.quantity)}
                         onClick={() => {
                             createOrder();
                         }}
@@ -224,37 +241,50 @@ function Purchase() {
                 onCancel={handleCancel}
                 footer={''}
             >
-                <AddressForm typeForm={typeFormAddress} address={currentAddressForm} onSetState={setCurrentAddress} onSetStatus={setStatus} />
-                
+                <AddressForm
+                    typeForm={typeFormAddress}
+                    address={currentAddressForm}
+                    onSetState={setCurrentAddress}
+                    onSetStatus={setStatus}
+                />
             </Modal>
             <Drawer title="Address edit" onClose={onCloseDrawAddress} open={openDrawAddress}>
                 <Radio.Group value={currentAddress?.id} onChange={handleChangeAddresses}>
-
-                        <Space direction="vertical" >
-                            {addresses.map((e: Address) => (
-                                <Space>
-                                    <Radio key={e?.id} value={e?.id}>
-                                        <p>{e?.phoneNumber}</p>
-                                        <p>
-                                            {e?.streetNumber + ', ' + e?.wardCommune + ', ' + e?.urbanDistrict + ', ' + e?.city}
-                                        </p>
-                                        <Divider />
-                                    </Radio>
-                                    <Button onClick={()=>{
-                                        setCurrentAddressForm(e)
-                                        setTypeFormAddress('EDIT')
+                    <Space direction="vertical">
+                        {addresses.map((e: Address) => (
+                            <Space>
+                                <Radio key={e?.id} value={e?.id}>
+                                    <p>{e?.phoneNumber}</p>
+                                    <p>
+                                        {e?.streetNumber +
+                                            ', ' +
+                                            e?.wardCommune +
+                                            ', ' +
+                                            e?.urbanDistrict +
+                                            ', ' +
+                                            e?.city}
+                                    </p>
+                                    <Divider />
+                                </Radio>
+                                <Button
+                                    onClick={() => {
+                                        setCurrentAddressForm(e);
+                                        setTypeFormAddress('EDIT');
                                         setOpen(true);
-                                    }}>Edit</Button>
-                                </Space>
-                            ))}
-                        </Space>
+                                    }}
+                                >
+                                    Edit
+                                </Button>
+                            </Space>
+                        ))}
+                    </Space>
                 </Radio.Group>
                 <Button
                     type="primary"
                     block
                     onClick={() => {
-                        setCurrentAddressForm(undefined)
-                        setTypeFormAddress('ADD')
+                        setCurrentAddressForm(undefined);
+                        setTypeFormAddress('ADD');
                         setOpen(true);
                     }}
                 >

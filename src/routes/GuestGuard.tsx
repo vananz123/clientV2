@@ -15,7 +15,7 @@ const GuestGuard: React.FC<{children:JSX.Element}> = ({children})=>{
                 return <Navigate to={'/admin/product'}/>
             }
             if(user.roles[0] == 'customer'){
-                return <Navigate to={'/product/all'}/>
+                return <Navigate to={'/home'}/>
             }
         }
         

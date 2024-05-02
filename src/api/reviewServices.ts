@@ -1,6 +1,30 @@
 import * as request from '../utils/request';
-import { Result, Review } from './ResType';
-
+import { PagingResult, Result, Review } from './ResType';
+export const getReivewByProductId = async (id: number,page:number) => {
+    try {
+        const res = await request.get(`/review/product/${encodeURIComponent(id)}?PageIndex=${encodeURIComponent(page)}&PageSize=5`);
+        const resultObj :Review[] = res.resultObj.items
+        const paging: PagingResult = {
+            items: resultObj,
+            pageIndex : res.resultObj.pageIndex,
+            pageCount:res.resultObj.pageCount,
+            pageSize:res.resultObj.pageSize,
+            totalRecords:res.resultObj.totalRecords
+        }
+        const resp: Result ={
+            error :'',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
+            statusCode:200,
+            resultObj : paging,
+        }
+        return resp
+    } catch (error: any) {
+        console.log(error.response.data);
+        const resError: Result = error.response.data;
+        return resError;
+    }
+};
 export const createReivew = async (data: Review) => {
     try {
         const add = {

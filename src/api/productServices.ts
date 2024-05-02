@@ -56,21 +56,25 @@ export const getProductDetail = async(id:number)=>{
     }
 }
 const pageSize = 8
-export const getProductByCategoryIdPaging = async(categoryId:number, filter:Filter)=>{
+export const getProductPagingByFilter = async(filter:Filter)=>{
     try{
         let material:string = ""
-        filter.optionMaterial.forEach((e:string)=>{
+        filter.optionMaterial?.forEach((e:string)=>{
             material += e + ","
         })
         console.log(material)
         const params ={
+            categoryId:filter.categoryId,
+            productName:filter.productName,
             optionPrice:filter.optionPrice,
             pageIndex: filter.page,
-            pageSize:pageSize,
+            pageSize:filter.pageSize,
             MaterialName:material,
-            sortOder: filter.sortOder || 'ascending'
+            sortOder: filter.sortOder || 'ascending',
+            isPromotion:filter.isPromotion || false,
+            productStatus:filter.productStatus
         }
-        const res = await request.post(`/product/category/${encodeURIComponent(categoryId)}`,params)
+        const res = await request.post(`/product/filter`,params)
         const resultObj :Product[] = res.resultObj.items
         const paging: PagingResult = {
             items: resultObj,
@@ -131,7 +135,8 @@ export const addProduct = async(data:Product)=>{
             name: data.name,
             seoDescription: data.seoDescription,
             seoTitle: data.seoTitle,
-            categoryId: data.categoryId
+            categoryId: data.categoryId,
+            status:data.status
         }
         const res= await request.post(`/product`,pro)
         const resultObj   = res.resultObj
@@ -254,13 +259,6 @@ export const uploadImage = async(id:number,data:any)=>{
 }
 export const addProductNoSize = async(id:number, price:number,stock:number)=>{
     try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
         const res= await request.post(`/product/${encodeURIComponent(id)}/product-item`,{price:price,stock:stock})
         const resultObj :Product  = res.resultObj
         const resp: Result ={

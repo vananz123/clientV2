@@ -87,6 +87,11 @@ let optionsProductStatus: SelectProps['options'] = [
     {
         value: 4,
         label: 'Sale',
+        disabled:true
+    },
+    {
+        value: 5,
+        label: 'UnActive'
     },
 ];
 let optionsSku: SelectProps['options'] = [
@@ -147,7 +152,6 @@ const ProductForm: React.FC<{
     }, []);
     console.log(product);
     const handleChange = (value: string[]) => {
-        console.log(`Selected: ${value}`);
     };
     const onFinish: FormProps<Product>['onFinish'] = (values) => {
         setIsLoading(true);
@@ -156,7 +160,6 @@ const ProductForm: React.FC<{
                 const res = await productServices.updateProduct(product.id, values);
                 if (res.statusCode == 200) {
                     if (values.file != undefined) {
-                        console.log(values.file)
                         await productServices.uploadThumbnailImage(res.resultObj.id, values.file[0].originFileObj);
                     }
                     const status: StatusForm = 'success';
@@ -169,7 +172,7 @@ const ProductForm: React.FC<{
                     openNotificationWithIcon('error','Add Product error')
                 }
                 setIsLoading(false);
-            }, 500);
+            }, 300);
         } else {
             setTimeout(async () => {
                 const res = await productServices.addProduct(values);
@@ -187,7 +190,7 @@ const ProductForm: React.FC<{
                     onSetStatus(status);
                 }
                 setIsLoading(false);
-            }, 500);
+            }, 300);
         }
     };
     const onFinishVariation = (values: any) => {
@@ -200,31 +203,27 @@ const ProductForm: React.FC<{
                     setOpenVariaton(false)
                     openNotificationWithIcon('success','Add variation success')
                 }
-            }, 500);
+            }, 300);
         }
     };
-    const onFinishProductItem = (values: any) => {
-        //console.log( values)
+    const onFinishProductItem =async (values: any) => {
+      
         if (product != undefined) {
-            if (isSize == true) {
-                setTimeout(async () => {
-                    const res = await productServices.addProductSize(product.id, values.items);
+            if (isSize === true) {
+                const res = await productServices.addProductSize(product.id, values.items);
                     if (res.isSuccessed === true) {
                         onSetState(res.resultObj)
                         setOpenProductItem(false)
                         openNotificationWithIcon('success','Add Product item success')
                     }
-                }, 300);
             } else {
-                setTimeout(async () => {
-                    const res = await productServices.addProductNoSize(product.id, values.price, values.stock);
-                    if (res.isSuccessed == true) {
+                const res = await productServices.addProductNoSize(product.id, values.price, values.stock);
+                    console.log(product.id)
+                    if (res.isSuccessed === true) {
                         onSetState(res.resultObj)
-                        setIsSize(false);
                         setOpenProductItem(false)
                         openNotificationWithIcon('success','Add Product item size success')
                     }
-                }, 300);
             }
         }
     };

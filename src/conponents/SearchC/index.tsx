@@ -20,13 +20,13 @@ const SearchC: React.FC<{
     const { Search } = Input;
     const baseUrl: BaseUrl = 'https://localhost:7005';
     const [searchValue, setSearchValue] = React.useState('');
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [data, setData] = React.useState<Product[]>([]);
     const inputRef = useRef<InputRef>(null);
     const debounce = useDebounce({ value: searchValue, deplay: 1000 });
     const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
         if (info?.source == 'input') {
-            navigate(`/product/search/${value}`)
+            navigate(`/product/${value}`);
         }
         if (info?.source == 'clear') {
             setData([]);
@@ -53,29 +53,39 @@ const SearchC: React.FC<{
             <Popover
                 content={
                     <>
-                        {data.length > 0 ? data?.map((e: Product) => (
-                        <div>
-                            <Space>
+                        {data.length > 0 ? (
+                            data?.map((e: Product) => (
                                 <div>
-                                    <img style={{ width: 70 }} src={baseUrl + e.urlThumbnailImage} />
+                                    <Link to={`product/detail/${e.id}`}>
+                                        <Space>
+                                            <div>
+                                                <img style={{ width: 70 }} src={baseUrl + e.urlThumbnailImage} />
+                                            </div>
+                                            <div>
+                                                <p>{e.seoTitle}</p>
+                                                <p>{ChangeCurrence(e.price)}</p>
+                                            </div>
+                                        </Space>
+                                    </Link>
                                 </div>
-                                <div>
-                                    <p>{e.seoTitle}</p>
-                                    <p>{ChangeCurrence(e.price)}</p>
-                                </div>
-                                
-                            </Space>
-                        </div>
-                    )): <div style={{width:350,height:70,textAlign:'center'}} >Not found</div>}
-                    <div style={{width:350,textAlign:'center'}} ><Link to={`/product/search/${searchValue}`}>show more product</Link></div>
+                            ))
+                        ) : (
+                            <div style={{ width: 350, height: 70, textAlign: 'center' }}>Not found</div>
+                        )}
+                        {searchValue != '' ? (
+                            <div style={{ width: 350, textAlign: 'center' }}>
+                                <Link to={`/product/${searchValue}`}>Hiển thị tất cả</Link>
+                            </div>
+                        ) : (
+                            ''
+                        )}
                     </>
-                
-            }
+                }
                 title={'search'}
                 trigger={'click'}
             >
                 <Search
-                    placeholder="Name product"
+                    placeholder="Tên sản phẩm"
                     style={{ display: 'block' }}
                     allowClear
                     //enterButton="Search"

@@ -185,7 +185,7 @@ function OrderConfirm() {
                             okButtonProps={{ loading: confirmLoading }}
                             onCancel={()=>{setOpenConfrim(false);}}
                         >
-                            <Button onClick={()=>{showPopconfirm()}}>Confrim</Button>
+                            <Button disabled={order?.status?.some(s => s.name =="Đã tiếp nhận" || s.name ==="Đã hủy")} onClick={()=>{showPopconfirm()}}>Confrim</Button>
                         </Popconfirm>
                         <Popconfirm
                             title="Xác nhận"

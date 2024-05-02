@@ -96,11 +96,13 @@ function HeaderC() {
                         </Link>
                     </div>
                 ) : (
-                    <div style={{paddingBottom:5}}>
-                        <Link to={'/auth/login'}>
-                            <Avatar size="large" icon={<UserOutlined />} />
-                        </Link>
-                    </div>
+                    <Tooltip placement='bottom' title="Đăng nhập">
+                        <div style={{paddingBottom:5}}>
+                            <Link to={'/auth/login'}>
+                                <Avatar size="large" icon={<UserOutlined />} />
+                            </Link>
+                        </div>
+                    </Tooltip>
                 )}
             </Space>
         </Header>

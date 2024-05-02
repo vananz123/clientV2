@@ -2,16 +2,36 @@ import { useParams } from 'react-router';
 import type { Product, ProductItem, Variation } from '../Admin/Product/ProductList';
 import React, { useEffect } from 'react';
 import * as productServices from '@/api/productServices';
+import * as reviewServices from '@/api/reviewServices';
 import * as cartServices from '@/api/cartServices';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { addToCart } from '@/feature/cart/cartSlice';
 import { selectUser } from '@/feature/user/userSlice';
-import { Col, Row, Skeleton, Image, Space, InputNumber, Button, notification, Flex, Divider, Segmented } from 'antd';
+import {
+    Col,
+    Row,
+    Skeleton,
+    Image,
+    Space,
+    InputNumber,
+    Button,
+    notification,
+    Flex,
+    Divider,
+    Segmented,
+    Card,
+    Avatar,
+    Rate,
+    Empty,
+} from 'antd';
 import { MinusOutlined, PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import type { CollapseProps } from 'antd';
 import { Collapse } from 'antd';
 type NotificationType = 'success' | 'error';
 import { useNavigate } from 'react-router-dom';
+import Meta from 'antd/es/card/Meta';
+import { Review } from '@/api/ResType';
+import dayjs from 'dayjs';
 interface OptionSize {
     label: string;
     value: number;
@@ -23,6 +43,7 @@ function ProductDetail() {
     const [data, setData] = React.useState<Product>();
     const user = useAppSelector(selectUser);
     const [listImage, setListImage] = React.useState<string[]>([]);
+    const [listReview, setListReview] = React.useState<Review[]>([]);
     const dispatch = useAppDispatch();
     const [currentProductItem, setCurrentProductItem] = React.useState<ProductItem>();
     const [quantity, setQuantity] = React.useState(1);
@@ -34,7 +55,10 @@ function ProductDetail() {
         });
     };
     const increase = () => {
-        setQuantity(quantity + 1);
+        let quan = quantity + 1;
+        if (currentProductItem != undefined && quan <= currentProductItem?.stock) {
+            setQuantity(quan);
+        }
     };
     const text = `
   A dog is a type of domesticated animal.
@@ -75,34 +99,44 @@ function ProductDetail() {
         }
         setQuantity(newCount);
     };
+    const getData = async () => {
+        const res = await productServices.getProductDetail(Number(id));
+        if (res.isSuccessed == true) {
+            let arr: string[] = res.resultObj.urlImage.split('*');
+            const t = arr.pop();
+            setListImage(arr);
+            setData(res.resultObj);
+            setCurrentProductItem(res.resultObj.items[0]);
+            getReview(res.resultObj.id);
+            let sizeOption: OptionSize[] = [];
+            if (res.resultObj.items.length > 1) {
+                res.resultObj.items.forEach((element: ProductItem) => {
+                    let option: OptionSize = {
+                        label: element.value,
+                        value: element.id,
+                    };
+                    if (element.status == 2) {
+                        option.disabled = true;
+                    }
+                    sizeOption.push(option);
+                });
+                setOptionSize(sizeOption);
+            }
+        }
+    };
+    const getReview = async (id: number) => {
+        const r = await reviewServices.getReivewByProductId(id, 1);
+        console.log(r);
+        if (r.isSuccessed == true) {
+            setListReview(r.resultObj.items);
+        }
+    };
     const { id } = useParams();
     useEffect(() => {
         if (id != undefined) {
-            const getData = async () => {
-                const res = await productServices.getProductDetail(Number(id));
-                if (res.isSuccessed == true) {
-                    let arr: string[] = res.resultObj.urlImage.split('*');
-                    const t = arr.pop();
-                    setListImage(arr);
-                    setData(res.resultObj);
-                    setCurrentProductItem(res.resultObj.items[0]);
-                    let sizeOption: OptionSize[] = [];
-                    if (res.resultObj.items.length > 1) {
-                        res.resultObj.items.forEach((element: ProductItem) => {
-                            let option: OptionSize = {
-                                label: element.value,
-                                value: element.id,
-                            };
-                            if (element.status == 2) {
-                                option.disabled = true;
-                            }
-                            sizeOption.push(option);
-                        });
-                        setOptionSize(sizeOption);
-                    }
-                }
-            };
             getData();
+        }
+        if (typeof data !== 'undefined') {
         }
     }, [id]);
     const handleChangeColl = (key: string | string[]) => {
@@ -112,7 +146,6 @@ function ProductDetail() {
         Navigate(-1);
     };
     const onChangeSize = (value: any) => {
-        console.log(value);
         if (data != undefined) {
             const item = data.items.find((x) => x.id == value);
             if (item != undefined) {
@@ -121,9 +154,10 @@ function ProductDetail() {
         }
     };
     const handleAddToCart = async () => {
-        if(typeof user !=='undefined'){
-            if (typeof currentProductItem !== 'undefined' ) {
+        if (typeof user !== 'undefined') {
+            if (typeof currentProductItem !== 'undefined') {
                 const res = await cartServices.addCart(user.id, currentProductItem.id, quantity);
+                console.log(res);
                 if (res.isSuccessed == true) {
                     dispatch(addToCart(res.resultObj));
                     openNotificationWithIcon('success');
@@ -133,10 +167,9 @@ function ProductDetail() {
             } else {
                 openNotificationWithIcon('error');
             }
-        }else{
-            Navigate('/auth/login')
+        } else {
+            Navigate('/auth/login');
         }
-        
     };
     return (
         <div>
@@ -193,11 +226,13 @@ function ProductDetail() {
                                                         options={optionSize}
                                                         value={currentProductItem?.id}
                                                         onChange={onChangeSize}
+                                                        disabled={currentProductItem?.status == 2}
                                                     />
                                                 </>
                                             ) : (
                                                 ''
                                             )}
+                                            <p>In Stock: {currentProductItem?.stock}</p>
                                         </div>
                                         <Flex justify="space-between">
                                             <Space.Compact>
@@ -207,7 +242,7 @@ function ProductDetail() {
                                                     }}
                                                     icon={<MinusOutlined />}
                                                 />
-                                                <InputNumber min={1} max={100000} value={quantity} />
+                                                <InputNumber min={1} max={currentProductItem?.stock} value={quantity} />
 
                                                 <Button
                                                     onClick={() => {
@@ -221,6 +256,7 @@ function ProductDetail() {
                                                 onClick={() => {
                                                     handleAddToCart();
                                                 }}
+                                                disabled={currentProductItem?.status == 2}
                                                 style={{ width: '200px' }}
                                             >
                                                 Add to cart
@@ -232,6 +268,82 @@ function ProductDetail() {
                                 ) : (
                                     ''
                                 )}
+                            </Col>
+                        </Row>
+                        <Row gutter={16}>
+                            <Col span={14}>
+                                { listReview.length > 0 ? (
+                                    <>
+                                        {listReview.map((e: Review) => (
+                                            <Card key={e.id} style={{ width: '100%', marginTop: 16 }}>
+                                                <Meta
+                                                    avatar={
+                                                        <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
+                                                    }
+                                                    title={e.user.userName}
+                                                    description={
+                                                        <>
+                                                            <Space align="baseline" direction="vertical">
+                                                                <Rate value={e.rate} disabled />
+                                                                <p>{e.comment}</p>
+                                                                <p>{dayjs(e.createAt).format('YYYY-MM-DD')}</p>
+                                                            </Space>
+                                                        </>
+                                                    }
+                                                />
+                                                {e.feelback != undefined ? (
+                                                    <>
+                                                        <Card
+                                                            key={e.id}
+                                                            type="inner"
+                                                            style={{ width: '100%', marginTop: 16 }}
+                                                        >
+                                                            <Meta
+                                                                avatar={
+                                                                    <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
+                                                                }
+                                                                title={'Feedback of admin'}
+                                                                description={
+                                                                    <>
+                                                                        <Space align="baseline" direction="vertical">
+                                                                            <p>{e.feelback}</p>
+                                                                            <p>
+                                                                                {dayjs(e.feelbackAt).format(
+                                                                                    'YYYY-MM-DD',
+                                                                                )}
+                                                                            </p>
+                                                                        </Space>
+                                                                    </>
+                                                                }
+                                                            />
+                                                        </Card>
+                                                    </>
+                                                ) : (
+                                                    ''
+                                                )}
+                                            </Card>
+                                        ))}
+                                    </>
+                                ) : (
+                                    <Empty
+                                        image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                                        imageStyle={{ height: 60 }}
+                                        description={
+                                            <span>
+                                                Customize <a href="#API">Description</a>
+                                            </span>
+                                        }
+                                    >
+                                    </Empty>
+                                )}
+                            </Col>
+                            <Col span={10}>
+                                <Card style={{ width: '100%', marginTop: 16 }}>
+                                    <Space align="start">
+                                        <Image width={100} src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
+                                        <Meta title="Card title" description="This is the description" />
+                                    </Space>
+                                </Card>
                             </Col>
                         </Row>
                     </div>

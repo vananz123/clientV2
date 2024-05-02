@@ -21,7 +21,7 @@ function SiderC() {
     const onClick: MenuProps['onClick'] = (e) => {
         Navigate(e.key);
     };
-    const items: MenuItem[] = [getItem('Dashboard', ''),getItem('Product', '/admin/product'), getItem('Category', '/admin/categories'), getItem('Order', '/admin/order'), getItem('Promotion', '/admin/promotion'), getItem('User', '/admin/user')];
+    const items: MenuItem[] = [getItem('Dashboard', '/admin/dashboard'),getItem('Product', '/admin/product'), getItem('Category', '/admin/categories'), getItem('Order', '/admin/order'), getItem('Promotion', '/admin/promotion'), getItem('User', '/admin/user')];
     return (
         <Sider
             breakpoint="lg"

@@ -1,17 +1,17 @@
-import { Table, Input, Space, Pagination, Image, Modal, Upload, Button, Flex, Tooltip } from 'antd';
-import type { TableProps, TableColumnsType } from 'antd';
+import { Table, Input, Space, Pagination, Image, Modal, Upload, Button, Flex, Tooltip, Descriptions } from 'antd';
+import type { TableProps, TableColumnsType, DescriptionsProps } from 'antd';
 import { Avatar, Col, Divider, Drawer, List, Row } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
 import * as productServices from '@/api/productServices';
 import React, { useEffect } from 'react';
-import { PlusOutlined, RetweetOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined, RetweetOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import type { BaseUrl } from '@/utils/request';
 import { TableRowSelection } from 'antd/es/table/interface';
 import type { ModePromotionType } from './ModePromotion';
 import ModePromotion from './ModePromotion';
 export type Category = {
-    id: string;
+    id: number;
     name: string;
     isShow: true;
     seoDescription: string;
@@ -53,6 +53,7 @@ export type Product = {
     file: any;
     urlThumbnailImage: string;
     viewCount: number;
+    PromotionName?:string,
     status: number;
     dateCreated: string;
     dateModify: string;
@@ -60,19 +61,8 @@ export type Product = {
     variation: Variation[];
 };
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
-interface DescriptionItemProps {
-    title: string;
-    content: React.ReactNode;
-}
 
-const DescriptionItem = ({ title, content }: DescriptionItemProps) => {
-    return (
-        <div className="site-description-item-profile-wrapper">
-            <p className="site-description-item-profile-p-label">{title}:</p>
-            {content}
-        </div>
-    );
-};
+
 const getBase64 = (file: FileType): Promise<string> =>
     new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -116,12 +106,12 @@ function ProductList() {
         const res = await productServices.getAllProduct();
         console.log(res);
         if (res.isSuccessed == true) {
-            const arrSort: Product[] = res.resultObj.sort((a: Product, b: Product) => {
-                let aa = new Date(a.dateCreated).getTime();
-                let bb = new Date(b.dateCreated).getTime();
-                return bb - aa;
-            });
-            setData(arrSort);
+        // const arrSort: Product[] = res.resultObj.sort((a: Product, b: Product) => {
+        //     let aa = new Date(a.dateCreated).getTime();
+        //     let bb = new Date(b.dateCreated).getTime();
+        //     return bb - aa;
+        // });
+            setData(res.resultObj);
         }
     };
     useEffect(() => {
@@ -168,7 +158,7 @@ function ProductList() {
             ),
         },
         {
-            title: 'Discount rate',
+            title: 'discountRate',
             dataIndex: 'discountRate',
             key: 'discountRate',
         },
@@ -196,6 +186,17 @@ function ProductList() {
             ),
         },
     ];
+    const desProduct :DescriptionsProps['items']= [
+        {
+            key: 'Name',
+            label: 'Name',
+            children: (<span>{currentProductItem?.name}</span>)
+        },{
+            key: 'Promotion',
+            label: 'Promotion',
+            children: (<span>{currentProductItem?.discountRate}</span>)
+        },
+    ]
     const rowSelection: TableRowSelection<Product> = {
         onChange: (selectedRowKeys, selectedRows: Product[]) => {
             setListSelectRow(selectedRows);
@@ -223,11 +224,10 @@ function ProductList() {
         setCurrentId(id);
         setOpen(true);
     };
-    const handleOkDel = () => {
+    const handleOkDel = async() => {
         setModalText('deleting!');
         setConfirmLoading(true);
-        setTimeout(async () => {
-            const res = await productServices.deleteProduct(currentId);
+        const res = await productServices.deleteProduct(currentId);
             if (res.statusCode == 204) {
                 const res = await productServices.getAllProduct();
                 if (res.statusCode == 200) {
@@ -240,21 +240,17 @@ function ProductList() {
                 setModalText('error!');
                 setConfirmLoading(false);
             }
-        }, 500);
     };
-    const uploadImageAPI = () => {
+    const uploadImageAPI = async() => {
         setConfirmLoadingModal2(true);
-        setTimeout(async () => {
-            const res = await productServices.uploadThumbnailImage(currentId, fileList[0].originFileObj);
+        const res = await productServices.uploadThumbnailImage(currentId, fileList[0].originFileObj);
             if (res != null) {
                 setConfirmLoadingModal2(false);
                 setModal2Open(false);
                 loadAllProduct();
                 setFileList([]);
             }
-        }, 500);
     };
-    console.log(fileList);
     return (
         <div>
             <Space direction="vertical" style={{ width: '100%' }}>
@@ -280,7 +276,7 @@ function ProductList() {
                                 ) : (
                                     <Button onClick={()=>{
                                         setModalModePromotion(true)
-                                    }} type="primary" icon={<PlusOutlined />} size="large">
+                                    }} type="primary" icon={<DeleteOutlined />} size="large">
                                         Del
                                     </Button>
                                 )}
@@ -318,82 +314,7 @@ function ProductList() {
                 <p className="site-description-item-profile-p" style={{ marginBottom: 24 }}>
                     User Profile
                 </p>
-                <p className="site-description-item-profile-p">Personal</p>
-                <Row>
-                    <Col span={12}>
-                        <DescriptionItem title="Full Name" content="Lily" />
-                    </Col>
-                    <Col span={12}>
-                        <DescriptionItem title="Account" content="AntDesign@example.com" />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={12}>
-                        <DescriptionItem title="City" content="HangZhou" />
-                    </Col>
-                    <Col span={12}>
-                        <DescriptionItem title="Country" content="China🇨🇳" />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={12}>
-                        <DescriptionItem title="Birthday" content="February 2,1900" />
-                    </Col>
-                    <Col span={12}>
-                        <DescriptionItem title="Website" content="-" />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={24}>
-                        <DescriptionItem title="Message" content="Make things as simple as possible but no simpler." />
-                    </Col>
-                </Row>
-                <Divider />
-                <p className="site-description-item-profile-p">Company</p>
-                <Row>
-                    <Col span={12}>
-                        <DescriptionItem title="Position" content="Programmer" />
-                    </Col>
-                    <Col span={12}>
-                        <DescriptionItem title="Responsibilities" content="Coding" />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={12}>
-                        <DescriptionItem title="Department" content="XTech" />
-                    </Col>
-                    <Col span={12}>
-                        <DescriptionItem title="Supervisor" content={<a>Lin</a>} />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={24}>
-                        <DescriptionItem
-                            title="Skills"
-                            content="C / C + +, data structures, software engineering, operating systems, computer networks, databases, compiler theory, computer architecture, Microcomputer Principle and Interface Technology, Computer English, Java, ASP, etc."
-                        />
-                    </Col>
-                </Row>
-                <Divider />
-                <p className="site-description-item-profile-p">Contacts</p>
-                <Row>
-                    <Col span={12}>
-                        <DescriptionItem title="Email" content="AntDesign@example.com" />
-                    </Col>
-                    <Col span={12}>
-                        <DescriptionItem title="Phone Number" content="+86 181 0000 0000" />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={24}>
-                        <DescriptionItem
-                            title="Github"
-                            content={
-                                <a href="http://github.com/ant-design/ant-design/">github.com/ant-design/ant-design/</a>
-                            }
-                        />
-                    </Col>
-                </Row>
+                <Descriptions title="Product profile" items={desProduct}  />
             </Drawer>
             <Modal
                 title="Upload image"
