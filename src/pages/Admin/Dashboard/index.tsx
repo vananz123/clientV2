@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect } from 'react';
 import type { StatisticProps } from 'antd';
 import { Col, Row, Statistic } from 'antd';
 import CountUp from 'react-countup';
-import ReactDOM from 'react-dom';
 import * as statisticServices from '@/api/statisticServices';
 import { Area } from '@ant-design/plots';
 const formatter: StatisticProps['formatter'] = (value) => <CountUp end={value as number} separator="," />;

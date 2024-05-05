@@ -40,7 +40,7 @@ export const cartSlice = createAppSlice({
             },
         ),
         emptyCart: create.reducer((state)=>{
-            let dataE: CartResult = {
+            const dataE: CartResult = {
                 totalPrice:0,
                 totalPriceBeforeDiscount:0,
                 totalDiscount:0,

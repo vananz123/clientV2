@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ResponseUser } from "./userServices";
 
 export type Result = {

@@ -1,14 +1,14 @@
-import { Button, Tooltip, Input, Space, Image } from 'antd';
-import { Flex, Layout, Menu, theme, Badge, Avatar, Dropdown } from 'antd';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {  Tooltip, Space } from 'antd';
+import {  Layout, theme, Badge, Avatar, Dropdown } from 'antd';
 import { UserOutlined, DownOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '@/app/hooks';
-import { selectUser, selectStatus, signOut } from '@/feature/user/userSlice';
+import { selectUser, signOut } from '@/feature/user/userSlice';
 import { selectCart } from '@/feature/cart/cartSlice';
-import * as loginServices from '@/api/loginServices';
 import { Link } from 'react-router-dom';
 import type { MenuProps } from 'antd';
-import React, { useEffect, useState } from 'react';
-const { Header, Content } = Layout;
+import React from 'react';
+const { Header } = Layout;
 import NavC from './NavC';
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -23,7 +23,7 @@ function getItem(label: React.ReactNode, key: React.Key, children?: MenuItem[]):
 import { useNavigate } from 'react-router-dom';
 import './style.scss';
 import SearchC from '@/conponents/SearchC';
-import { Product } from '@/pages/Admin/Product/ProductList';
+import { Product } from '@/type';
 function HeaderC() {
     const Navigate = useNavigate();
     const user = useAppSelector(selectUser);
@@ -57,7 +57,7 @@ function HeaderC() {
     ];
     const Logout = async () => {
         const accessToken = localStorage.getItem('accessToken');
-        const refreshToken = localStorage.getItem('refreshToken');
+        //const refreshToken = localStorage.getItem('refreshToken');
         if (accessToken != null) {
             localStorage.removeItem('accessToken');
             //localStorage.removeItem('refreshToken');

@@ -1,11 +1,11 @@
-import { Alert, Modal, Select, SelectProps } from 'antd';
-import { Product } from './ProductList';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { notification, Modal, Select, SelectProps } from 'antd';
+import { Product } from '@/type';
 import React, { SetStateAction, useEffect } from 'react';
 import * as promotionServices from '@/api/promotionServices';
 import * as productServices from '@/api/productServices';
 import { Promotion } from '@/api/ResType';
 export type ModePromotionType = 'EDIT' | 'DEL';
-import { Button, notification, Skeleton, Space } from 'antd';
 import dayjs from 'dayjs';
 type NotificationType = 'success' | 'error';
 const ModePromotion: React.FC<{
@@ -18,8 +18,8 @@ const ModePromotion: React.FC<{
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [option, setOption] = React.useState<SelectProps['options']>([]);
     const [currentId,setCurrentId] =React.useState<number>(0)
-    const [data, setData] = React.useState<Promotion[]>([]);
-    const [modalText, setModalText] = React.useState('Do you want delete!');
+    // const [data, setData] = React.useState<Promotion[]>([]);
+    // const [modalText, setModalText] = React.useState('Do you want delete!');
     const [api, contextHolder] = notification.useNotification();
     const openNotificationWithIcon = (type: NotificationType) => {
         api[type]({
@@ -30,20 +30,20 @@ const ModePromotion: React.FC<{
     const loadAllProduct = async () => {
         const res = await productServices.getAllProduct();
         if (res.isSuccessed == true) {
-            const arrSort: Product[] = res.resultObj.sort((a: Product, b: Product) => {
-                let aa = new Date(a.dateCreated).getTime();
-                let bb = new Date(b.dateCreated).getTime();
-                return bb - aa;
-            });
-            setStateData(arrSort)
+            // const arrSort: Product[] = res.resultObj.sort((a: Product, b: Product) => {
+            //     const aa = new Date(a.dateCreated).getTime();
+            //     const bb = new Date(b.dateCreated).getTime();
+            //     return bb - aa;
+            // });
+            setStateData(res.resultObj)
         }
     };
     const getPromotion = async () => {
         const res = await promotionServices.getAllPromotionByType('promotion');
         if (res.isSuccessed === true) {
-            let arr: SelectProps['options'] = [];
+            const arr: SelectProps['options'] = [];
             res.resultObj.forEach((element: Promotion) => {
-                var item = {
+                const item = {
                     label: `${element.name}, ${dayjs(element.startDate).format('MM-DD-YYYY')}, ${dayjs(element.endDate).format('MM-DD-YYYY')}`,
                     value: element.id,
                 };

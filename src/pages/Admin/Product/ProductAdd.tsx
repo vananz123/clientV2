@@ -1,11 +1,9 @@
 import ProductForm from '@/conponents/ProductForm';
-import * as productServices from '@/api/productServices';
 import React, { useEffect } from 'react';
-import {Button, notification, Space } from 'antd';
+import { notification } from 'antd';
 type NotificationType = 'success' | 'error';
-import { Product } from './ProductList';
-import { useParams,useNavigate } from 'react-router-dom';
-import { Skeleton } from 'antd';
+import { Product } from '@/type'
+import { useNavigate } from 'react-router-dom';
 import type { StatusForm } from '../Category/Type';
 function ProductAdd() {
     const [product, setProduct] = React.useState<Product>();

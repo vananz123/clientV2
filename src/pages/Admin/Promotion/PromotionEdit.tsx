@@ -1,6 +1,6 @@
 import * as promotionServices from '@/api/promotionServices';
 import React, { useEffect } from 'react';
-import { Button, notification, Skeleton, Space } from 'antd';
+import {  notification, Skeleton } from 'antd';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 type NotificationType = 'success' | 'error';
@@ -24,7 +24,7 @@ function PromotionEdit() {
             const getPromotion = async () => {
                 const res = await promotionServices.getById(Number(id))
                 if (res.isSuccessed === true) {
-                    let arr: Dayjs[] = []
+                    const arr: Dayjs[] = []
 
                     arr.push(dayjs(res.resultObj?.startDate))
                     arr.push(dayjs(res.resultObj?.endDate))

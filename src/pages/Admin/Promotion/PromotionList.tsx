@@ -1,15 +1,12 @@
-import { Table, Space, Pagination, Modal, Button, Flex } from 'antd';
+import { Table, Space, Modal, Button, Flex } from 'antd';
 import type { TableProps } from 'antd';
 import * as promotionServices from '@/api/promotionServices';
 import React, { useEffect } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import SearchC from '@/conponents/SearchC';
 import { Link } from 'react-router-dom';
 import type { Promotion } from '@/api/ResType';
 
 function PromotionList() {
-    const dispatch = useAppDispatch();
     const [data, setData] = React.useState<Promotion[]>();
     const [currentId, setCurrentId] = React.useState<number>(0);
     const [open, setOpen] = React.useState(false);

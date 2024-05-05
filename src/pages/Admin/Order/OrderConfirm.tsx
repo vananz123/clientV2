@@ -1,20 +1,19 @@
 import { Order, OrderDetail, OrderStatus } from '@/api/ResType';
 import React, { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import {  useParams } from 'react-router-dom';
 import * as orderServices from '@/api/orderServices';
 import { Button, Col, Descriptions, Popconfirm, Row, Timeline ,notification} from 'antd';
 import { DescriptionsProps, Space } from 'antd';
-import { BaseUrl } from '@/utils/request';
 type NotificationType = 'success' | 'error';
 type TimeLineProps = {
     label?: string;
     children: string;
 };
 function OrderConfirm() {
-    let { id } = useParams();
+    const { id } = useParams();
     const baseUrl =import.meta.env.VITE_BASE_URL
     const [api, contextHolder] = notification.useNotification();
-    const navigate = useNavigate()
+   
     const openNotificationWithIcon = (type: NotificationType,mess:string) => {
         api[type]({
             message: 'Notification Title',
@@ -151,7 +150,7 @@ function OrderConfirm() {
             const res = await orderServices.getOrderAdminByOrderId(Number(id));
             if (res.isSuccessed == true) {
                 setOrder(res.resultObj);
-                let arr: TimeLineProps[] = [];
+                const arr: TimeLineProps[] = [];
                 res.resultObj.status?.forEach((element: OrderStatus) => {
                     const line: TimeLineProps = {
                         //label:new Date(element.createAt).toUTCString(),

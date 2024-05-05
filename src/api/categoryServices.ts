@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as request from '../utils/request'
 import { Result } from './ResType'
-import { Category } from '@/pages/Admin/Product/ProductList'
-export const getAllCate = async()=>{ 
+import { Category } from '@/type'
+export const getAllCate = async(type:string ='sub')=>{ 
     try{
-        const res = await request.get(`/category`)
+        const res = await request.get(`/category?type=${type}`)
         const resultObj : Category[]  = res.resultObj
         const resp: Result ={
             error :'',
@@ -42,9 +43,7 @@ export const createCate = async(data:Category)=>{
     try{
         const cate = {
             name:data.name,
-            isShow:data.isShow,
-            seoDescription:data.seoDescription,
-            seoTitle:data.seoTitle
+            parentId:data.parentId
         }
         const res = await request.post(`/category`,cate)
         const resultObj  = res.resultObj
@@ -67,9 +66,7 @@ export const updateCate = async(id:string,data:Category)=>{
         const cate = {
             id:id,
             name:data.name,
-            isShow:data.isShow,
-            seoDescription:data.seoDescription,
-            seoTitle:data.seoTitle
+            parentId:data.parentId
         }
         const res = await request.put(`/category`,cate)
         const resultObj:Category  = res.resultObj

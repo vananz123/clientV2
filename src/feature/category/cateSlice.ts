@@ -1,5 +1,5 @@
 import { createAppSlice } from '../../app/createAppSlice';
-import type { Category } from '@/pages/Admin/Product/ProductList';
+import { Category } from '@/type'
 import { CateAPI } from './cateAPI';
 import { PayloadAction } from '@reduxjs/toolkit';
 export interface CateSliceState {

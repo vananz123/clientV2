@@ -1,12 +1,11 @@
 import { Order } from '@/api/ResType';
-import { BaseUrl } from '@/utils/request';
-import { Table, Input, Space, Pagination, Image, Modal, Upload, Button, Flex, Badge } from 'antd';
+import { Table, Space ,Badge } from 'antd';
 import type { TableProps } from 'antd';
 import React, { useEffect } from 'react';
 import * as orderServices from '@/api/orderServices';
 import { Link } from 'react-router-dom';
 function OrderList() {
-    const baseUrl =import.meta.env.VITE_BASE_URL
+   // const baseUrl =import.meta.env.VITE_BASE_URL
     const [data, setData] = React.useState<Order[]>();
     const columns: TableProps<Order>['columns'] = [
         {
@@ -59,16 +58,15 @@ function OrderList() {
     const loadOrder = async () => {
         const res = await orderServices.getOrderAdmin();
         if (res.isSuccessed == true) {
-            const arrSort: Order[] = res.resultObj.items.sort((a: Order, b: Order) => {
-                let aa = new Date(a.orderDate).getTime();
-                let bb = new Date(b.orderDate).getTime();
-                return bb - aa;
-            });
-            setData(arrSort);
+            // const arrSort: Order[] = res.resultObj.items.sort((a: Order, b: Order) => {
+            //     let aa = new Date(a.orderDate).getTime();
+            //     let bb = new Date(b.orderDate).getTime();
+            //     return bb - aa;
+            // });
+            setData(res.resultObj.items);
         }
     };
     useEffect(() => {
-        
         loadOrder();
     }, []);
     return <div>

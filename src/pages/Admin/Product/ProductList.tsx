@@ -1,6 +1,8 @@
-import { Table, Input, Space, Pagination, Image, Modal, Upload, Button, Flex, Tooltip, Descriptions } from 'antd';
-import type { TableProps, TableColumnsType, DescriptionsProps } from 'antd';
-import { Avatar, Col, Divider, Drawer, List, Row } from 'antd';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Table,  Space,  Image, Modal, Upload, Button, Flex, Tooltip, Descriptions } from 'antd';
+import type {  TableColumnsType, DescriptionsProps } from 'antd';
+import {  Drawer,} from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
 import * as productServices from '@/api/productServices';
 import React, { useEffect } from 'react';
@@ -10,56 +12,7 @@ import type { BaseUrl } from '@/utils/request';
 import { TableRowSelection } from 'antd/es/table/interface';
 import type { ModePromotionType } from './ModePromotion';
 import ModePromotion from './ModePromotion';
-export type Category = {
-    id: number;
-    name: string;
-    isShow: true;
-    seoDescription: string;
-    seoTitle: string;
-    urlImage: string;
-    status: number;
-};
-export type ProductItem = {
-    id: number;
-    productId: number;
-    price: number;
-    priceBeforeDiscount: number;
-    discountRate: number;
-    stock: number;
-    sku: string;
-    isMulti: boolean;
-    urlImage: string;
-    status: number;
-    dateCreated: string;
-    dateModify: string;
-    name: string;
-    value: string;
-};
-export type Variation = {
-    id: number;
-    name: string;
-    value: string;
-};
-export type Product = {
-    id: number;
-    name: string;
-    categoryId: number;
-    seoDescription: string;
-    discountRate: number;
-    price: number;
-    priceBeforeDiscount: number;
-    seoTitle: string;
-    seoAlias: string;
-    file: any;
-    urlThumbnailImage: string;
-    viewCount: number;
-    PromotionName?:string,
-    status: number;
-    dateCreated: string;
-    dateModify: string;
-    items: ProductItem[];
-    variation: Variation[];
-};
+import { Product,ProductItem } from '@/type';
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
 

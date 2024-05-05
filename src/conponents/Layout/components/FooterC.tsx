@@ -1,5 +1,5 @@
-import { InstagramOutlined, PhoneOutlined } from '@ant-design/icons';
-import { Avatar, Col, Layout, Row, Space } from 'antd';
+
+import {  Col, Layout, Row, Space } from 'antd';
 import { FacebookOutlined, LinkedinOutlined, TwitterOutlined, YoutubeOutlined } from '@ant-design/icons';
 import { Flex, Tag } from 'antd';
 const { Footer } = Layout;

@@ -1,28 +1,24 @@
-import { Link, useParams, useNavigate } from 'react-router-dom';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {  useParams } from 'react-router-dom';
 import * as productServices from '@/api/productServices';
-import React, { useEffect, useRef } from 'react';
-import { Category, Product } from '../Admin/Product/ProductList';
+import React, { useEffect } from 'react';
+import { Product } from '@/type';
 import { useAppSelector } from '@/app/hooks';
 import { selectCate } from '@/feature/category/cateSlice';
 import {
     Button,
-    Card,
     Col,
     Flex,
     Result,
     Row,
     Select,
-    SelectProps,
     Skeleton,
     Spin,
-    Breadcrumb,
-    Slider,
-    InputNumber,
     Switch,
     Pagination,
     PaginationProps,
 } from 'antd';
-import { ArrowLeftOutlined, LoadingOutlined, SwapRightOutlined } from '@ant-design/icons';
+import {  LoadingOutlined } from '@ant-design/icons';
 import ProductCard from '@/conponents/ProductCard';
 import { optionsPrice, optionsSort, optionsMaterial } from './FilterType';
 import type { Filter } from './FilterType';
@@ -34,7 +30,7 @@ function ProductListShow() {
     const [pageSize, setPageSize] = React.useState<number>(6);
     const cate = useAppSelector(selectCate);
     const [page, setPage] = React.useState<number>(1);
-    const [isLoading, setIsLoading] = React.useState<boolean>(true);
+    //const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [loadingPage, setLoadingPage] = React.useState<boolean>(false);
     const [loadingSearch, setLoadingSearch] = React.useState<boolean>(false);
     const [sortOder, setSortOder] = React.useState<Sort>('ascending');
@@ -116,7 +112,7 @@ function ProductListShow() {
                     const a: number = Number(id);
                     if (!Number.isNaN(a)) {
                         if (typeof cate !== 'undefined') {
-                            let name = cate.find((x) => x.id == a);
+                            const name = cate.find((x) => x.id == a);
                             setTitleContent(name?.name);
                         }
 
@@ -125,7 +121,9 @@ function ProductListShow() {
                         setTitleContent('Tìm kiếm: ' + id);
                         getProductPNPaging();
                     }
-                } catch {}
+                } catch {
+                    console.log("dd")
+                }
             }
         }
     }, [id, page, optionPrice, optionMaterial, sortOder, isPromotion]);
@@ -145,7 +143,7 @@ function ProductListShow() {
             setOptionMaterial(value);
         }
     };
-    const onShowSizeChange: PaginationProps['onShowSizeChange'] = (current, pageSize) => {
+    const onShowSizeChange: PaginationProps['onShowSizeChange'] = (current) => {
         setPage(current)
       };
     return (

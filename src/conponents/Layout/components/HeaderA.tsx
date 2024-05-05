@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, Tooltip, Input, Space, Image } from 'antd';
 import { Flex, Layout, Menu, theme, Badge, Avatar, Dropdown } from 'antd';
 import { UserOutlined, DownOutlined } from '@ant-design/icons';

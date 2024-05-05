@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button, Checkbox, Form, type FormProps, Input, Space, Alert, Modal, message, Flex } from 'antd';
+import { Button, Form, type FormProps, Input, Alert, Modal, message, Flex } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { useAppDispatch } from '@/app/hooks';
 import { signIn } from '@/feature/user/userSlice';
 import * as loginServices from '@/api/loginServices';
 import * as userServices from '@/api/userServices';
@@ -16,7 +16,7 @@ function Login() {
     const Navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [open, setOpen] = React.useState(false);
-    const [resuft, setResuft] = React.useState<Result>();
+    //const [resuft, setResuft] = React.useState<Result>();
     const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false)
     const [messageApi, contextHolder] = message.useMessage();
     const onFinish: FormProps<LoginType>['onFinish'] = (values) => {
@@ -24,7 +24,6 @@ function Login() {
             const resuft = await loginServices.login(values);
             console.log(resuft);
             if (resuft.statusCode == 200) {
-                const token = resuft.resultObj.accessToken;
                 localStorage.setItem('accessToken', resuft.resultObj.accessToken);
                 //localStorage.setItem('refreshToken', resuft.resultObj.refreshToken);
                 const userResuft = await userServices.getUser();
@@ -34,7 +33,7 @@ function Login() {
                     if (userResuft.resultObj.roles[0] == 'admin') {
                         Navigate('/admin/product');
                     } else if (userResuft.resultObj.roles[0] == 'customer') {
-                        Navigate(`/product/all`);
+                        Navigate(`/home`);
                     } else {
                         setError(userResuft);
                     }
