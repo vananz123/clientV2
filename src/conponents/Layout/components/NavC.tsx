@@ -4,7 +4,7 @@ import { selectCate } from "@/feature/category/cateSlice";
 import { useLocation, useNavigate  } from "react-router-dom";
 import { Category } from "@/type";
 import React from "react";
-import Logo from '/public/L.png'
+import Logo from '/L.png'
 type MenuItem = Required<MenuProps>['items'][number];
 function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
     return {
