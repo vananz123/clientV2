@@ -143,3 +143,14 @@ export type Promotion = {
       status: number,
       arrDate:any[],
 }
+
+export interface addressGHTK{
+    id:number,
+    name:string,
+    pid:boolean,
+    type:number,
+    region:number,
+    alias:string,
+    is_picked:number,
+    is_delivered:number,
+}

@@ -1,0 +1,22 @@
+/* Mixin */
+/* Set các giá trị với màn hình tương ứng */
+/* @mobile-width: 480px; 
+@tablet-width: 768px; 
+#desktop-width: 1024px;  
+*/
+
+
+@media (max-width: 480px) {     
+  .carouselHome{
+    display: none;
+  }
+ } 
+
+@media (min-width: 768px) and (max-width: 1024px) {       
+   @content;   
+ } 
+
+@media (min-width: 1024px) {     
+  @content;  
+ } 
+

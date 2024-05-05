@@ -1,20 +1,16 @@
 import { Card } from 'antd';
 import Meta from 'antd/es/card/Meta';
 import Flex from 'antd';
-import type { Product } from '@/pages/Admin/Product/ProductList';
+import { Product } from '@/type';
 import { Link } from 'react-router-dom';
 import { BaseUrl } from '@/utils/request';
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
     const baseUrl =import.meta.env.VITE_BASE_URL
     return (
         <Link to={`/product/detail/${product.id}`}>
-            <Card hoverable style={{ width:'100%', maxWidth:'300px' }}  cover={<img alt="example" src={`${baseUrl+ product.urlThumbnailImage}`} />}>
-                {/* <Meta title={product.name} description={product.basePrice} /> */}
-                <h3>{product.seoTitle}</h3>
-                {product.discountRate == null ? 
-                <>
+            <Card bordered={false} hoverable style={{border:'none',backgroundColor:'#f5f5f5', width:'100%', maxWidth:'300px'}}  cover={<img alt="example" src={`${ product.urlThumbnailImage}`} />}>
+                <h3 style={{textAlign:'center'}}>{product.seoTitle}</h3>
                 <strong>{ChangeCurrence(product.price)}</strong>
-                </>:<strong>{ChangeCurrence(product.price)}<sup>-{product.discountRate}</sup></strong>}
             </Card>
         </Link>
     );
