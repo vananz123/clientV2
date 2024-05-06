@@ -1,9 +1,10 @@
-import { HeaderA, FooterC ,SiderC} from '../components';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { HeaderA ,SiderC} from '../components';
 import { Layout, theme } from 'antd';
 import { Outlet } from 'react-router-dom';
 const { Content } = Layout;
 import './style.scss';
-import React from 'react';
 function AdminLayout({ children }:any){
     const {
         token: { colorBgContainer, borderRadiusLG },
@@ -26,7 +27,6 @@ function AdminLayout({ children }:any){
                         <Outlet/>
                     </div>
                 </Content>
-                <FooterC />
             </Layout>
         </Layout>
     );

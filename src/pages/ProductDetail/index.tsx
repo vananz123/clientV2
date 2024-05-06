@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from 'react-router';
-import type { Product, ProductItem, Variation } from '../Admin/Product/ProductList';
+import { Product,ProductItem,Variation } from '@/type';
 import React, { useEffect } from 'react';
 import * as productServices from '@/api/productServices';
 import * as reviewServices from '@/api/reviewServices';
@@ -39,6 +40,7 @@ interface OptionSize {
 }
 function ProductDetail() {
     const Navigate = useNavigate();
+    const { id } = useParams();
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const [data, setData] = React.useState<Product>();
     const user = useAppSelector(selectUser);
@@ -55,7 +57,7 @@ function ProductDetail() {
         });
     };
     const increase = () => {
-        let quan = quantity + 1;
+        const quan = quantity + 1;
         if (currentProductItem != undefined && quan <= currentProductItem?.stock) {
             setQuantity(quan);
         }
@@ -101,17 +103,18 @@ function ProductDetail() {
     };
     const getData = async () => {
         const res = await productServices.getProductDetail(Number(id));
+        console.log(res)
         if (res.isSuccessed == true) {
-            let arr: string[] = res.resultObj.urlImage.split('*');
+            const arr: string[] = res.resultObj.urlImage.split('*');
             const t = arr.pop();
             setListImage(arr);
             setData(res.resultObj);
             setCurrentProductItem(res.resultObj.items[0]);
             getReview(res.resultObj.id);
-            let sizeOption: OptionSize[] = [];
+            const sizeOption: OptionSize[] = [];
             if (res.resultObj.items.length > 1) {
                 res.resultObj.items.forEach((element: ProductItem) => {
-                    let option: OptionSize = {
+                    const option: OptionSize = {
                         label: element.value,
                         value: element.id,
                     };
@@ -131,7 +134,7 @@ function ProductDetail() {
             setListReview(r.resultObj.items);
         }
     };
-    const { id } = useParams();
+    
     useEffect(() => {
         if (id != undefined) {
             getData();

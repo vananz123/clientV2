@@ -23,7 +23,7 @@ import UserOrderDetail from '@/pages/UserOrderDetail';
 import { PromotionAdd, PromotionEdit, PromotionList } from '@/pages/Admin/Promotion';
 import ForgotPassword from '@/pages/ForgotPassword';
 import UserList from '@/pages/Admin/User/UserList';
-const Router: React.FC<{}> = () => {
+const Router: React.FC = () => {
     return useRoutes([
         {
             path: 'auth',
@@ -63,23 +63,24 @@ const Router: React.FC<{}> = () => {
                     element: <Navigate to={'/'} replace />,
                 },
                 {
-                    path: "/home",
+                    path: '/home',
                     element: <Home />,
                 },
                 {
                     path: 'cart',
                     element: (
                         <AuthGuard>
-                            <RoleGuard role="customer">
+                            <RoleGuard role={['customer']}>
                                 <Cart />
                             </RoleGuard>
                         </AuthGuard>
                     ),
-                },{
+                },
+                {
                     path: 'purchase',
                     element: (
                         <AuthGuard>
-                            <RoleGuard role="customer">
+                            <RoleGuard role={['customer']}>
                                 <Purchase />
                             </RoleGuard>
                         </AuthGuard>
@@ -101,16 +102,17 @@ const Router: React.FC<{}> = () => {
                     path: 'profile',
                     element: (
                         <AuthGuard>
-                            <RoleGuard role="customer">
+                            <RoleGuard role={['customer']}>
                                 <Profile />
                             </RoleGuard>
                         </AuthGuard>
                     ),
-                },{
+                },
+                {
                     path: 'profile/order-detail/:id',
                     element: (
                         <AuthGuard>
-                            <RoleGuard role="customer">
+                            <RoleGuard role={['customer']}>
                                 <UserOrderDetail />
                             </RoleGuard>
                         </AuthGuard>
@@ -120,7 +122,7 @@ const Router: React.FC<{}> = () => {
                     path: 'checkout/:id',
                     element: (
                         <AuthGuard>
-                            <RoleGuard role="customer">
+                            <RoleGuard role={['customer']}>
                                 <Checkout />
                             </RoleGuard>
                         </AuthGuard>
@@ -130,23 +132,17 @@ const Router: React.FC<{}> = () => {
                     path: 'checkout-vnpay',
                     element: (
                         <AuthGuard>
-                            <RoleGuard role="customer">
+                            <RoleGuard role={['customer']}>
                                 <CheckoutVnpay />
                             </RoleGuard>
                         </AuthGuard>
                     ),
-                }
+                },
             ],
         },
         {
             path: 'admin',
-            element: (
-                <AuthGuard>
-                    <RoleGuard role="admin">
-                        <AdminLayout />
-                    </RoleGuard>
-                </AuthGuard>
-            ),
+            element: <AdminLayout />,
             children: [
                 {
                     index: true,
@@ -154,52 +150,116 @@ const Router: React.FC<{}> = () => {
                 },
                 {
                     path: 'dashboard',
-                    element: <Dashboard />,
+                    element: (
+                        <AuthGuard>
+                            <RoleGuard role={['admin']}>
+                                <Dashboard />
+                            </RoleGuard>
+                        </AuthGuard>
+                    ),
                 },
                 {
                     path: 'product',
-                    element: <ProductList />,
+                    element: (
+                        <AuthGuard>
+                            <RoleGuard role={['admin', 'sale']}>
+                                <ProductList />
+                            </RoleGuard>
+                        </AuthGuard>
+                    ),
                 },
                 {
                     path: 'product-add',
-                    element: <ProductAdd />,
+                    element: (
+                        <AuthGuard>
+                            <RoleGuard role={['admin']}>
+                                <ProductAdd />
+                            </RoleGuard>
+                        </AuthGuard>
+                    ),
                 },
                 {
                     path: 'product-edit/:id',
-                    element: <ProductEdit />,
+                    element: (
+                        <AuthGuard>
+                            <RoleGuard role={['admin']}>
+                                <ProductEdit />
+                            </RoleGuard>
+                        </AuthGuard>
+                    ),
                 },
                 {
                     path: 'categories',
-                    element: <CategoriesList />,
+                    element:<AuthGuard>
+                    <RoleGuard role={['admin','sale']}>
+                        <CategoriesList />
+                    </RoleGuard>
+                </AuthGuard>  ,
                 },
                 {
                     path: 'category-add',
-                    element: <CategoryAdd />,
+                    element:<AuthGuard>
+                    <RoleGuard role={['admin' ]}>
+                        <CategoryAdd />
+                    </RoleGuard>
+                </AuthGuard>  ,
                 },
                 {
                     path: 'category-edit/:id',
-                    element: <CategoryEdit />,
+                    element: <AuthGuard>
+                    <RoleGuard role={['admin' ]}>
+                        <CategoryEdit />
+                    </RoleGuard>
+                </AuthGuard>  ,
                 },
                 {
                     path: 'order',
-                    element: <OrderList />,
+                    element:<AuthGuard>
+                    <RoleGuard role={['admin' ,'sale']}>
+                        <OrderList />
+                    </RoleGuard>
+                </AuthGuard>  ,
                 },
                 {
                     path: 'order/detail/:id',
-                    element: <OrderConfirm />,
-                },{
+                    element:<AuthGuard>
+                    <RoleGuard role={['admin' ,'sale']}>
+                        <OrderConfirm />
+                    </RoleGuard>
+                </AuthGuard>  ,
+                },
+                {
                     path: 'promotion',
-                    element: <PromotionList />,
-                },{
+                    element:<AuthGuard>
+                    <RoleGuard role={['admin' ,'sale']}>
+                        <PromotionList />
+                    </RoleGuard>
+                </AuthGuard>  ,
+                },
+                {
                     path: 'promotion-add',
-                    element: <PromotionAdd />,
-                },{
+                    element:<AuthGuard>
+                    <RoleGuard role={['admin'  ]}>
+                        <PromotionAdd />
+                    </RoleGuard>
+                </AuthGuard>  ,
+                },
+                {
                     path: 'promotion-edit/:id',
-                    element: <PromotionEdit />,
-                },{
+                    element:<AuthGuard>
+                    <RoleGuard role={['admin'  ]}>
+                        <PromotionEdit />
+                    </RoleGuard>
+                </AuthGuard>  ,
+                },
+                {
                     path: 'user',
-                    element: <UserList />,
-                }
+                    element:<AuthGuard>
+                    <RoleGuard role={['admin' ,'sale' ]}>
+                        <UserList />
+                    </RoleGuard>
+                </AuthGuard>  ,
+                },
             ],
         },
     ]);

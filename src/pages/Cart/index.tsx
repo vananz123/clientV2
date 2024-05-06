@@ -1,8 +1,7 @@
 import type { Cart } from '@/api/ResType';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { addToCart, selectCart, selectStatus } from '@/feature/cart/cartSlice';
-import { BaseUrl } from '@/utils/request';
-import { DeleteOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { addToCart, selectCart } from '@/feature/cart/cartSlice';
+import { DeleteOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import {
     Alert,
     Avatar,
@@ -12,9 +11,7 @@ import {
     Descriptions,
     Empty,
     InputNumber,
-    List,
     Modal,
-    Popconfirm,
     Row,
     Space,
     Spin,
@@ -56,7 +53,7 @@ function Cart() {
     };
     const increase = async (e: Cart) => {
         if (typeof e !== 'undefined') {
-            let newQuantity = e?.quantity + 1;
+            const newQuantity = e?.quantity + 1;
             if(newQuantity <= e?.stock){
                 setLoadingHandleQuantity(true);
                 setTimeout(async () => {
@@ -74,7 +71,7 @@ function Cart() {
     const decline = async (e: Cart) => {
         if (typeof e !== 'undefined' && e.quantity > 0) {
             setLoadingHandleQuantity(true);
-            let newQuantity = e?.quantity - 1;
+            const newQuantity = e?.quantity - 1;
             setTimeout(async () => {
                 const res = await cartServices.updateCart(e?.id, newQuantity);
                 if (res.isSuccessed == true) {

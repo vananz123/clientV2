@@ -5,7 +5,7 @@ import { useAppDispatch } from '@/app/hooks';
 import { signIn } from '@/feature/user/userSlice';
 import * as loginServices from '@/api/loginServices';
 import * as userServices from '@/api/userServices';
-import type { Result } from '@/api/ResType';
+import type { Result, Role } from '@/api/ResType';
 import { Link, useNavigate } from 'react-router-dom';
 export type LoginType = {
     email?: string;
@@ -29,13 +29,12 @@ function Login() {
                 const userResuft = await userServices.getUser();
                 if (userResuft.isSuccessed == true) {
                     dispatch(signIn(userResuft.resultObj));
-                    console.log(userResuft);
-                    if (userResuft.resultObj.roles[0] == 'admin') {
+                    const roleAdmin :Role[] =['admin','sale']
+                    console.log(roleAdmin.indexOf(userResuft.resultObj.roles[0]))
+                    if (roleAdmin.indexOf(userResuft.resultObj.roles[0]) >= 0) {
                         Navigate('/admin/product');
-                    } else if (userResuft.resultObj.roles[0] == 'customer') {
-                        Navigate(`/home`);
                     } else {
-                        setError(userResuft);
+                        Navigate(`/home`);
                     }
                 } else {
                     setError(userResuft);

@@ -1,6 +1,7 @@
-import React, { SetStateAction, useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { SetStateAction, useEffect } from 'react';
 import {
-    AutoComplete,
     Button,
     type FormProps,
     Form,
@@ -14,18 +15,16 @@ import {
     Col,
     Row,
 } from 'antd';
-import {  notification, Skeleton } from 'antd';
+import { notification } from 'antd';
 import dayjs from 'dayjs';
 type NotificationType = 'success' | 'error';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Product, ProductItem } from '@/pages/Admin/Product/ProductList';
+import { Product, ProductItem, Category } from '@/type';
 import * as productServices from '@/api/productServices';
 import type { SelectProps } from 'antd';
-import { Category } from '@/pages/Admin/Product/ProductList';
 import type { StatusForm } from '@/pages/Admin/Category/Type';
 import { useAppSelector } from '@/app/hooks';
 import { selectCate } from '@/feature/category/cateSlice';
-import { Image } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
@@ -67,7 +66,7 @@ const normFile = (e: any) => {
     return e?.fileList;
 };
 
-let optionsProductStatus: SelectProps['options'] = [
+const optionsProductStatus: SelectProps['options'] = [
     {
         value: 0,
         label: 'InActive',
@@ -87,14 +86,14 @@ let optionsProductStatus: SelectProps['options'] = [
     {
         value: 4,
         label: 'Sale',
-        disabled:true
+        disabled: true,
     },
     {
         value: 5,
-        label: 'UnActive'
+        label: 'UnActive',
     },
 ];
-let optionsSku: SelectProps['options'] = [
+const optionsSku: SelectProps['options'] = [
     {
         value: 'cm',
         label: 'CM',
@@ -110,8 +109,8 @@ const ProductForm: React.FC<{
     onSetStatus: SetStateAction<any>;
 }> = ({ product, onSetState, onSetStatus }) => {
     const [form] = Form.useForm();
-    const baseUrl =import.meta.env.VITE_BASE_URL
-    form.setFieldsValue(product)
+    const baseUrl = import.meta.env.VITE_BASE_URL;
+    form.setFieldsValue(product);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [options, setOptions] = React.useState<SelectProps['options']>([]);
     const [isSize, setIsSize] = React.useState<boolean>(false);
@@ -120,10 +119,10 @@ const ProductForm: React.FC<{
     const [openVariaton, setOpenVariaton] = React.useState(false);
     const [openUploadImages, setOpenUploadImages] = React.useState(false);
     const [api, contextHolder] = notification.useNotification();
-    const openNotificationWithIcon = (type: NotificationType,mess:string) => {
+    const openNotificationWithIcon = (type: NotificationType, mess: string) => {
         api[type]({
             message: 'Notification Title',
-            description:mess,
+            description: mess,
         });
     };
     const showDrawerProductItem = () => {
@@ -136,12 +135,16 @@ const ProductForm: React.FC<{
         setOpenUploadImages(true);
     };
     useEffect(() => {
-        let options: SelectProps['options'] = [];
+        const options: SelectProps['options'] = [];
         categories.forEach((element: Category) => {
-            options.push({
-                value: element.id,
-                label: element.name,
-            });
+            if (element.subCategory != undefined) {
+                element.subCategory.forEach((e: Category) => {
+                    options.push({
+                        value: e.id,
+                        label: e.name,
+                    });
+                });
+            }
         });
         setOptions(options);
         if (product != undefined) {
@@ -151,46 +154,40 @@ const ProductForm: React.FC<{
         }
     }, []);
     console.log(product);
-    const handleChange = (value: string[]) => {
-    };
-    const onFinish: FormProps<Product>['onFinish'] = (values) => {
+    const handleChange = (value: string[]) => {};
+    const onFinish: FormProps<Product>['onFinish'] = async (values) => {
         setIsLoading(true);
         if (product != undefined) {
-            setTimeout(async () => {
-                const res = await productServices.updateProduct(product.id, values);
-                if (res.statusCode == 200) {
-                    if (values.file != undefined) {
-                        await productServices.uploadThumbnailImage(res.resultObj.id, values.file[0].originFileObj);
-                    }
-                    const status: StatusForm = 'success';
-                    onSetState(res.resultObj);
-                    onSetStatus(status);
-                    openNotificationWithIcon('success','Add Product success')
-                } else {
-                    const status: StatusForm = 'error';
-                    onSetStatus(status);
-                    openNotificationWithIcon('error','Add Product error')
+            const res = await productServices.updateProduct(product.id, values);
+            if (res.statusCode == 200) {
+                if (values.file != undefined) {
+                    await productServices.uploadThumbnailImage(res.resultObj.id, values.file[0].originFileObj);
                 }
-                setIsLoading(false);
-            }, 300);
+                const status: StatusForm = 'success';
+                onSetState(res.resultObj);
+                onSetStatus(status);
+                openNotificationWithIcon('success', 'Add Product success');
+            } else {
+                const status: StatusForm = 'error';
+                onSetStatus(status);
+                openNotificationWithIcon('error', 'Add Product error');
+            }
+            setIsLoading(false);
         } else {
-            setTimeout(async () => {
-                const res = await productServices.addProduct(values);
-                if (res.statusCode == 201) {
-                    if (values.file != undefined) {
-                        console.log(values.file)
-                        await productServices.uploadThumbnailImage(res.resultObj.id, values.file[0].originFileObj);
-                       
-                    }
-                    const status: StatusForm = 'success';
-                    onSetState(res.resultObj);
-                    onSetStatus(status);
-                } else {
-                    const status: StatusForm = 'error';
-                    onSetStatus(status);
+            const res = await productServices.addProduct(values);
+            if (res.statusCode == 201) {
+                if (values.file != undefined) {
+                    console.log(values.file);
+                    await productServices.uploadThumbnailImage(res.resultObj.id, values.file[0].originFileObj);
                 }
-                setIsLoading(false);
-            }, 300);
+                const status: StatusForm = 'success';
+                onSetState(res.resultObj);
+                onSetStatus(status);
+            } else {
+                const status: StatusForm = 'error';
+                onSetStatus(status);
+            }
+            setIsLoading(false);
         }
     };
     const onFinishVariation = (values: any) => {
@@ -199,31 +196,30 @@ const ProductForm: React.FC<{
             setTimeout(async () => {
                 const res = await productServices.addVariation(product.id, values.variations);
                 if (res.isSuccessed === true) {
-                    onSetState(res.resultObj)
-                    setOpenVariaton(false)
-                    openNotificationWithIcon('success','Add variation success')
+                    onSetState(res.resultObj);
+                    setOpenVariaton(false);
+                    openNotificationWithIcon('success', 'Add variation success');
                 }
             }, 300);
         }
     };
-    const onFinishProductItem =async (values: any) => {
-      
+    const onFinishProductItem = async (values: any) => {
         if (product != undefined) {
             if (isSize === true) {
                 const res = await productServices.addProductSize(product.id, values.items);
-                    if (res.isSuccessed === true) {
-                        onSetState(res.resultObj)
-                        setOpenProductItem(false)
-                        openNotificationWithIcon('success','Add Product item success')
-                    }
+                if (res.isSuccessed === true) {
+                    onSetState(res.resultObj);
+                    setOpenProductItem(false);
+                    openNotificationWithIcon('success', 'Add Product item success');
+                }
             } else {
                 const res = await productServices.addProductNoSize(product.id, values.price, values.stock);
-                    console.log(product.id)
-                    if (res.isSuccessed === true) {
-                        onSetState(res.resultObj)
-                        setOpenProductItem(false)
-                        openNotificationWithIcon('success','Add Product item size success')
-                    }
+                console.log(product.id);
+                if (res.isSuccessed === true) {
+                    onSetState(res.resultObj);
+                    setOpenProductItem(false);
+                    openNotificationWithIcon('success', 'Add Product item size success');
+                }
             }
         }
     };
@@ -231,20 +227,20 @@ const ProductForm: React.FC<{
         console.log('Failed:', errorInfo);
     };
 
-    const onFinishUploadImages = (values:any)=>{
-        console.log(values)
-        if(product!= undefined){
-            if(values.file != undefined){
+    const onFinishUploadImages = (values: any) => {
+        console.log(values);
+        if (product != undefined) {
+            if (values.file != undefined) {
                 setTimeout(async () => {
                     const res = await productServices.uploadImage(product.id, values.file);
                     if (res.isSuccessed == true) {
-                        setOpenUploadImages(false)
-                        openNotificationWithIcon('success','Add Image success')
+                        setOpenUploadImages(false);
+                        openNotificationWithIcon('success', 'Add Image success');
                     }
                 }, 300);
             }
         }
-    }
+    };
     return (
         <div>
             <Form
@@ -298,19 +294,23 @@ const ProductForm: React.FC<{
                 >
                     <Select size={'middle'} onChange={handleChange} style={{ width: 200 }} options={options} />
                 </Form.Item>
-                <Form.Item<Product>
-                    name="status"
-                    label="Status"
-                    initialValue={1}
-                    rules={[{ required: true, message: 'Please select Status!' }]}
-                >
-                    <Select
-                        size={'middle'}
-                        //onChange={handleChange}
-                        style={{ width: 200 }}
-                        options={optionsProductStatus}
-                    />
-                </Form.Item>
+                {typeof product !== 'undefined' ? (
+                    <Form.Item<Product>
+                        name="status"
+                        label="Status"
+                        initialValue={1}
+                        rules={[{ required: true, message: 'Please select Status!' }]}
+                    >
+                        <Select
+                            size={'middle'}
+                            //onChange={handleChange}
+                            style={{ width: 200 }}
+                            options={optionsProductStatus}
+                        />
+                    </Form.Item>
+                ) : (
+                    ''
+                )}
                 <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit" loading={isLoading}>
                         Save
@@ -328,7 +328,7 @@ const ProductForm: React.FC<{
                             Config Variation
                         </Button>
                         <Button type="primary" onClick={showDrawerProductItem} icon={<PlusOutlined />}>
-                            Config product 
+                            Config product
                         </Button>
                     </Space>
                 </>
@@ -414,16 +414,22 @@ const ProductForm: React.FC<{
                 onClose={() => setOpenProductItem(false)}
                 open={openProductItem}
             >
-                {typeof product !== 'undefined'? <><Switch
-                    checked={isSize}
-                    checkedChildren="size"
-                    unCheckedChildren="No size"
-                    onChange={() => {
-                        setIsSize(!isSize);
-                    }}
-                    disabled={product?.items.length > 0}
-                /></>:''}
-                
+                {typeof product !== 'undefined' ? (
+                    <>
+                        <Switch
+                            checked={isSize}
+                            checkedChildren="size"
+                            unCheckedChildren="No size"
+                            onChange={() => {
+                                setIsSize(!isSize);
+                            }}
+                            disabled={product?.items.length > 0}
+                        />
+                    </>
+                ) : (
+                    ''
+                )}
+
                 <Form
                     {...formItemLayout}
                     name="dynamic_form_nest_item"

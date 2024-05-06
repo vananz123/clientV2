@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as request from '../utils/request'
 import { LoginType } from '@/pages/Login'
 import { Result } from './ResType'

@@ -19,7 +19,7 @@ function ProductAdd() {
     useEffect(() => {
         if(status == 'success'){
             openNotificationWithIcon('success')
-            navigate(`/admin/product`)
+            navigate(`/admin/product-edit/${product?.id}`)
             
         }
         if(status == 'error'){

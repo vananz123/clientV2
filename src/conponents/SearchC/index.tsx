@@ -1,18 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDebounce } from '@/hooks';
 import { Input, Popover, Space } from 'antd';
-import { useAppSelector } from '@/app/hooks';
-import { selectCate } from '@/feature/category/cateSlice';
 import type { SearchProps } from 'antd/es/input/Search';
 import * as productServices from '@/api/productServices';
 import type { InputRef } from 'antd';
 import React, { SetStateAction, useEffect, useRef } from 'react';
-import { Product } from '@/pages/Admin/Product/ProductList';
+import { Product } from '@/type';
 import { BaseUrl } from '@/utils/request';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-enum status {
-    productName = 1,
-    categoryName = 2,
-}
+import { Link, useNavigate } from 'react-router-dom';
+import { Filter } from '@/pages/ProductListShow/FilterType';
 const SearchC: React.FC<{
     typeSearch: number;
     onSetState: SetStateAction<any>;
@@ -39,11 +36,18 @@ const SearchC: React.FC<{
     useEffect(() => {
         const Search = async () => {
             if (debounce != '') {
-                const result = await productServices.getProductPagingBySeoTitle(debounce, 1, 100);
+                const filter: Filter = {
+                    page: 1,
+                    pageSize: 5,
+                    sortOder:'ascending',
+                    productName:debounce?.toString(),
+                };
+                const result = await productServices.getProductPagingByFilter(filter);
                 if (result.statusCode == 200) {
                     setData(result.resultObj.items);
                     onSetState(result.resultObj.items);
                 }
+                
             }
         };
         Search();

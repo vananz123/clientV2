@@ -1,6 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ResponseUser } from "./userServices";
 
+export type Role = 'admin' | 'customer' |'sale' | undefined;
+export type ResponseUser = {
+    id: string;
+    roles: Role[];
+    firstName: string;
+    lastName: string;
+    fullName: string;
+    email: string;
+    userName: string;
+    phoneNumber: string;
+};
 export type Result = {
     error: string;
     isSuccessed: boolean;
@@ -23,6 +33,7 @@ export type Cart = {
     productItemId: number;
     quantity: number;
     price: number;
+    isCombo?:boolean;
     priceBeforeDiscount: number;
     discountRate?: number;
     stock: number;
