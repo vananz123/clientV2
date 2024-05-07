@@ -56,9 +56,7 @@ export type Address = {
     streetNumber: string;
     wardCommune: string;
     urbanDistrict: string;
-    city: string;
     province: string;
-    country: string;
     isDefault: boolean;
 };
 export type PaymentType = {
