@@ -1,19 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Sort } from '@/pages/ProductListShow'
 import * as request from '../utils/request'
 import { Order, PagingResult, Result } from './ResType'
-import { Product } from '@/pages/Admin/Product/ProductList'
+import { Product } from '@/type'
 import { Filter } from '@/pages/ProductListShow/FilterType'
 export const getAllProduct = async()=>{
     try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
         const res = await request.get(`/product`)
-
         const resultObj : Product[]  = res.resultObj
         const resp: Result ={
             error :'',
@@ -31,13 +25,6 @@ export const getAllProduct = async()=>{
 }
 export const getProductDetail = async(id:number)=>{
     try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
         const res = await request.get(`/product/${encodeURIComponent(id)}`)
 
         const resultObj : Product  = res.resultObj
@@ -124,13 +111,7 @@ export const getProductPagingBySeoTitle = async(seoTitle:any, page:number, pageS
 }
 export const addProduct = async(data:Product)=>{
     try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
+
         const pro ={
             name: data.name,
             seoDescription: data.seoDescription,
@@ -214,7 +195,6 @@ export const deleteProduct = async(id:number)=>{
 }
 export const uploadThumbnailImage = async(id:number,data:any)=>{
     try{
-        const token = localStorage.getItem('accessToken')
         const formData = new FormData()
         formData.append('ImageFile',data);
 
@@ -236,7 +216,6 @@ export const uploadThumbnailImage = async(id:number,data:any)=>{
 }
 export const uploadImage = async(id:number,data:any)=>{
     try{
-        const token = localStorage.getItem('accessToken')
         const formData = new FormData()
         data.forEach((element:any) => {
             formData.append('ImageFile',element.originFileObj);

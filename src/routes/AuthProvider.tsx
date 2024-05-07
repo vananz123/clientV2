@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect } from "react"
 import { useAppDispatch } from '@/app/hooks';
 import { addToCart,emptyCart } from "@/feature/cart/cartSlice";
-import { signIn ,initialize,initializeActive} from '@/feature/user/userSlice';
+import {  initialize,initializeActive} from '@/feature/user/userSlice';
 import * as userServices from '@/api/userServices'
 import * as cartServices from '@/api/cartServices'
 function AuthProvider ({children}:any){

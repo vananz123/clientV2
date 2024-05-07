@@ -1,16 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { RegisterUser } from '@/pages/Register';
 import * as request from '../utils/request';
 import { Result, Address, PagingResult } from './ResType';
-export type ResponseUser = {
-    id: string;
-    roles: string[];
-    firstName: string;
-    lastName: string;
-    fullName: string;
-    email: string;
-    userName: string;
-    phoneNumber: string;
-};
+import { ResponseUser } from './ResType';
 export const getUser = async () => {
     try {
         const res = await request.get(`/user`);

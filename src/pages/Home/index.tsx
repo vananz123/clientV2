@@ -1,11 +1,12 @@
-import { Button, Card, Carousel, Col, Row } from 'antd';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Card, Carousel, Col, Row } from 'antd';
 import { Product } from '@/type';
 import ProductCard from '@/conponents/ProductCard';
 import React, { useEffect } from 'react';
 import * as productServices from '@/api/productServices';
 import { Filter } from '../ProductListShow/FilterType';
 import { Link } from 'react-router-dom';
-import ProductEx from 'E:/KLTN/clientV2/public/sp-GN0000Y002158-nhan-cuoi-vang-24k-pnj-1.png'
+
 import './style.css';
 import * as addressGHTKServices from '@/api/addressGHTKServices'
 const contentStyle: React.CSSProperties = {
@@ -20,80 +21,80 @@ const imgStyles: React.CSSProperties = {
     width: '100%',
     height: '500px',
 };
-const productEx :Product [] =[
-    {
-        name: 'Nhẫn Cưới Vàng 244',
-        urlThumbnailImage: ProductEx,
-        id: 2,
-        categoryId: 0,
-        seoDescription: '',
-        discountRate: 0,
-        price: 2000000,
-        priceBeforeDiscount: 0,
-        seoTitle: 'Nhẫn Cưới Vàng 24K',
-        file: undefined,
-        viewCount: 0,
-        status: 0,
-        dateCreated: '',
-        dateModify: '',
-        items: [],
-        variation: []
-    },
-    {
-        name: 'Nhẫn Cưới Vàng 244',
-        urlThumbnailImage: ProductEx,
-        id: 2,
-        categoryId: 0,
-        seoDescription: '',
-        discountRate: 0,
-        price: 2000000,
-        priceBeforeDiscount: 0,
-        seoTitle: 'Nhẫn Cưới Vàng 24K',
-        file: undefined,
-        viewCount: 0,
-        status: 0,
-        dateCreated: '',
-        dateModify: '',
-        items: [],
-        variation: []
-    },
-    {
-        name: 'Nhẫn Cưới Vàng 24K',
-        urlThumbnailImage: ProductEx,
-        id: 2,
-        categoryId: 0,
-        seoDescription: '',
-        discountRate: 0,
-        price: 2000000,
-        priceBeforeDiscount: 0,
-        seoTitle: 'Nhẫn Cưới Vàng 24K',
-        file: undefined,
-        viewCount: 0,
-        status: 0,
-        dateCreated: '',
-        dateModify: '',
-        items: [],
-        variation: []
-    },
-    {
-        name: 'Nhẫn Cưới Vàng 244',
-        urlThumbnailImage: ProductEx,
-        id: 2,
-        categoryId: 0,
-        seoDescription: '',
-        discountRate: 0,
-        price: 2000000,
-        priceBeforeDiscount: 0,
-        seoTitle: 'Nhẫn Cưới Vàng 24K',
-        file: undefined,
-        viewCount: 0,
-        status: 0,
-        dateCreated: '',
-        dateModify: '',
-        items: [],
-        variation: []
-    }
-]
+// const productEx :Product [] =[
+//     {
+//         name: 'Nhẫn Cưới Vàng 244',
+//         urlThumbnailImage: ProductEx,
+//         id: 2,
+//         categoryId: 0,
+//         seoDescription: '',
+//         discountRate: 0,
+//         price: 2000000,
+//         priceBeforeDiscount: 0,
+//         seoTitle: 'Nhẫn Cưới Vàng 24K',
+//         file: undefined,
+//         viewCount: 0,
+//         status: 0,
+//         dateCreated: '',
+//         dateModify: '',
+//         items: [],
+//         variation: []
+//     },
+//     {
+//         name: 'Nhẫn Cưới Vàng 244',
+//         urlThumbnailImage: ProductEx,
+//         id: 2,
+//         categoryId: 0,
+//         seoDescription: '',
+//         discountRate: 0,
+//         price: 2000000,
+//         priceBeforeDiscount: 0,
+//         seoTitle: 'Nhẫn Cưới Vàng 24K',
+//         file: undefined,
+//         viewCount: 0,
+//         status: 0,
+//         dateCreated: '',
+//         dateModify: '',
+//         items: [],
+//         variation: []
+//     },
+//     {
+//         name: 'Nhẫn Cưới Vàng 24K',
+//         urlThumbnailImage: ProductEx,
+//         id: 2,
+//         categoryId: 0,
+//         seoDescription: '',
+//         discountRate: 0,
+//         price: 2000000,
+//         priceBeforeDiscount: 0,
+//         seoTitle: 'Nhẫn Cưới Vàng 24K',
+//         file: undefined,
+//         viewCount: 0,
+//         status: 0,
+//         dateCreated: '',
+//         dateModify: '',
+//         items: [],
+//         variation: []
+//     },
+//     {
+//         name: 'Nhẫn Cưới Vàng 244',
+//         urlThumbnailImage: ProductEx,
+//         id: 2,
+//         categoryId: 0,
+//         seoDescription: '',
+//         discountRate: 0,
+//         price: 2000000,
+//         priceBeforeDiscount: 0,
+//         seoTitle: 'Nhẫn Cưới Vàng 24K',
+//         file: undefined,
+//         viewCount: 0,
+//         status: 0,
+//         dateCreated: '',
+//         dateModify: '',
+//         items: [],
+//         variation: []
+//     }
+// ]
 function Home() {
     const [productsNew, setProductsNew] = React.useState<Product[]>();
     const [productsHot, setProductsHot] = React.useState<Product[]>();
@@ -116,9 +117,10 @@ function Home() {
     };
 
     useEffect(() => {
-        // getProductPaging(2);
-        // getProductPaging(3);
-        const getAllProvince  =async()=>{
+
+        getProductPaging(2);
+        getProductPaging(3);
+        const getAllAddress  =async()=>{
             const res =await addressGHTKServices.getAllProvince()
             if(res.isSuccessed ===true){
                 console.log(res.resultObj)
@@ -142,10 +144,10 @@ function Home() {
                 console.log(res.resultObj)
             }
         }
-        getAllProvince()
-        getAllDistrict()
-        getAllWard()
-        getAllRoad()
+        // getAllAddress()
+        // getAllProvince()
+        // getAllWard()
+        // getAllRoad()
     }, []);
     const onChange = (currentSlide: number) => {
         console.log(currentSlide);
@@ -154,7 +156,7 @@ function Home() {
         <div>
             <div>
                 <div className='carouselHome'>
-                    <Carousel  autoplay afterChange={onChange}>
+                    <Carousel  autoplay  afterChange={onChange}>
                         <div>
                             <h3 style={contentStyle}>
                                 <img
@@ -189,9 +191,9 @@ function Home() {
                         title="Xu Hướng"
                         style={{marginTop: 20,borderRadius:'50%' }}
                     >
-                        {typeof productEx !== 'undefined' ? (
+                        {typeof productsNew !== 'undefined' ? (
                             <Row gutter={[12, 12]}>
-                                {productEx.map((e: Product) => (
+                                {productsNew.map((e: Product) => (
                                     <Col
                                         style={{ display: 'flex', justifyContent: 'center'}}
                                         xs={12}
@@ -218,9 +220,9 @@ function Home() {
                         extra={<Link to={'/product/hot'}>Xem thêm</Link>
                         }
                     >
-                        {typeof productEx !== 'undefined' ? (
+                        {typeof productsHot !== 'undefined' ? (
                             <Row gutter={[12, 12]}>
-                                {productEx.map((e: Product) => (
+                                {productsHot.map((e: Product) => (
                                     <Col
                                         style={{ display: 'flex', justifyContent: 'center'}}
                                         xs={12}
@@ -240,9 +242,9 @@ function Home() {
                         )}
                     </Card>
                     <Card bordered={false} title="Sản phẩm mới" style={{ marginTop: 24 }} extra={<Link to={'/product/new'}>Xem thêm</Link>}>
-                        {typeof productEx !== 'undefined' ? (
+                        {typeof productsHot !== 'undefined' ? (
                             <Row gutter={[12, 12]}>
-                                {productEx.map((e: Product) => (
+                                {productsHot.map((e: Product) => (
                                     <Col
                                         style={{ display: 'flex', justifyContent: 'center' }}
                                         xs={12}
@@ -272,9 +274,9 @@ function Home() {
                         extra={<Link to={'/product/hot'}>Xem thêm</Link>
                         }
                     >
-                        {typeof productEx !== 'undefined' ? (
+                        {typeof productsHot !== 'undefined' ? (
                             <Row gutter={[12, 12]}>
-                                {productEx.map((e: Product) => (
+                                {productsHot.map((e: Product) => (
                                     <Col
                                         style={{ display: 'flex', justifyContent: 'center'}}
                                         xs={12}
@@ -301,9 +303,9 @@ function Home() {
                         extra={<Link to={'/product/hot'}>Xem thêm</Link>
                         }
                     >
-                        {typeof productEx !== 'undefined' ? (
+                        {typeof productsHot !== 'undefined' ? (
                             <Row gutter={[12, 12]}>
-                                {productEx.map((e: Product) => (
+                                {productsHot.map((e: Product) => (
                                     <Col
                                         style={{ display: 'flex', justifyContent: 'center'}}
                                         xs={12}

@@ -1,8 +1,8 @@
 import React from "react"
 import Loading from "@/pages/Loading";
-import { Navigate, Outlet } from "react-router-dom"
+import { Navigate } from "react-router-dom"
 import { useAppSelector } from "@/app/hooks"
-type Role = 'ADMIN' | 'USER' | undefined;
+
 import { selectUser ,selectIsAuthenticated,selectIsInitialized} from "@/feature/user/userSlice"
 const GuestGuard: React.FC<{children:JSX.Element}> = ({children})=>{
     const isAuthenticated = useAppSelector(selectIsAuthenticated)
