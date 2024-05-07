@@ -18,7 +18,7 @@ const contentStyle: React.CSSProperties = {
 const imgStyles: React.CSSProperties = {
     margin: 0,
     width: '100%',
-    height: '400px',
+    height: '500px',
 };
 const productEx :Product [] =[
     {
@@ -118,13 +118,13 @@ function Home() {
     useEffect(() => {
         // getProductPaging(2);
         // getProductPaging(3);
-        const getAllAddress  =async()=>{
+        const getAllProvince  =async()=>{
             const res =await addressGHTKServices.getAllProvince()
             if(res.isSuccessed ===true){
                 console.log(res.resultObj)
             }
         }
-        const getAllProvince  = async()=>{
+        const getAllDistrict  = async()=>{
             const res =await addressGHTKServices.getAllDistrict(833)
             if(res.isSuccessed ===true){
                 console.log(res.resultObj)
@@ -142,8 +142,8 @@ function Home() {
                 console.log(res.resultObj)
             }
         }
-        getAllAddress()
         getAllProvince()
+        getAllDistrict()
         getAllWard()
         getAllRoad()
     }, []);

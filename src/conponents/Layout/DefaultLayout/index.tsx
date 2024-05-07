@@ -25,7 +25,8 @@ function DefaultLayout({ children }: any) {
                            <Outlet/>
                         </div>
                     </Content>
-                    <FooterC />
+
+                    <FooterC/>
                 </Layout>
                 
             </Layout>
