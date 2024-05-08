@@ -1,22 +1,16 @@
-import { ArrowDownOutlined, ArrowLeftOutlined, DollarOutlined, MinusOutlined } from '@ant-design/icons';
+import {ArrowLeftOutlined} from '@ant-design/icons';
 import {
     Badge,
     Button,
-    Card,
     Col,
     Descriptions,
     Divider,
-    Drawer,
     Flex,
     Form,
-    FormProps,
-    Input,
+
     Modal,
-    Radio,
-    Rate,
     Result,
     Row,
-    Skeleton,
     Space,
 } from 'antd';
 import React, { useEffect } from 'react';
@@ -51,12 +45,7 @@ function Profile() {
             const res = await orderServices.getOrderByUserId(user?.id);
             console.log(res);
             if (res.statusCode == 200) {
-                const arrSort: Order[] = res.resultObj.items.sort((a: Order, b: Order) => {
-                    let aa = new Date(a.orderDate).getTime();
-                    let bb = new Date(b.orderDate).getTime();
-                    return bb - aa;
-                });
-                setData(arrSort);
+                setData(res.resultObj.items);
             }
         }
     };
@@ -107,9 +96,9 @@ function Profile() {
             children: (
                 <>
                     {typeof data !== 'undefined' ? (
-                        data.map((e: Order, index) => (
+                        data.map((e: Order) => (
                             <>
-                                <Row align={'middle'} style={{ padding: 10 }}>
+                                <Row key={e.id} align={'middle'} style={{ padding: 10 }}>
                                     <Col span={6}>
                                         <Space wrap>
                                             <p>Thành tiền: {ChangeCurrence(e.orderTotal)}</p>
@@ -173,7 +162,7 @@ function Profile() {
                                                                 ', ' +
                                                                 e?.urbanDistrict +
                                                                 ', ' +
-                                                                e?.city}
+                                                                e.province}
                                                         </p>
                                                     </div>
                                                 </Space>
@@ -189,7 +178,7 @@ function Profile() {
                                                     </Button>
                                                     <Button
                                                         onClick={() => {
-                                                            setCurrentAddressForm(e);
+                                                            setCurrentAddress(e);
                                                             setOpenDel(true);
                                                             
                                                         }}

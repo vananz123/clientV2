@@ -94,8 +94,7 @@ export const getAddressByUserId = async (id: string) => {
 export const addAddress = async (data: Address) => {
     try {
         const add = {
-            province:'',
-            city: data.city,
+            province:data.province,
             phoneNumber: data.phoneNumber,
             streetNumber: data.streetNumber,
             urbanDistrict: data.urbanDistrict,
@@ -122,8 +121,7 @@ export const updateAddress = async (data: Address) => {
     try {
         const add = {
             id:data.id,
-            province:'',
-            city: data.city,
+            province:data.province,
             phoneNumber: data.phoneNumber,
             streetNumber: data.streetNumber,
             urbanDistrict: data.urbanDistrict,
