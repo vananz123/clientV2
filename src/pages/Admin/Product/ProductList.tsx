@@ -87,7 +87,17 @@ function ProductList() {
             <div style={{ marginTop: 8 }}>Upload</div>
         </button>
     );
-
+    const ChangeCurrence = (number: number | undefined) => {
+        if (number) {
+            const formattedNumber = number.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                currencyDisplay: 'code',
+            });
+            return formattedNumber;
+        }
+        return 0;
+    };
     const columns: TableColumnsType<Product> = [
         {
             title: 'Id',
@@ -98,6 +108,14 @@ function ProductList() {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+        },
+        {
+            title: 'Price',
+            dataIndex: 'price',
+            key: 'price',
+            render: (_, record) => (
+                <p>{ChangeCurrence(record.price)}</p>
+            ),
         },
         {
             title: 'Picture',

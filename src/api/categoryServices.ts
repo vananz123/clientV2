@@ -2,7 +2,7 @@
 import * as request from '../utils/request'
 import { Result } from './ResType'
 import { Category } from '@/type'
-export const getAllCate = async(type:string ='sub')=>{ 
+export const getAllCate = async(type:string = 'sub')=>{ 
     try{
         const res = await request.get(`/category?type=${type}`)
         const resultObj : Category[]  = res.resultObj
@@ -22,7 +22,7 @@ export const getAllCate = async(type:string ='sub')=>{
 }
 export const getCateById = async(id:string)=>{
     try{
-        const res = await request.get(`/category/id/${encodeURIComponent(id)}`)
+        const res = await request.get(`/category/${encodeURIComponent(id)}`)
         const resultObj : Category  = res.resultObj
         const resp: Result ={
             error :'',

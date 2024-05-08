@@ -55,7 +55,7 @@ const CategoryForm: React.FC<{ category: Category | undefined; onSetState: SetSt
         if(category != undefined){
             setTimeout(async () => {
                 if (category?.id != undefined) {
-                    const res = await categoryServices.updateCate(category?.id, values);
+                    const res = await categoryServices.updateCate(category?.id.toString(), values);
                     if (res.statusCode == 200) {
                         onSetState(res.resultObj);
                         const status : StatusForm ='success'
@@ -129,12 +129,6 @@ const CategoryForm: React.FC<{ category: Category | undefined; onSetState: SetSt
             >
                 <Input />
             </Form.Item>
-            <Form.Item<Category> 
-            name="isShow"
-            //initialValue={category?.isShow}
-            label="Switch">
-          <Switch />
-        </Form.Item>
             <Form.Item<Category>
                     name="status"
                     label="Status"

@@ -6,7 +6,6 @@ import React, { useEffect } from 'react';
 import * as productServices from '@/api/productServices';
 import { Filter } from '../ProductListShow/FilterType';
 import { Link } from 'react-router-dom';
-
 import './style.css';
 import * as addressGHTKServices from '@/api/addressGHTKServices'
 const contentStyle: React.CSSProperties = {
@@ -120,34 +119,6 @@ function Home() {
 
         getProductPaging(2);
         getProductPaging(3);
-        const getAllAddress  =async()=>{
-            const res =await addressGHTKServices.getAllProvince()
-            if(res.isSuccessed ===true){
-                console.log(res.resultObj)
-            }
-        }
-        const getAllDistrict  = async()=>{
-            const res =await addressGHTKServices.getAllDistrict(833)
-            if(res.isSuccessed ===true){
-                console.log(res.resultObj)
-            }
-        }
-        const getAllWard  = async()=>{
-            const res =await addressGHTKServices.getAllWard(1470)
-            if(res.isSuccessed ===true){
-                console.log(res.resultObj)
-            }
-        }
-        const getAllRoad  = async()=>{
-            const res =await addressGHTKServices.getAllRoad(16578)
-            if(res.isSuccessed ===true){
-                console.log(res.resultObj)
-            }
-        }
-        // getAllAddress()
-        // getAllProvince()
-        // getAllWard()
-        // getAllRoad()
     }, []);
     const onChange = (currentSlide: number) => {
         console.log(currentSlide);

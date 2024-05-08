@@ -6,6 +6,7 @@ import { StatusForm } from '../Category/Type';
 import { Guaranty } from '@/type';
 import GuarantyForm from '@/conponents/GuarantyForm';
 import * as guarantyServices from '@/api/guarantyServices'
+import dayjs, { Dayjs } from 'dayjs';
 function GuarantiesEdit() {
     const { id } = useParams();
     const [guaranty, setGuaranty] = React.useState<Guaranty>();
@@ -23,14 +24,20 @@ function GuarantiesEdit() {
             if (guaranty != undefined) {
                 const getGuaranty = async () => {
                     // lấy guaranty theo id
-                    // const res = await productServices.getProductDetail(Number(id));
-                    // if (res.isSuccessed == true) {
-                    //     setProduct(res.resultObj);
-                    // }
+                    const res = await guarantyServices.getGuarantyById(Number(id));
+                    if (res.isSuccessed === true) {
+                        const arr: Dayjs[] = []
+                        // arr.push(dayjs(res.resultObj?.startDate))
+                        // arr.push(dayjs(res.resultObj?.endDate))
+                        setGuaranty(res.resultObj);
+                    }
                 };
-            
+                getGuaranty()
                 openNotificationWithIcon('success');
             }
+        }
+        if (status == 'success') {
+            if (typeof guaranty !== 'undefined') openNotificationWithIcon('success');
         }
         if (status == 'error') {
             openNotificationWithIcon('error');
