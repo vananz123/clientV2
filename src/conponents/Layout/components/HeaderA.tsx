@@ -70,7 +70,7 @@ function HeaderA() {
                 justifyContent: 'end',
             }}
         >
-            <Dropdown menu={{ items }} trigger={['click']}>
+            <Dropdown menu={{ items }} trigger={['hover']}>
                 <a onClick={(e) => e.preventDefault()}>
                     <Space>
                         <Avatar size="large" icon={<UserOutlined />} />

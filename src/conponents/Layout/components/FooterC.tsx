@@ -12,7 +12,7 @@ const footerStyle: React.CSSProperties = {
 function FooterC() {
     return (
         <div style={{borderTop:'1px solid #858585', padding:'40px 20px 20px'}}>
-            <Footer style={{ textAlign: 'center', backgroundColor:'lightgray' }}>
+            <Footer style={{ textAlign: 'center' }}>
                 <Row gutter={[8,8]} align={'top'} justify={'start'}>
                     <Col xs={24} md={24} lg={6} xl={6}>
                         <div style={{textAlign:'left'}}>

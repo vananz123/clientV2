@@ -21,7 +21,7 @@ function GuarantiesAdd() {
         if (status == 'success') {
             if (guaranty != undefined) {
                 openNotificationWithIcon('success');
-                Navigate('/admin/categories');
+                Navigate('/admin/guaranties');
             }
         }
         if (status == 'error') {

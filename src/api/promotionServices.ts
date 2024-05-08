@@ -2,7 +2,7 @@ import { ModePromotionType } from '@/pages/Admin/Product/ModePromotion';
 import * as request from '../utils/request';
 import { Promotion, Result } from './ResType';
 import { Value } from 'sass';
-import { Product } from '@/pages/Admin/Product/ProductList';
+import { Product } from '@/type';
 export const getAllPromotion = async () => {
     try {
         const res = await request.get(`/promotion/type`);

@@ -2,6 +2,8 @@
 export type Category = {
     id: number;
     name: string;
+    seoTitle: string,
+    seoDescription: string,
     parentId:number;
     subCategory:Category[];
     urlImage: string;
@@ -55,7 +57,8 @@ export interface Guaranty {
     name: string,
     description: string,
     period: number,
-    dateCreated?: string,
-    dateModify?: string,
-    status: number
+    dateCreated: string,
+    dateModify: string,
+    status: number,
+    arrDate: any[]
 }

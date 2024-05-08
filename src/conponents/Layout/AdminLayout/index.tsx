@@ -5,6 +5,7 @@ import { Layout, theme } from 'antd';
 import { Outlet } from 'react-router-dom';
 const { Content } = Layout;
 import './style.scss';
+import {FooterC} from '../components';
 function AdminLayout({ children }:any){
     const {
         token: { colorBgContainer, borderRadiusLG },
@@ -19,7 +20,7 @@ function AdminLayout({ children }:any){
                     <div
                         style={{
                             padding: 24,
-                            minHeight: 360,
+                            minHeight: 550,
                             background: colorBgContainer,
                             borderRadius: borderRadiusLG,
                         }}
@@ -27,6 +28,7 @@ function AdminLayout({ children }:any){
                         <Outlet/>
                     </div>
                 </Content>
+                <FooterC></FooterC>
             </Layout>
         </Layout>
     );
