@@ -1,11 +1,11 @@
 import CategoryForm from '@/conponents/CategoryForm';
 import React, { useEffect } from 'react';
-import { Button, notification, Space } from 'antd';
+import {  notification } from 'antd';
 type NotificationType = 'success' | 'error';
 import * as categoryServices from '@/api/categoryServices';
-import { Category } from '@/pages/Admin/Product/ProductList';
-import { useAppSelector, useAppDispatch } from '@/app/hooks';
-import { selectCate, selectStatus, updateCate, addCateAsync } from '@/feature/category/cateSlice';
+import { Category } from '@/type';
+import {useAppDispatch } from '@/app/hooks';
+import {  addCateAsync } from '@/feature/category/cateSlice';
 import type { StatusForm } from './Type';
 import { useNavigate } from 'react-router-dom';
 function CategoryAdd() {

@@ -1,7 +1,7 @@
 import React, { SetStateAction } from 'react';
 import { Button, type FormProps, Form, Input, Select, SelectProps, Switch } from 'antd';
 import * as categoryServices from '@/api/categoryServices';
-import { Category } from '@/pages/Admin/Product/ProductList';
+import { Category } from '@/type';
 import type { StatusForm } from '@/pages/Admin/Category/Type';
 const formItemLayout = {
     labelCol: {
@@ -26,7 +26,7 @@ const tailFormItemLayout = {
         },
     },
 };
-let optionstStatus: SelectProps['options'] = [
+const optionstStatus: SelectProps['options'] = [
     {
         value: 0,
         label: 'Active',

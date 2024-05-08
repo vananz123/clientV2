@@ -1,14 +1,12 @@
-import { Table, Space, Pagination, Modal, Button, Flex } from 'antd';
+import { Table, Space, Modal, Button, Flex } from 'antd';
 import type { TableProps } from 'antd';
-import type { PaginationProps } from 'antd';
 import * as categoryServices from '@/api/categoryServices';
 import React, { useEffect } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { addCateAsync, selectCate } from '@/feature/category/cateSlice';
-import SearchC from '@/conponents/SearchC';
 import { Link } from 'react-router-dom';
-import { Category } from '../Product/ProductList';
+import { Category } from '@/type';
 
 function CategoriesList() {
     const dispatch = useAppDispatch();
@@ -50,7 +48,7 @@ function CategoriesList() {
             render: (_, record) => (
                 <Space size="middle">
                     <Link to={`/admin/category-edit/${record.id}`}>Edit</Link>
-                    <a onClick={() => showModalDel(record.id, record.name)}>Delete</a>
+                    <a onClick={() => showModalDel(record.id.toString(), record.name)}>Delete</a>
                 </Space>
             ),
         },
