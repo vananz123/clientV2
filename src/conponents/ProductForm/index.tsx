@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { SetStateAction, useEffect } from 'react';
+
 import {
     Button,
     type FormProps,
@@ -18,9 +19,9 @@ import {
 import { notification } from 'antd';
 import dayjs from 'dayjs';
 type NotificationType = 'success' | 'error';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-
-import { Product, ProductItem, Category } from '@/type';
+import { MinusCircleOutlined, PlusOutlined, DownOutlined } from '@ant-design/icons';
+import * as guarantyServieces from '@/api/guarantyServices';
+import { Product, ProductItem, Category, Guaranty } from '@/type';
 import * as productServices from '@/api/productServices';
 import type { SelectProps } from 'antd';
 import type { StatusForm } from '@/pages/Admin/Category/Type';
@@ -29,7 +30,7 @@ import { selectCate } from '@/feature/category/cateSlice';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
-
+const MAX_COUNT = 2;
 const getBase64 = (file: FileType): Promise<string> =>
     new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -112,6 +113,16 @@ const ProductForm: React.FC<{
     const [form] = Form.useForm();
     const baseUrl = import.meta.env.VITE_BASE_URL;
     form.setFieldsValue(product);
+    const [value, setValue] = React.useState<string[]>([]);
+    const suffix = (
+        <>
+            <span>
+                {value.length} / {MAX_COUNT}
+            </span>
+            <DownOutlined />
+        </>
+    );
+    const [optionsGuaranty, setOptionsGuaranty] = React.useState<SelectProps['options']>();
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [options, setOptions] = React.useState<SelectProps['options']>([]);
     const [isSize, setIsSize] = React.useState<boolean>(false);
@@ -135,6 +146,17 @@ const ProductForm: React.FC<{
     const showDrawUploadImages = () => {
         setOpenUploadImages(true);
     };
+
+    const GeneratorSelectOption = (data: Guaranty[]): SelectProps['options'] => {
+        const options: SelectProps['options'] = [];
+        data.forEach((element: Guaranty) => {
+            options.push({
+                value: element.id,
+                label: element.name,
+            });
+        });
+        return options;
+    };
     useEffect(() => {
         const options: SelectProps['options'] = [];
         categories.forEach((element: Category) => {
@@ -153,6 +175,13 @@ const ProductForm: React.FC<{
                 setIsSize(true);
             }
         }
+        const getAllGuaranty = async () => {
+            const res = await guarantyServieces.getAllGuaranty();
+            if (res.isSuccessed === true) {
+                setOptionsGuaranty(GeneratorSelectOption(res.resultObj));
+            }
+        };
+        getAllGuaranty();
     }, []);
     console.log(product);
     const handleChange = (value: string[]) => {};
@@ -411,7 +440,7 @@ const ProductForm: React.FC<{
 
             <Drawer
                 title="Create product item"
-                width={600}
+                width={650}
                 onClose={() => setOpenProductItem(false)}
                 open={openProductItem}
             >
@@ -453,7 +482,7 @@ const ProductForm: React.FC<{
                                                     type="number"
                                                     placeholder="Price"
                                                     min={0}
-                                                    style={{ width: 150 }}
+                                                    style={{ width: 90, marginRight: '5px' }}
                                                 />
                                             </Form.Item>
                                             <Form.Item
@@ -465,7 +494,7 @@ const ProductForm: React.FC<{
                                                     type="number"
                                                     placeholder="Stock"
                                                     min={0}
-                                                    style={{ width: 100 }}
+                                                    style={{ width: 50, marginRight: '5px' }}
                                                 />
                                             </Form.Item>
                                             <Form.Item
@@ -473,7 +502,7 @@ const ProductForm: React.FC<{
                                                 name={[name, 'value']}
                                                 rules={[{ required: true, message: 'Missing value' }]}
                                             >
-                                                <Input placeholder="value" />
+                                                <Input placeholder="value" style={{ width: 50, marginRight: '5px' }} />
                                             </Form.Item>
                                             <Form.Item
                                                 {...restField}
@@ -483,8 +512,24 @@ const ProductForm: React.FC<{
                                                 <Select
                                                     size={'middle'}
                                                     //onChange={handleChange}
-                                                    style={{ width: 100 }}
+                                                    style={{ width: 70 }}
                                                     options={optionsSku}
+                                                />
+                                            </Form.Item>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'guaranty']}
+                                                rules={[{ required: true, message: 'Missing Guaranty' }]}
+                                            >
+                                                <Select
+                                                    mode="multiple"
+                                                    maxCount={MAX_COUNT}
+                                                    value={value}
+                                                    style={{ width: 250 }}
+                                                    onChange={setValue}
+                                                    suffixIcon={suffix}
+                                                    placeholder="Please select"
+                                                    options={optionsGuaranty}
                                                 />
                                             </Form.Item>
                                             <MinusCircleOutlined onClick={() => remove(name)} />
@@ -501,7 +546,7 @@ const ProductForm: React.FC<{
                     ) : (
                         <>
                             <Row>
-                                <Col span={12}>
+                                <Col span={8}>
                                     <Form.Item<ProductItem>
                                         name="price"
                                         initialValue={product?.items[0]?.price}
@@ -515,7 +560,7 @@ const ProductForm: React.FC<{
                                         />
                                     </Form.Item>
                                 </Col>
-                                <Col span={12}>
+                                <Col span={8}>
                                     <Form.Item<ProductItem>
                                         name="stock"
                                         initialValue={product?.items[0]?.stock}
@@ -526,6 +571,23 @@ const ProductForm: React.FC<{
                                             placeholder="Stock"
                                             min={0}
                                             style={{ width: '100%' }}
+                                        />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={8}>
+                                    <Form.Item
+                                        name={'guaranty'}
+                                        rules={[{ required: true, message: 'Missing Guaranty' }]}
+                                    >
+                                        <Select
+                                            mode="multiple"
+                                            maxCount={MAX_COUNT}
+                                            value={value}
+                                            style={{ width: 250 }}
+                                            onChange={setValue}
+                                            suffixIcon={suffix}
+                                            placeholder="Please select"
+                                            options={optionsGuaranty}
                                         />
                                     </Form.Item>
                                 </Col>
