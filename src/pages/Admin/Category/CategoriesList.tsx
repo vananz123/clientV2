@@ -1,5 +1,5 @@
 import { Table, Space, Modal, Button, Flex } from 'antd';
-import type { TableProps } from 'antd';
+import type { TableColumnsType, TableProps } from 'antd';
 import * as categoryServices from '@/api/categoryServices';
 import React, { useEffect } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { addCateAsync, selectCate } from '@/feature/category/cateSlice';
 import { Link } from 'react-router-dom';
 import { Category } from '@/type';
+
 
 function CategoriesList() {
     const dispatch = useAppDispatch();
@@ -16,9 +17,10 @@ function CategoriesList() {
     const [open, setOpen] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [modalText, setModalText] = React.useState('Do you want delete!');
-    const [context,setContext] = React.useState<string>('OK');
+    const [context, setContext] = React.useState<string>('OK');
+    
 
-    const columns: TableProps<Category>['columns'] = [
+    const columnss: TableColumnsType<Category> = [
         {
             title: 'Id',
             dataIndex: 'id',
@@ -28,20 +30,50 @@ function CategoriesList() {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            
-        },
-        {
-            title: 'seoTitle',
-            dataIndex: 'seoTitle',
-            key: 'seoTitle',
-            
         },
         {
             title: 'status',
             dataIndex: 'status',
             key: 'status',
-            
         },
+        // {
+        //     title: 'subCategory',
+        //     dataIndex: 'subCategory',
+        //     key: 'subCategory',
+        // },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (_, record) => (
+                <Space size="middle">
+                    <Link to={`/admin/category-edit/${record.id}`}>Edit</Link>
+                    <a onClick={() => showModalDel(record.id.toString(), record.name)}>Delete</a>
+                </Space>
+            ),
+        },
+    ];
+    const columns: TableColumnsType<Category> = [
+        Table.EXPAND_COLUMN,
+        {
+            title: 'Id',
+            dataIndex: 'id',
+            key: 'id',
+        },
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'status',
+            dataIndex: 'status',
+            key: 'status',
+        },
+        // {
+        //     title: 'subCategory',
+        //     dataIndex: 'subCategory',
+        //     key: 'subCategory',
+        // },
         {
             title: 'Action',
             key: 'action',
@@ -64,27 +96,27 @@ function CategoriesList() {
     const handleOkDel = () => {
         setModalText('deleting!');
         setConfirmLoading(true);
-        setContext('')
+        setContext('');
         setTimeout(async () => {
             const res = await categoryServices.deleteCate(currentId);
             if (res.statusCode == 204) {
-              const ref = await categoryServices.getAllCate()
-              if(ref.statusCode ==200){
-                setData(ref.resultObj);
-                setOpen(false);
-                dispatch(addCateAsync(ref.resultObj))
-                setConfirmLoading(false);
-              }
+                const ref = await categoryServices.getAllCate();
+                if (ref.statusCode == 200) {
+                    setData(ref.resultObj);
+                    setOpen(false);
+                    dispatch(addCateAsync(ref.resultObj));
+                    setConfirmLoading(false);
+                }
             } else {
                 setModalText('error!');
                 setConfirmLoading(false);
-                setContext('OK')
+                setContext('OK');
             }
         }, 500);
     };
     return (
         <div>
-            <Space direction="vertical" style={{width:"100%"}}>
+            <Space direction="vertical" style={{ width: '100%' }}>
                 <Flex justify="space-between">
                     <Link to={'/admin/category-add'}>
                         <Button type="primary" icon={<PlusOutlined />} size="large">
@@ -93,7 +125,17 @@ function CategoriesList() {
                     </Link>
                     {/* <SearchC typeSearch={2} onSetState={setData} /> */}
                 </Flex>
-                <Table  pagination={{ position:['bottomLeft'], pageSize:4 }} columns={columns} dataSource={data} />
+                <Table
+                    rowKey={(record) => record.id}
+                    pagination={{ position: ['bottomLeft'], pageSize: 4 }}
+                    columns={columns}
+                    dataSource={data}
+                   expandable={{
+                    expandedRowRender:(recore)=>{
+                        return <Table rowKey={(recore)=> recore.id} columns={columnss} dataSource={recore.subCategory}/>
+                    }
+                   }}
+                />
             </Space>
             <Modal
                 title="Delete"

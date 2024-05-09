@@ -2,8 +2,6 @@
 export type Category = {
     id: number;
     name: string;
-    seoTitle: string,
-    seoDescription: string,
     parentId:number;
     subCategory:Category[];
     urlImage: string;

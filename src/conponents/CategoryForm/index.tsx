@@ -1,8 +1,10 @@
-import React, { SetStateAction } from 'react';
-import { Button, type FormProps, Form, Input, Select, SelectProps, Switch } from 'antd';
+import React, { SetStateAction, useEffect } from 'react';
+import { Button, type FormProps, Form, Input, Select, SelectProps } from 'antd';
 import * as categoryServices from '@/api/categoryServices';
 import { Category } from '@/type';
 import type { StatusForm } from '@/pages/Admin/Category/Type';
+import {  useAppSelector } from '@/app/hooks';
+import { selectCate } from '@/feature/category/cateSlice';
 const formItemLayout = {
     labelCol: {
         xs: { span: 24 },
@@ -47,41 +49,48 @@ const CategoryForm: React.FC<{ category: Category | undefined; onSetState: SetSt
 }) => {
     const [form] = Form.useForm();
     form.setFieldsValue(category)
+   const cate = useAppSelector(selectCate)
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [optionParent,setOptionParent] = React.useState<SelectProps['options']>([])
+    useEffect(()=>{
+        const item :SelectProps['options']= []
+        cate.forEach((e:Category)=>{
+            item.push({
+                label:e.name,
+                value:e.id,
+            })
+        })
+        setOptionParent(item)
+    },[category])
     const [context,setContext] = React.useState<string>('Save');
-    const onFinish: FormProps<Category>['onFinish'] = (values) => {
+    const onFinish: FormProps<Category>['onFinish'] =async (values) => {
         setIsLoading(true);
         setContext('')
         if(category != undefined){
-            setTimeout(async () => {
-                if (category?.id != undefined) {
-                    const res = await categoryServices.updateCate(category?.id.toString(), values);
-                    if (res.statusCode == 200) {
-                        onSetState(res.resultObj);
-                        const status : StatusForm ='success'
-                        onSetStatus(status)
-                    }else{
-                        const status : StatusForm ='error'
-                        onSetStatus(status)
-                    }
+            if (category?.id != undefined) {
+                const res = await categoryServices.updateCate(category?.id.toString(), values);
+                if (res.statusCode == 200) {
+                    onSetState(res.resultObj);
+                    const status : StatusForm ='success'
+                    onSetStatus(status)
+                }else{
+                    const status : StatusForm ='error'
+                    onSetStatus(status)
                 }
-                setIsLoading(false);
-                setContext('Save')
-            }, 300);
+            }
+            setIsLoading(false);
+            setContext('Save')
         }else{
-            setTimeout(async () => {
-                console.log(values)
-                const res = await categoryServices.createCate(values);
-                    if (res.statusCode == 201) {
-                        onSetState(res.resultObj);
-                        const status : StatusForm ='success'
-                        onSetStatus(status)
-                    }else{
-                        const status : StatusForm ='error'
-                        onSetStatus(status)
-                    }
-                setIsLoading(false);
-            }, 300);
+            const res = await categoryServices.createCate(values);
+            if (res.statusCode == 201) {
+                onSetState(res.resultObj);
+                const status : StatusForm ='success'
+                onSetStatus(status)
+            }else{
+                const status : StatusForm ='error'
+                onSetStatus(status)
+            }
+        setIsLoading(false);
         }
     };
 
@@ -110,29 +119,20 @@ const CategoryForm: React.FC<{ category: Category | undefined; onSetState: SetSt
                 <Input />
             </Form.Item>
             <Form.Item<Category>
-                name="seoTitle"
-                label="Seo title"
-                tooltip="What do you want others to call you?"
-                //valuePropName='name'
-                //initialValue={category?.seoTitle}
-                rules={[{ required: true, message: 'Please input category name!', whitespace: true }]}
-            >
-                <Input />
-            </Form.Item>
-            <Form.Item<Category>
-                name='seoDescription'
-                label="seoDescription"
-                tooltip="What do you want others to call you?"
-                //valuePropName='name'
-                //initialValue={category?.seoDescription}
-                rules={[{ required: true, message: 'Please input category name!', whitespace: true }]}
-            >
-                <Input />
-            </Form.Item>
+                    name='parentId'
+                    label="Parent"
+                    rules={[{ required: true, message: 'Please select Parent!' }]}
+                >
+                    <Select
+                        size={'middle'}
+                        //onChange={handleChange}
+                        style={{ width: 200 }}
+                        options={optionParent}
+                    />
+                </Form.Item>
             <Form.Item<Category>
                     name="status"
                     label="Status"
-                    initialValue={0}
                     rules={[{ required: true, message: 'Please select Status!' }]}
                 >
                     <Select
