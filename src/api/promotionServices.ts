@@ -61,10 +61,9 @@ export const CreatePromotion = async (data:any) => {
     try {
         const pro = {
             Name : data.name,
-            seoDescription:data.seoDescription,
-            seoTitle:data.seoTitle,
-            type :"promotion",
-            discountRate:data.discountRate,
+            description:data.description,
+            type: data.type,
+            value:data.value,
             startDate:data.startDate,
             endDate:data.endDate
         }
@@ -119,10 +118,9 @@ export const UpdatePromotion = async (data:any) => {
         const pro = {
             id: data.id,
             Name : data.name,
-            seoDescription:data.seoDescription,
-            seoTitle:data.seoTitle,
-            type :"promotion",
-            discountRate:data.discountRate,
+            description:data.description,
+            type :data.type,
+            value: data.value,
             startDate:data.startDate,
             endDate:data.endDate
         }

@@ -50,13 +50,13 @@ export type Product = {
     variation: Variation[];
 };
 export interface Guaranty {
-    id: number,
-    sku: string,
-    name: string,
-    description: string,
-    period: number,
-    dateCreated: string,
-    dateModify: string,
-    status: number,
-    arrDate: any[]
+    id: number;
+    sku: string;
+    name: string;
+    description: string;
+    period: number;
+    dateCreated: string;
+    dateModify: string;
+    status: number;
+    arrDate: any[];
 }
