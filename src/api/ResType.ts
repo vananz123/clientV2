@@ -136,21 +136,17 @@ export type Order={
     orderDetail?:OrderDetail[],
     
 }
-export type Promotion = {
-    id: number,
-      name: string,
-      seoDescription: string,
-      seoTitle: string,
-      seoAlias: string,
-      discountRate?: number,
-      discountAmount?: number,
-      condition?:number,
-      type:string,
-      urlImage: string,
-      startDate: string,
-      endDate: string,
-      status: number,
-      arrDate:any[],
+export interface Promotion {
+    id: number;
+    name: string;
+    description: string;
+    condition?: number;
+    type: string;
+    value: number;
+    startDate: string;
+    endDate: string;
+    status: number;
+    arrDate: any[];
 }
 
 export interface addressGHTK{

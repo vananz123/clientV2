@@ -1,5 +1,5 @@
 import React, { SetStateAction } from 'react';
-import { Button, type FormProps, Form, Input, InputNumber, DatePicker } from 'antd';
+import { Button, type FormProps, Form, Input, InputNumber, DatePicker, Select } from 'antd';
 import * as promotionServices from '@/api/promotionServices';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
@@ -16,6 +16,8 @@ const formItemLayout = {
         sm: { span: 16 },
     },
 };
+
+const SelectOptionPromotionType = [{ label: 'percentage', value: 'percentage' },{ label: 'fixed', value: 'fixed' }];
 
 const tailFormItemLayout = {
     wrapperCol: {
@@ -40,25 +42,23 @@ const PromotionForm: React.FC<{
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [context, setContext] = React.useState<string>('Save');
     const onFinish: FormProps<Promotion>['onFinish'] = (values) => {
-        
-        values.startDate = dayjs(values.arrDate[0]).format()
-        values.endDate = dayjs(values.arrDate[1]).format()
-        
+        values.startDate = dayjs(values.arrDate[0]).format();
+        values.endDate = dayjs(values.arrDate[1]).format();
+
         setIsLoading(true);
         setContext('');
-        console.log(values)
         if (promotion != undefined) {
             setTimeout(async () => {
-                values.id = promotion?.id
+                values.id = promotion?.id;
                 if (promotion?.id != undefined) {
                     const res = await promotionServices.UpdatePromotion(values);
                     if (res.isSuccessed === true) {
                         onSetState(res.resultObj);
-                        const status : StatusForm ='success'
-                        onSetStatus(status)
-                    }else{
-                        const status : StatusForm ='error'
-                        onSetStatus(status)
+                        const status: StatusForm = 'success';
+                        onSetStatus(status);
+                    } else {
+                        const status: StatusForm = 'error';
+                        onSetStatus(status);
                     }
                 }
                 setIsLoading(false);
@@ -67,15 +67,15 @@ const PromotionForm: React.FC<{
         } else {
             setTimeout(async () => {
                 const res = await promotionServices.CreatePromotion(values);
-                console.log(res)
-                    if (res.isSuccessed === true) {
-                        onSetState(res.resultObj);
-                        const status : StatusForm ='success'
-                        onSetStatus(status)
-                    }else{
-                        const status : StatusForm ='error'
-                        onSetStatus(status)
-                    }
+                console.log(res);
+                if (res.isSuccessed === true) {
+                    onSetState(res.resultObj);
+                    const status: StatusForm = 'success';
+                    onSetStatus(status);
+                } else {
+                    const status: StatusForm = 'error';
+                    onSetStatus(status);
+                }
                 setIsLoading(false);
             }, 200);
         }
@@ -86,12 +86,11 @@ const PromotionForm: React.FC<{
     };
 
     return (
-        
         <>
             <Form
                 {...formItemLayout}
                 form={form}
-                name="productFrom"
+                name="promotionForm"
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 style={{ maxWidth: 600 }}
@@ -103,39 +102,65 @@ const PromotionForm: React.FC<{
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.name}
-                    rules={[{ required: true, message: 'Please input category name!', whitespace: true }]}
+                    rules={[{ required: true, message: 'Please input promotion name!'}]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item<Promotion>
-                    name="seoTitle"
-                    label="Seo Title"
+                    name="description"
+                    label="Mô Tả"
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.seoTitle}
-                    rules={[{ required: true, message: 'Please input category name!', whitespace: true }]}
+                    rules={[{ required: true, message: 'Please input promotion decription!'}]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item<Promotion>
-                    name="seoDescription"
-                    label="Seo Description"
+                    name="value"
+                    label="Value Promotion"
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.seoDescription}
-                    rules={[{ required: true, message: 'Please input category name!' }]}
+                    // rules={[{ required: true, message: 'Please input promotion value!' }]}
+                    dependencies={['type']}
+                        hasFeedback
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please confirm your password!',
+                            },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    if (!value || getFieldValue('type') === 'percentage') {
+                                        if(value > 100){
+                                            return Promise.reject(new Error('The new type that you entered do not match!'));        
+                                        }
+                                        else return Promise.resolve();
+                                        
+                                    }
+                                    return Promise.resolve();
+                                },
+                            }),
+                        ]}
                 >
-                    <Input />
+                    <InputNumber  />
                 </Form.Item>
                 <Form.Item<Promotion>
-                    name="discountRate"
-                    label="Discount Rate"
+                    name="type"
+                    label="Type Discount"
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
-                    //initialValue={promotion?.discountRate}
-                    rules={[{ required: true, message: 'Please input Discount Rate!' }]}
+                    initialValue={"fixed"}
+                    rules={[{ required: true, message: 'Please input type Discount !' }]}
                 >
-                    <InputNumber type="number" max={100} min={1} />
+                     <Select
+                            size={'middle'}
+                            //onChange={handleChange}
+                            style={{ width: 150 }}
+                            options={SelectOptionPromotionType}
+                            maxCount={1}
+                        />
                 </Form.Item>
                 <Form.Item
                     name={'arrDate'}

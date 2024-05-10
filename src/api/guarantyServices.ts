@@ -22,8 +22,8 @@ export const getAllGuaranty = async(period:number =0)=>{
 }
 export const getGuarantyById = async(id:number)=>{
     try{
-        const res = await request.get(`/guranties/${encodeURIComponent(id)}`)
-        console.log(res)
+        const res = await request.get(`/guaranties/${encodeURIComponent(id)}`)
+     
         const resultObj : Guaranty  = res.resultObj
         const resp: Result ={
             error :'',
@@ -73,7 +73,7 @@ export const updateGuaranty = async(id:string, data:Guaranty)=>{
             description:data.description,
             sku: data.sku,
             period : data.period,
-            dateModify: data.dateModify
+            status: data.status
             
         }
         console.log(pro)

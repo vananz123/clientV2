@@ -52,20 +52,17 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
 }) => {
     const [form] = Form.useForm();
     form.setFieldsValue(guaranty)
+    console.log(guaranty)
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [context,setContext] = React.useState<string>('Save');
     const onFinish: FormProps<Guaranty>['onFinish'] = (values) => {
-
-        // values.dateCreated = dayjs(values.arrDate[0]).format()
-        // values.dateModify = dayjs(values.arrDate[1]).format()
-        values.dateModify = dayjs(values.dateModify).format()
-
         setIsLoading(true);
         setContext('')
         if(guaranty != undefined){
             setTimeout(async () => {
                 if (guaranty?.id != undefined) {
                     //Call api guaranty addGuaranty
+                    values.id = guaranty.id
                     const res = await guarantyServieces.updateGuaranty(guaranty?.id.toString(),values);
                     if (res.statusCode == 200) {
                         onSetState(res.resultObj);
@@ -81,7 +78,6 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
             }, 300);
         }else{
             setTimeout(async () => {
-                console.log(values)
                 //call api updateGuaranty
                 const res = await guarantyServieces.createGuaranty(values);
                     if (res.statusCode == 201) {
@@ -128,7 +124,7 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.seoTitle}
-                    rules={[{ required: true, message: 'Please input category name!', whitespace: true }]}
+                    rules={[{ required: true, message: 'Please input guaranty name!', whitespace: true }]}
                 >
                     <Input />
                 </Form.Item>
@@ -138,9 +134,9 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.seoTitle}
-                    rules={[{ required: true, message: 'Please input category name!', whitespace: true }]}
+                    rules={[{ required: true, message: 'Please input guaranty name!' }]}
                 >
-                    <Input />
+                    <InputNumber max={36} min={0} type='number' />
                 </Form.Item>
                 <Form.Item<Guaranty>
                     name="description"
@@ -165,13 +161,7 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
                         options={optionstStatus}
                     />
                 </Form.Item>
-                <Form.Item<Guaranty>
-                    name='dateModify'
-                    label="DateModify"
-                    rules={[{ required: true, message: 'Please input category name!' }]}
-                 >
-                    <DatePicker/>
-                </Form.Item>
+                
                 {/* <Form.Item
                     name={'arrDate'}
                     label="Date"
