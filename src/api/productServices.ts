@@ -262,36 +262,6 @@ function randomNumber(min:number, max:number):number {
 }
 export const addProductSize = async(id:number, data:any[])=>{
     try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
-        const guaranties:any[]= []
-        data.forEach((element:any) =>{
-                const item ={
-                    id:element.id,
-                    name:element.name,
-                    value: element.value,
-                    selected:element.selected
-                }
-                guaranties.push(item)
-        });
-
-        const resgua= await request.post(`/guaranties/${encodeURIComponent(id)}`,guaranties)
-        const resultOJ:Guaranty   = resgua.resultObj
-        const resguaranty: Result ={
-            error :'',
-            isSuccessed:resgua.isSuccessed,
-            message:resgua.message,
-            statusCode:200,
-            resultObj : resultOJ
-        }
-        return resguaranty
-
-
         const pro:any[]= []
         data.forEach((element:any) => {
             const item ={
