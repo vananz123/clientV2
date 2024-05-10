@@ -306,7 +306,7 @@ const ProductForm: React.FC<{
                     //initialValue={product?.seoDescription}
                     rules={[{ required: true, message: 'Please input seo description' }]}
                 >
-                    <Input.TextArea showCount maxLength={100} />
+                    <Input.TextArea showCount maxLength={500} />
                 </Form.Item>
                 <Form.Item name="file" label="Upload thumbnail" valuePropName="fileList" getValueFromEvent={normFile}>
                     <Upload listType="picture-card" maxCount={1}>
@@ -518,7 +518,7 @@ const ProductForm: React.FC<{
                                             </Form.Item>
                                             <Form.Item
                                                 {...restField}
-                                                name={[name, 'guaranty']}
+                                                name={[name, 'guaranties']}
                                                 rules={[{ required: true, message: 'Missing Guaranty' }]}
                                             >
                                                 <Select

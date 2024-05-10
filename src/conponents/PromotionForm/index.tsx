@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { SetStateAction } from 'react';
-import { Button, type FormProps, Form, Input, InputNumber, DatePicker } from 'antd';
+import { Button, type FormProps, Form, Input, InputNumber, DatePicker, Select } from 'antd';
 import * as promotionServices from '@/api/promotionServices';
 import dayjs from 'dayjs';
-import type { Dayjs } from 'dayjs';
 import type { StatusForm } from '@/pages/Admin/Category/Type';
 import { Promotion } from '@/api/ResType';
-import type { DatePickerProps } from 'antd';
 const formItemLayout = {
     labelCol: {
         xs: { span: 24 },
@@ -16,7 +15,7 @@ const formItemLayout = {
         sm: { span: 16 },
     },
 };
-
+const SelectOptionPromotionType = [{ label: 'percentage', value: 'percentage' },{ label: 'fixed', value: 'fixed' }];
 const tailFormItemLayout = {
     wrapperCol: {
         xs: {
@@ -103,39 +102,61 @@ const PromotionForm: React.FC<{
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.name}
-                    rules={[{ required: true, message: 'Please input category name!', whitespace: true }]}
+                    rules={[{ required: true, message: 'Please input promotion name!'}]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item<Promotion>
-                    name="seoTitle"
-                    label="Seo Title"
-                    tooltip="What do you want others to call you?"
-                    //valuePropName='name'
-                    //initialValue={promotion?.seoTitle}
-                    rules={[{ required: true, message: 'Please input category name!', whitespace: true }]}
-                >
-                    <Input />
-                </Form.Item>
-                <Form.Item<Promotion>
-                    name="seoDescription"
-                    label="Seo Description"
+                     name="description"
+                     label="Mô Tả"
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.seoDescription}
-                    rules={[{ required: true, message: 'Please input category name!' }]}
+                    rules={[{ required: true, message: 'Please input promotion decription!'}]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item<Promotion>
-                    name="discountRate"
-                    label="Discount Rate"
+                     name="value"
+                     label="Value Promotion"
                     tooltip="What do you want others to call you?"
-                    //valuePropName='name'
-                    //initialValue={promotion?.discountRate}
-                    rules={[{ required: true, message: 'Please input Discount Rate!' }]}
+                    dependencies={['type']}
+                        hasFeedback
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please confirm your password!',
+                            },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    if (!value || getFieldValue('type') === 'percentage') {
+                                        if(value > 100){
+                                            return Promise.reject(new Error('The new type that you entered do not match!'));        
+                                        }
+                                        else return Promise.resolve();
+
+                                    }
+                                    return Promise.resolve();
+                                },
+                            }),
+                        ]}
+                >
+                    <InputNumber type="number" min={1} />
+                </Form.Item>
+                <Form.Item<Promotion>
+                    name="type"
+                    label="Type Discount"
+                    tooltip="What do you want others to call you?"
+                    initialValue={"fixed"}
+                    rules={[{ required: true, message: 'Please input type Discount !' }]}
                 >
                     <InputNumber type="number" max={100} min={1} />
+                     <Select
+                            size={'middle'}
+                            //onChange={handleChange}
+                            style={{ width: 150 }}
+                            options={SelectOptionPromotionType}
+                        />
                 </Form.Item>
                 <Form.Item
                     name={'arrDate'}
@@ -145,13 +166,6 @@ const PromotionForm: React.FC<{
                 >
                     <RangePicker />
                 </Form.Item>
-                {/* <Form.Item<Promotion>
-                    name='startDate'
-                 label="DatePicker"
-                 rules={[{ required: true, message: 'Please input category name!' }]}
-                 >
-              <DatePicker/>
-            </Form.Item> */}
                 <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit" loading={isLoading} style={{ width: '100px' }}>
                         {context}

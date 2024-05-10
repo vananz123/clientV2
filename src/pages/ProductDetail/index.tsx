@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from 'react-router';
-import { Product,ProductItem,Variation } from '@/type';
+import { Guaranty, Product, ProductItem, Variation } from '@/type';
 import React, { useEffect } from 'react';
 import * as productServices from '@/api/productServices';
 import * as reviewServices from '@/api/reviewServices';
@@ -62,35 +62,50 @@ function ProductDetail() {
             setQuantity(quan);
         }
     };
-    const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`;
-
     const items: CollapseProps['items'] = [
         {
             key: '1',
-            label: 'Variation',
+            label: 'Thông số và mô tả',
             children: (
                 <Space direction="vertical">
-                    {data?.variation.map((e: Variation) => (
-                        <p>
-                            {e.name}: {e.value}
-                        </p>
-                    ))}
+                    {data?.variation != undefined ? (
+                        data?.variation.map((e: Variation) => (
+                            <p>
+                                {e.name}: {e.value}
+                            </p>
+                        ))
+                    ) : (
+                        <>
+                            <Skeleton />
+                            <Skeleton />
+                        </>
+                    )}
                 </Space>
             ),
         },
         {
             key: '2',
-            label: 'This is panel header 2',
-            children: <p>{text}</p>,
-        },
-        {
-            key: '3',
-            label: 'This is panel header 3',
-            children: <p>{text}</p>,
+            label: 'Dịch vụ sau mua',
+            children: (
+                <>
+                    {currentProductItem?.guaranties == undefined ? (
+                        <Skeleton />
+                    ) : (
+                        <Space direction='vertical'>
+                            {currentProductItem.guaranties?.length > 0
+                                ? currentProductItem?.guaranties?.map((e: Guaranty) => (
+                                      <>
+                                      <div key={e.id}>
+                                          <p>Loại bảo hành: {e.name}</p>
+                                          <p>Mô tả{e.description}</p>
+                                      </div>
+                                      </>
+                                  ))
+                                : <p>Sản phẩm này không được bảo hành</p>}
+                        </Space>
+                    )}
+                </>
+            ),
         },
     ];
     const [optionSize, setOptionSize] = React.useState<OptionSize[]>([]);
@@ -103,7 +118,7 @@ function ProductDetail() {
     };
     const getData = async () => {
         const res = await productServices.getProductDetail(Number(id));
-        console.log(res)
+        console.log(res);
         if (res.isSuccessed == true) {
             const arr: string[] = res.resultObj.urlImage.split('*');
             const t = arr.pop();
@@ -134,7 +149,7 @@ function ProductDetail() {
             setListReview(r.resultObj.items);
         }
     };
-    
+
     useEffect(() => {
         if (id != undefined) {
             getData();
@@ -150,7 +165,7 @@ function ProductDetail() {
     };
     const onChangeSize = (value: any) => {
         if (data != undefined) {
-            const item = data.items.find((x) => x.id == value);
+            const item = data.items?.find((x) => x.id == value);
             if (item != undefined) {
                 setCurrentProductItem(item);
             }
@@ -221,8 +236,9 @@ function ProductDetail() {
                                         <div style={{ marginBottom: 15 }}>
                                             <h1>{data.seoTitle}</h1>
                                             <p>{data.seoDescription}</p>
-                                            <p>{ChangeCurrence(currentProductItem?.price)}</p>
-                                            {data.items.length > 1 ? (
+                                            <span style={{color:'red',fontSize:18,fontWeight:500}}>{ChangeCurrence(currentProductItem?.price)}</span>
+                                            <span>{ChangeCurrence(currentProductItem?.priceBeforeDiscount)}</span>
+                                            {data.items?.length > 1 ? (
                                                 <>
                                                     <p>Size</p>
                                                     <Segmented
@@ -275,7 +291,7 @@ function ProductDetail() {
                         </Row>
                         <Row gutter={16}>
                             <Col span={14}>
-                                { listReview.length > 0 ? (
+                                {listReview.length > 0 ? (
                                     <>
                                         {listReview.map((e: Review) => (
                                             <Card key={e.id} style={{ width: '100%', marginTop: 16 }}>
@@ -333,19 +349,40 @@ function ProductDetail() {
                                         imageStyle={{ height: 60 }}
                                         description={
                                             <span>
-                                                Customize <a href="#API">Description</a>
+                                                Chưa có bình luận nào <a href="#API">Bình luận ngay</a>
                                             </span>
                                         }
-                                    >
-                                    </Empty>
+                                    ></Empty>
                                 )}
                             </Col>
                             <Col span={10}>
-                                <Card style={{ width: '100%', marginTop: 16 }}>
-                                    <Space align="start">
-                                        <Image width={100} src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
-                                        <Meta title="Card title" description="This is the description" />
-                                    </Space>
+                                <Card style={{ width: '100%', marginTop: 16 }} title="Sản phẩm tương tự">
+                                    {data.similarProduct == undefined ? (
+                                        <Skeleton />
+                                    ) : data.similarProduct.length > 0 ? (
+                                        <>
+                                            {data.similarProduct.map((item: Product) => (
+                                                <Card type="inner" key={item.id}>
+                                                    <Space align="start">
+                                                        <Image
+                                                            width={100}
+                                                            src={baseUrl+ item.urlThumbnailImage}
+                                                        />
+                                                        <Meta
+                                                            title={item.seoTitle}
+                                                            description={ChangeCurrence(item.price)}
+                                                        />
+                                                    </Space>
+                                                </Card>
+                                            ))}
+                                        </>
+                                    ) : (
+                                        <Card type="inner">
+                                            <Space align="start">
+                                                <Meta description="Không có sản phẩm tương tự" />
+                                            </Space>
+                                        </Card>
+                                    )}
                                 </Card>
                             </Col>
                         </Row>

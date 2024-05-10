@@ -44,7 +44,7 @@ function ProductList() {
     const showDrawer = (id: number) => {
         const loadProductDetail = async () => {
             const res = await productServices.getProductDetail(id);
-            if (res.isSuccessed == true) {
+            if (res.isSuccessed === true) {
                 setCurrentProductItem(res.resultObj);
             }
         };
@@ -58,7 +58,7 @@ function ProductList() {
     const loadAllProduct = async () => {
         const res = await productServices.getAllProduct();
         console.log(res);
-        if (res.isSuccessed == true) {
+        if (res.isSuccessed === true) {
         // const arrSort: Product[] = res.resultObj.sort((a: Product, b: Product) => {
         //     let aa = new Date(a.dateCreated).getTime();
         //     let bb = new Date(b.dateCreated).getTime();

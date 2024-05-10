@@ -54,37 +54,27 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
     form.setFieldsValue(guaranty)
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [context,setContext] = React.useState<string>('Save');
-    const onFinish: FormProps<Guaranty>['onFinish'] = (values) => {
-
-        // values.dateCreated = dayjs(values.arrDate[0]).format()
-        // values.dateModify = dayjs(values.arrDate[1]).format()
-        values.dateModify = dayjs(values.dateModify).format()
-
+    const onFinish: FormProps<Guaranty>['onFinish'] =async (values) => {
         setIsLoading(true);
         setContext('')
         if(guaranty != undefined){
-            setTimeout(async () => {
-                if (guaranty?.id != undefined) {
-                    //Call api guaranty addGuaranty
-                    const res = await guarantyServieces.updateGuaranty(guaranty?.id.toString(),values);
-                    if (res.statusCode == 200) {
-                        onSetState(res.resultObj);
-                        const status : StatusForm ='success'
-                        onSetStatus(status)
-                    }else{
-                        const status : StatusForm ='error'
-                        onSetStatus(status)
-                    }
+            if (guaranty?.id != undefined) {
+                values.id = guaranty.id
+                const res = await guarantyServieces.updateGuaranty(values);
+                if (res.isSuccessed === true) {
+                    onSetState(res.resultObj);
+                    const status : StatusForm ='success'
+                    onSetStatus(status)
+                }else{
+                    const status : StatusForm ='error'
+                    onSetStatus(status)
                 }
-                setIsLoading(false);
-                setContext('Save')
-            }, 300);
+            }
+            setIsLoading(false);
+            setContext('Save')
         }else{
-            setTimeout(async () => {
-                console.log(values)
-                //call api updateGuaranty
-                const res = await guarantyServieces.createGuaranty(values);
-                    if (res.statusCode == 201) {
+            const res = await guarantyServieces.createGuaranty(values);
+                    if (res.isSuccessed === true) {
                         onSetState(res.resultObj);
                         const status : StatusForm ='success'
                         onSetStatus(status)
@@ -93,7 +83,6 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
                         onSetStatus(status)
                     }
                 setIsLoading(false);
-            }, 300);
         }
     };
 
@@ -118,7 +107,7 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.name}
-                    rules={[{ required: true, message: 'Please input guaranty name!', whitespace: true }]}
+                    rules={[{ required: true, message: 'Please input guaranty name!' }]}
                 >
                     <Input />
                 </Form.Item>
@@ -148,9 +137,9 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.seoDescription}
-                    rules={[{ required: true, message: 'Please input guaranty description!', whitespace: true }]}
+                    rules={[{ required: true, message: 'Please input guaranty description!'}]}
                 >
-                    <Input />
+                     <InputNumber max={36} min={0} type='number' />
                 </Form.Item>
                 <Form.Item<Guaranty>
                     name="status"
@@ -172,14 +161,6 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
                  >
                     <DatePicker/>
                 </Form.Item>
-                {/* <Form.Item
-                    name={'arrDate'}
-                    label="Date"
-                    //initialValue={promotion?.arrDate}
-                    rules={[{ required: true, message: 'Please input category name!' }]}
-                >
-                    <RangePicker />
-                </Form.Item> */}
                 <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit" loading={isLoading} style={{ width: '100px' }}>
                         {context}

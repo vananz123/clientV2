@@ -23,7 +23,6 @@ export const getAllGuaranty = async(period:number =0)=>{
 export const getGuarantyById = async(id:number)=>{
     try{
         const res = await request.get(`/guranties/${encodeURIComponent(id)}`)
-        console.log(res)
         const resultObj : Guaranty  = res.resultObj
         const resp: Result ={
             error :'',
@@ -46,8 +45,7 @@ export const createGuaranty = async(data:Guaranty)=>{
             name:data.name,
             period: data.period,
             sku: data.sku,
-            description:data.description,
-            dateModify: data.dateModify
+            description:data.description
         }
         const res = await request.post(`/guaranties`,guaranties)
         const resultObj  = res.resultObj
@@ -65,7 +63,7 @@ export const createGuaranty = async(data:Guaranty)=>{
         return resError
     }
 }
-export const updateGuaranty = async(id:string, data:Guaranty)=>{
+export const updateGuaranty = async(data:Guaranty)=>{
     try{
         const pro = {
             id: data.id,
@@ -73,8 +71,7 @@ export const updateGuaranty = async(id:string, data:Guaranty)=>{
             description:data.description,
             sku: data.sku,
             period : data.period,
-            dateModify: data.dateModify
-            
+            status:data.status
         }
         console.log(pro)
         const res = await request.put(`/guaranties`,pro)
@@ -102,6 +99,34 @@ export const deleteGuaranty = async(id:number)=>{
             isSuccessed:res.isSuccessed,
             message:res.message,
             statusCode:204,
+            resultObj : resultObj
+        }
+        return resp
+    }catch(error:any){
+        console.log(error.response.data)
+        const resError: Result =error.response.data
+        return resError
+    }
+}
+export const assignProduct = async(id:number, data:any[])=>{
+    try{
+        const pro:any[]= []
+        data.forEach((element:any) => {
+            const item ={
+                id:element.id,
+                value:'',
+                name:'',
+                selected:true,
+            }
+            pro.push(item)
+        });
+        const res= await request.post(`/guaranties/${encodeURIComponent(id)}`,pro)
+        const resultObj   = res.resultObj
+        const resp: Result ={
+            error :'',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
+            statusCode:201,
             resultObj : resultObj
         }
         return resp

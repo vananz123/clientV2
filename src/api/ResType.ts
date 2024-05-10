@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-export type Role = 'admin' | 'customer' |'sale' | undefined;
+export type Role = 'admin' | 'customer' | 'sale' | undefined;
 export type ResponseUser = {
     id: string;
     roles: Role[];
@@ -29,13 +29,13 @@ export type Cart = {
     id: number;
     seoTitle: string;
     urlThumbnailImage: string;
-    productId:number;
+    productId: number;
     productItemId: number;
     quantity: number;
     price: number;
-    isCombo?:boolean;
     priceBeforeDiscount: number;
-    discountRate?: number;
+    valuePromotion: number;
+    type: string;
     stock: number;
     sku: string;
     total: number;
@@ -72,36 +72,36 @@ export type PaymentMethod = {
     isDefault: boolean;
     name: string;
 };
-export type PurchaseResult ={
-    orderId?:number,
-    paymentTypeName?:string,
-    returnUrl?:string
-}
-export type OrderStatus ={
-    id:number;
-    orderId:number;
-    name:string;
-    description:string;
-    createAt:string;
-    status: number
-}
-export type Review ={
-    id: number,
-    userId: string,
-    orderDetailId: number,
-    createAt: string,
-    rate?: number,
-    comment: string,
-    feelback?: string,
-    feelbackAt?: string
-    user:ResponseUser
-}
-export type OrderDetail={
+export type PurchaseResult = {
+    orderId?: number;
+    paymentTypeName?: string;
+    returnUrl?: string;
+};
+export type OrderStatus = {
+    id: number;
+    orderId: number;
+    name: string;
+    description: string;
+    createAt: string;
+    status: number;
+};
+export type Review = {
+    id: number;
+    userId: string;
+    orderDetailId: number;
+    createAt: string;
+    rate?: number;
+    comment: string;
+    feelback?: string;
+    feelbackAt?: string;
+    user: ResponseUser;
+};
+export type OrderDetail = {
     id: number;
     seoTitle: string;
-    orderId:string,
+    orderId: string;
     urlThumbnailImage: string;
-    productId:number;
+    productId: number;
     productItemId: number;
     quantity: number;
     price: number;
@@ -112,54 +112,49 @@ export type OrderDetail={
     totalDiscount: number;
     name?: string;
     value?: string;
-    review?:Review;
-}
+    review?: Review;
+};
 export type OrderPayment = {
-    id:number,
-    orderId:number,
-    paymentDate:string,
-    paymentType:string,
-    privoder:string,
-    accountNumber:string
-}
-export type Order={
-    id:number;
-    userId:string;
-    user:ResponseUser
-    orderDate:string;
-    orderTotal:number,
-    totalProduct:number,
-    orderDiscount:number;
-    status?:OrderStatus[],
-    address?:Address,
-    paymentMethod?:OrderPayment,
-    orderDetail?:OrderDetail[],
-    
-}
-export type Promotion = {
-    id: number,
-      name: string,
-      seoDescription: string,
-      seoTitle: string,
-      seoAlias: string,
-      discountRate?: number,
-      discountAmount?: number,
-      condition?:number,
-      type:string,
-      urlImage: string,
-      startDate: string,
-      endDate: string,
-      status: number,
-      arrDate:any[],
+    id: number;
+    orderId: number;
+    paymentDate: string;
+    paymentType: string;
+    privoder: string;
+    accountNumber: string;
+};
+export type Order = {
+    id: number;
+    userId: string;
+    user: ResponseUser;
+    orderDate: string;
+    orderTotal: number;
+    totalProduct: number;
+    orderDiscount: number;
+    status?: OrderStatus[];
+    address?: Address;
+    paymentMethod?: OrderPayment;
+    orderDetail?: OrderDetail[];
+};
+export interface Promotion {
+    id: number;
+    name: string;
+    description: string;
+    condition?: number;
+    type: string;
+    value: number;
+    startDate: string;
+    endDate: string;
+    status: number;
+    arrDate: any[];
 }
 
-export interface addressGHTK{
-    id:number,
-    name:string,
-    pid:boolean,
-    type:number,
-    region:number,
-    alias:string,
-    is_picked:number,
-    is_delivered:number,
+export interface addressGHTK {
+    id: number;
+    name: string;
+    pid: boolean;
+    type: number;
+    region: number;
+    alias: string;
+    is_picked: number;
+    is_delivered: number;
 }
