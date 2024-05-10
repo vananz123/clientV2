@@ -3,8 +3,9 @@
 import { Sort } from '@/pages/ProductListShow'
 import * as request from '../utils/request'
 import { Order, PagingResult, Result } from './ResType'
-import { Product } from '@/type'
+import { Guaranty, Product } from '@/type'
 import { Filter } from '@/pages/ProductListShow/FilterType'
+import { Value } from 'sass'
 export const getAllProduct = async()=>{
     try{
         const res = await request.get(`/product`)
@@ -268,6 +269,29 @@ export const addProductSize = async(id:number, data:any[])=>{
                 'Authorization': `Bearer ${token}`
             }
         }
+        const guaranties:any[]= []
+        data.forEach((element:any) =>{
+                const item ={
+                    id:element.id,
+                    name:element.name,
+                    value: element.value,
+                    selected:element.selected
+                }
+                guaranties.push(item)
+        });
+
+        const resgua= await request.post(`/guaranties/${encodeURIComponent(id)}`,guaranties)
+        const resultOJ:Guaranty   = resgua.resultObj
+        const resguaranty: Result ={
+            error :'',
+            isSuccessed:resgua.isSuccessed,
+            message:resgua.message,
+            statusCode:200,
+            resultObj : resultOJ
+        }
+        return resguaranty
+
+
         const pro:any[]= []
         data.forEach((element:any) => {
             const item ={
@@ -279,6 +303,7 @@ export const addProductSize = async(id:number, data:any[])=>{
             }
             pro.push(item)
         });
+
         const res= await request.post(`/product/${encodeURIComponent(id)}/product-item-size`,pro)
         const resultObj:Product   = res.resultObj
         const resp: Result ={

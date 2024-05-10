@@ -52,6 +52,7 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
 }) => {
     const [form] = Form.useForm();
     form.setFieldsValue(guaranty)
+    console.log(guaranty)
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [context,setContext] = React.useState<string>('Save');
     const onFinish: FormProps<Guaranty>['onFinish'] =async (values) => {
@@ -117,7 +118,7 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.seoTitle}
-                    rules={[{ required: true, message: 'Please input category name!', whitespace: true }]}
+                    rules={[{ required: true, message: 'Please input guaranty name!', whitespace: true }]}
                 >
                     <Input />
                 </Form.Item>
@@ -127,9 +128,9 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.seoTitle}
-                    rules={[{ required: true, message: 'Please input category name!', whitespace: true }]}
+                    rules={[{ required: true, message: 'Please input guaranty name!' }]}
                 >
-                    <Input />
+                    <InputNumber max={36} min={0} type='number' />
                 </Form.Item>
                 <Form.Item<Guaranty>
                     name="description"
@@ -154,13 +155,15 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
                         options={optionstStatus}
                     />
                 </Form.Item>
-                <Form.Item<Guaranty>
-                    name='dateModify'
-                    label="DateModify"
+                
+                {/* <Form.Item
+                    name={'arrDate'}
+                    label="Date"
+                    //initialValue={promotion?.arrDate}
                     rules={[{ required: true, message: 'Please input category name!' }]}
-                 >
-                    <DatePicker/>
-                </Form.Item>
+                >
+                    <RangePicker />
+                </Form.Item> */}
                 <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit" loading={isLoading} style={{ width: '100px' }}>
                         {context}

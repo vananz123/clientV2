@@ -63,8 +63,8 @@ export const CreatePromotion = async (data:any) => {
         const pro = {
             Name : data.name,
             description:data.description,
-            type :data.type,
-            value: data.value,
+            type: data.type,
+            value:data.value,
             startDate:data.startDate,
             endDate:data.endDate
         }
@@ -122,7 +122,6 @@ export const UpdatePromotion = async (data:any) => {
             description:data.description,
             type :data.type,
             value: data.value,
-            discountRate:data.discountRate,
             startDate:data.startDate,
             endDate:data.endDate
         }

@@ -234,24 +234,25 @@ const ProductForm: React.FC<{
         }
     };
     const onFinishProductItem = async (values: any) => {
-        if (product != undefined) {
-            if (isSize === true) {
-                const res = await productServices.addProductSize(product.id, values.items);
-                if (res.isSuccessed === true) {
-                    onSetState(res.resultObj);
-                    setOpenProductItem(false);
-                    openNotificationWithIcon('success', 'Add Product item success');
-                }
-            } else {
-                const res = await productServices.addProductNoSize(product.id, values.price, values.stock);
-                console.log(product.id);
-                if (res.isSuccessed === true) {
-                    onSetState(res.resultObj);
-                    setOpenProductItem(false);
-                    openNotificationWithIcon('success', 'Add Product item size success');
-                }
-            }
-        }
+        console.log(values)
+        // if (product != undefined) {
+        //     if (isSize === true) {
+        //         const res = await productServices.addProductSize(product.id, values.items);
+        //         if (res.isSuccessed === true) {
+        //             onSetState(res.resultObj);
+        //             setOpenProductItem(false);
+        //             openNotificationWithIcon('success', 'Add Product item success');
+        //         }
+        //     } else {
+        //         const res = await productServices.addProductNoSize(product.id, values.price, values.stock);
+        //         console.log(product.id);
+        //         if (res.isSuccessed === true) {
+        //             onSetState(res.resultObj);
+        //             setOpenProductItem(false);
+        //             openNotificationWithIcon('success', 'Add Product item size success');
+        //         }
+        //     }
+        // }
     };
     const onFinishFailed: FormProps<Product>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);

@@ -23,12 +23,29 @@ function GuarantiesEdit() {
         if (id != undefined && status == 'loading') {
             const getGuaranty = async () => {
                 const res = await guarantyServices.getGuarantyById(Number(id));
-                if (res.isSuccessed === true) {
+                if (res.isSuccessed == true) {
                     setGuaranty(res.resultObj);
                 }
             };
             getGuaranty()
         }
+        // if (status == 'success') {
+        //     if (guaranty == undefined) {
+        //         const getGuaranty = async () => {
+        //             // lấy guaranty theo id
+        //             const res = await guarantyServices.getGuarantyById(Number(id));
+        //             console.log(res)
+        //             if (res.isSuccessed === true) {
+        //                 const arr: Dayjs[] = []
+        //                 // arr.push(dayjs(res.resultObj?.startDate))
+        //                 // arr.push(dayjs(res.resultObj?.endDate))
+        //                 setGuaranty(res.resultObj);
+        //             }
+        //         };
+        //         getGuaranty()
+        //         openNotificationWithIcon('success');
+        //     }
+        // }
         if (status == 'success') {
             if (typeof guaranty !== 'undefined') openNotificationWithIcon('success');
         }
