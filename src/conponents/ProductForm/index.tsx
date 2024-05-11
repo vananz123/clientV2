@@ -7,31 +7,25 @@ import {
     type FormProps,
     Form,
     Input,
-    InputNumber,
     Upload,
     Select,
     Space,
     Drawer,
-    Switch,
     Col,
     Row,
     Skeleton,
 } from 'antd';
 import { notification } from 'antd';
-import dayjs from 'dayjs';
 type NotificationType = 'success' | 'error';
 import { MinusCircleOutlined, PlusOutlined, DownOutlined } from '@ant-design/icons';
-import { Product, ProductItem, Category, Guaranty } from '@/type';
+import { Product, ProductItem, Category } from '@/type';
 import * as productServices from '@/api/productServices';
 import type { SelectProps } from 'antd';
 import type { StatusForm } from '@/pages/Admin/Category/Type';
-import { useAppSelector } from '@/app/hooks';
-import { selectCate } from '@/feature/category/cateSlice';
+import * as categoryServices from "@/api/categoryServices"
 import type { GetProp, UploadFile, UploadProps } from 'antd';
 import ProductItemConfig from '../ProductItemConfig';
-
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
-const MAX_COUNT = 2;
 const getBase64 = (file: FileType): Promise<string> =>
     new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -104,7 +98,6 @@ const ProductForm: React.FC<{
     form.setFieldsValue(product);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [options, setOptions] = React.useState<SelectProps['options']>([]);
-    const categories = useAppSelector(selectCate);
     const [openVariaton, setOpenVariaton] = React.useState(false);
     const [openUploadImages, setOpenUploadImages] = React.useState(false);
     const [api, contextHolder] = notification.useNotification();
@@ -120,18 +113,19 @@ const ProductForm: React.FC<{
     const showDrawUploadImages = () => {
         setOpenUploadImages(true);
     };
-    useEffect(() => {
+    const getAllCate  =async ()=>{
+        const res  =await categoryServices.getAllCate("all")
         const options: SelectProps['options'] = [];
-        categories.forEach((element: Category) => {
-            if (element.subCategory != undefined) {
-                element.subCategory.forEach((e: Category) => {
-                    options.push({
-                        value: e.id,
-                        label: e.name,
-                    });
-                });
-            }
+        res.resultObj.forEach((e: Category) => {
+            options.push({
+                value: e.id,
+                label: e.name,
+            });
         });
+        setOptions(options)
+    }
+    useEffect(() => {
+        getAllCate()
     }, []);
     const handleChange = (value: string[]) => {};
     const onFinish: FormProps<Product>['onFinish'] = async (values) => {
@@ -270,7 +264,7 @@ const ProductForm: React.FC<{
                         />
                     </Form.Item>
                 ) : (
-                    ''
+                    <Skeleton/>
                 )}
                 <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit" loading={isLoading}>
@@ -280,7 +274,7 @@ const ProductForm: React.FC<{
             </Form>
                 </Col>
                 <Col xs={24} xl={12}>
-                    <ProductItemConfig productItem={product?.items}/>
+                    <ProductItemConfig product={product}  productItem={product?.items} onSetState={onSetState}/>
                 </Col>
             </Row>
             

@@ -1,12 +1,14 @@
 import { Order } from '@/api/ResType';
-import { Table, Space ,Badge } from 'antd';
+import { Table, Space, Badge, Tabs, Spin } from 'antd';
 import type { TableProps } from 'antd';
 import React, { useEffect } from 'react';
 import * as orderServices from '@/api/orderServices';
 import { Link } from 'react-router-dom';
+import dayjs from 'dayjs';
 function OrderList() {
-   // const baseUrl =import.meta.env.VITE_BASE_URL
+    // const baseUrl =import.meta.env.VITE_BASE_URL
     const [data, setData] = React.useState<Order[]>();
+    const [confirmLoading, setConfirmLoading] = React.useState<boolean>(false);
     const columns: TableProps<Order>['columns'] = [
         {
             title: 'Id',
@@ -17,9 +19,7 @@ function OrderList() {
             title: 'Email',
             dataIndex: 'user',
             key: 'user',
-            render:(_,record)=>(
-                <p>{record.user.email}</p>
-            )
+            render: (_, record) => <p>{record.user.email}</p>,
         },
         {
             title: 'Order total',
@@ -30,48 +30,85 @@ function OrderList() {
             title: 'orderDate',
             dataIndex: 'orderDate',
             key: 'orderDate',
-            render:(_,record)=>(
-                <p>{new Date(record.orderDate).toUTCString()}</p>
-            )
+            render: (_, record) => <p>{dayjs(record.orderDate).format('MM/DD/YYYY, HH:mm')}</p>,
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            render:(_,record)=>(
-                <Badge status='processing' text={record.status?.pop()?.name}/>
-            )
+            render: (_, record) => <Badge status="processing" text={record.status?.pop()?.name} />,
         },
         {
             title: 'Action',
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <a >Delete</a>
-                    <Link  key={`a-${record.id}`} to={`/admin/order/detail/${record.id}`}>
+                    <a>Delete</a>
+                    <Link key={`a-${record.id}`} to={`/admin/order/detail/${record.id}`}>
                         View Detail
                     </Link>
                 </Space>
             ),
         },
     ];
-    const loadOrder = async () => {
-        const res = await orderServices.getOrderAdmin();
+    const onChange = (key: string | undefined) => {
+        setConfirmLoading(true);
+        if (key == 'All') {
+            loadOrder(undefined);
+            setConfirmLoading(false);
+        } else {
+            loadOrder(key);
+            setConfirmLoading(false);
+        }
+    };
+    const items = [
+        {
+            key: 'Đang xử lý',
+            label: 'Đang xử lý',
+            children: <></>,
+        },
+        {
+            key: 'Đã thanh toán',
+            label: 'Đã thanh toán',
+            children:  <></>,
+        }, {
+            key: 'Đã tiếp nhận',
+            label: 'Đã tiếp nhận',
+            children:  <></>,
+        }, {
+            key: 'Đã hủy',
+            label: 'Đã hủy',
+            children:  <></>,
+        },
+        {
+            key: 'All',
+            label: 'All',
+            children:  <></>,
+        },
+    ];
+    const loadOrder = async (statusName: string | undefined) => {
+        const res = await orderServices.getOrderAdmin(statusName);
         if (res.isSuccessed == true) {
-            // const arrSort: Order[] = res.resultObj.items.sort((a: Order, b: Order) => {
-            //     let aa = new Date(a.orderDate).getTime();
-            //     let bb = new Date(b.orderDate).getTime();
-            //     return bb - aa;
-            // });
             setData(res.resultObj.items);
         }
     };
     useEffect(() => {
-        loadOrder();
+        loadOrder('Đang xử lý');
     }, []);
-    return <div>
-        <Table pagination={{ position: ['bottomLeft'], pageSize: 4 }} columns={columns} dataSource={data} />
-    </div>;
+    return (
+        <div>
+            <Spin spinning={confirmLoading}>
+                <Tabs
+                    defaultActiveKey="1"
+                    items={items}
+                    onChange={onChange}
+                    indicator={{
+                        size: (origin) => origin - 20,
+                    }}
+                />
+                <Table pagination={{ position: ['bottomLeft'], pageSize: 10 }} columns={columns} dataSource={data} />
+            </Spin>
+        </div>
+    );
 }
-
 export default OrderList;
