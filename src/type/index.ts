@@ -12,7 +12,8 @@ export type ProductItem = {
     productId: number;
     price: number;
     priceBeforeDiscount: number;
-    discountRate: number;
+    valuePromotion?:number;
+    type?:string;
     stock: number;
     sku: string;
     isCombo:boolean;
@@ -36,7 +37,8 @@ export interface Product {
     name: string;
     categoryId: number;
     seoDescription: string;
-    discountRate: number;
+    valuePromotion?: number;
+    type?:string;
     price: number;
     priceBeforeDiscount: number;
     seoTitle: string;
@@ -50,6 +52,7 @@ export interface Product {
     items?: ProductItem[];
     variation?: Variation[];
     similarProduct?:Product[];
+    guaranties?:Guaranty[];
 }
 export interface Guaranty {
     id: number;

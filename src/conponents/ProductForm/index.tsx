@@ -15,12 +15,12 @@ import {
     Switch,
     Col,
     Row,
+    Skeleton,
 } from 'antd';
 import { notification } from 'antd';
 import dayjs from 'dayjs';
 type NotificationType = 'success' | 'error';
 import { MinusCircleOutlined, PlusOutlined, DownOutlined } from '@ant-design/icons';
-import * as guarantyServieces from '@/api/guarantyServices';
 import { Product, ProductItem, Category, Guaranty } from '@/type';
 import * as productServices from '@/api/productServices';
 import type { SelectProps } from 'antd';
@@ -28,6 +28,7 @@ import type { StatusForm } from '@/pages/Admin/Category/Type';
 import { useAppSelector } from '@/app/hooks';
 import { selectCate } from '@/feature/category/cateSlice';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
+import ProductItemConfig from '../ProductItemConfig';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 const MAX_COUNT = 2;
@@ -48,7 +49,6 @@ const formItemLayout = {
         sm: { span: 16 },
     },
 };
-
 const tailFormItemLayout = {
     wrapperCol: {
         xs: {
@@ -67,7 +67,6 @@ const normFile = (e: any) => {
     }
     return e?.fileList;
 };
-
 const optionsProductStatus: SelectProps['options'] = [
     {
         value: 0,
@@ -95,16 +94,6 @@ const optionsProductStatus: SelectProps['options'] = [
         label: 'UnActive',
     },
 ];
-const optionsSku: SelectProps['options'] = [
-    {
-        value: 'cm',
-        label: 'CM',
-    },
-    {
-        value: 'size',
-        label: 'Size',
-    },
-];
 const ProductForm: React.FC<{
     product: Product | undefined;
     onSetState: SetStateAction<any>;
@@ -113,21 +102,9 @@ const ProductForm: React.FC<{
     const [form] = Form.useForm();
     const baseUrl = import.meta.env.VITE_BASE_URL;
     form.setFieldsValue(product);
-    const [value, setValue] = React.useState<string[]>([]);
-    const suffix = (
-        <>
-            <span>
-                {value.length} / {MAX_COUNT}
-            </span>
-            <DownOutlined />
-        </>
-    );
-    const [optionsGuaranty, setOptionsGuaranty] = React.useState<SelectProps['options']>();
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [options, setOptions] = React.useState<SelectProps['options']>([]);
-    const [isSize, setIsSize] = React.useState<boolean>(false);
     const categories = useAppSelector(selectCate);
-    const [openProductItem, setOpenProductItem] = React.useState(false);
     const [openVariaton, setOpenVariaton] = React.useState(false);
     const [openUploadImages, setOpenUploadImages] = React.useState(false);
     const [api, contextHolder] = notification.useNotification();
@@ -137,25 +114,11 @@ const ProductForm: React.FC<{
             description: mess,
         });
     };
-    const showDrawerProductItem = () => {
-        setOpenProductItem(true);
-    };
     const showDrawerVariation = () => {
         setOpenVariaton(true);
     };
     const showDrawUploadImages = () => {
         setOpenUploadImages(true);
-    };
-
-    const GeneratorSelectOption = (data: Guaranty[]): SelectProps['options'] => {
-        const options: SelectProps['options'] = [];
-        data.forEach((element: Guaranty) => {
-            options.push({
-                value: element.id,
-                label: element.name,
-            });
-        });
-        return options;
     };
     useEffect(() => {
         const options: SelectProps['options'] = [];
@@ -169,21 +132,7 @@ const ProductForm: React.FC<{
                 });
             }
         });
-        setOptions(options);
-        if (product != undefined) {
-            if (product.items.length > 1) {
-                setIsSize(true);
-            }
-        }
-        const getAllGuaranty = async () => {
-            const res = await guarantyServieces.getAllGuaranty();
-            if (res.isSuccessed === true) {
-                setOptionsGuaranty(GeneratorSelectOption(res.resultObj));
-            }
-        };
-        getAllGuaranty();
     }, []);
-    console.log(product);
     const handleChange = (value: string[]) => {};
     const onFinish: FormProps<Product>['onFinish'] = async (values) => {
         setIsLoading(true);
@@ -233,27 +182,6 @@ const ProductForm: React.FC<{
             }, 300);
         }
     };
-    const onFinishProductItem = async (values: any) => {
-        console.log(values)
-        // if (product != undefined) {
-        //     if (isSize === true) {
-        //         const res = await productServices.addProductSize(product.id, values.items);
-        //         if (res.isSuccessed === true) {
-        //             onSetState(res.resultObj);
-        //             setOpenProductItem(false);
-        //             openNotificationWithIcon('success', 'Add Product item success');
-        //         }
-        //     } else {
-        //         const res = await productServices.addProductNoSize(product.id, values.price, values.stock);
-        //         console.log(product.id);
-        //         if (res.isSuccessed === true) {
-        //             onSetState(res.resultObj);
-        //             setOpenProductItem(false);
-        //             openNotificationWithIcon('success', 'Add Product item size success');
-        //         }
-        //     }
-        // }
-    };
     const onFinishFailed: FormProps<Product>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
@@ -274,7 +202,9 @@ const ProductForm: React.FC<{
     };
     return (
         <div>
-            <Form
+            <Row gutter={16}>
+                <Col xs={24} xl={12} >
+                <Form
                 {...formItemLayout}
                 form={form}
                 name="productFrom"
@@ -348,6 +278,12 @@ const ProductForm: React.FC<{
                     </Button>
                 </Form.Item>
             </Form>
+                </Col>
+                <Col xs={24} xl={12}>
+                    <ProductItemConfig productItem={product?.items}/>
+                </Col>
+            </Row>
+            
 
             {product != undefined ? (
                 <>
@@ -357,9 +293,6 @@ const ProductForm: React.FC<{
                         </Button>
                         <Button type="primary" onClick={showDrawerVariation} icon={<PlusOutlined />}>
                             Config Variation
-                        </Button>
-                        <Button type="primary" onClick={showDrawerProductItem} icon={<PlusOutlined />}>
-                            Config product
                         </Button>
                     </Space>
                 </>
@@ -432,170 +365,6 @@ const ProductForm: React.FC<{
                         )}
                     </Form.List>
                     <Form.Item {...tailFormItemLayout}>
-                        <Button type="primary" htmlType="submit">
-                            Submit
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Drawer>
-
-            <Drawer
-                title="Create product item"
-                width={650}
-                onClose={() => setOpenProductItem(false)}
-                open={openProductItem}
-            >
-                {typeof product !== 'undefined' ? (
-                    <>
-                        <Switch
-                            checked={isSize}
-                            checkedChildren="size"
-                            unCheckedChildren="No size"
-                            onChange={() => {
-                                setIsSize(!isSize);
-                            }}
-                            disabled={product?.items.length > 0}
-                        />
-                    </>
-                ) : (
-                    ''
-                )}
-
-                <Form
-                    {...formItemLayout}
-                    name="dynamic_form_nest_item"
-                    onFinish={onFinishProductItem}
-                    style={{ maxWidth: 600, marginTop: 10 }}
-                    autoComplete="off"
-                >
-                    {isSize === true ? (
-                        <Form.List name="items" initialValue={product?.items}>
-                            {(fields, { add, remove }) => (
-                                <>
-                                    {fields.map(({ key, name, ...restField }) => (
-                                        <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                                            <Form.Item
-                                                {...restField}
-                                                name={[name, 'price']}
-                                                rules={[{ required: true, message: 'Missing price' }]}
-                                            >
-                                                <InputNumber
-                                                    type="number"
-                                                    placeholder="Price"
-                                                    min={0}
-                                                    style={{ width: 90, marginRight: '5px' }}
-                                                />
-                                            </Form.Item>
-                                            <Form.Item
-                                                {...restField}
-                                                name={[name, 'stock']}
-                                                rules={[{ required: true, message: 'Missing stock' }]}
-                                            >
-                                                <InputNumber
-                                                    type="number"
-                                                    placeholder="Stock"
-                                                    min={0}
-                                                    style={{ width: 50, marginRight: '5px' }}
-                                                />
-                                            </Form.Item>
-                                            <Form.Item
-                                                {...restField}
-                                                name={[name, 'value']}
-                                                rules={[{ required: true, message: 'Missing value' }]}
-                                            >
-                                                <Input placeholder="value" style={{ width: 50, marginRight: '5px' }} />
-                                            </Form.Item>
-                                            <Form.Item
-                                                {...restField}
-                                                name={[name, 'sku']}
-                                                rules={[{ required: true, message: 'Missing SKU' }]}
-                                            >
-                                                <Select
-                                                    size={'middle'}
-                                                    //onChange={handleChange}
-                                                    style={{ width: 70 }}
-                                                    options={optionsSku}
-                                                />
-                                            </Form.Item>
-                                            <Form.Item
-                                                {...restField}
-                                                name={[name, 'guaranties']}
-                                                rules={[{ required: true, message: 'Missing Guaranty' }]}
-                                            >
-                                                <Select
-                                                    mode="multiple"
-                                                    maxCount={MAX_COUNT}
-                                                    value={value}
-                                                    style={{ width: 250 }}
-                                                    onChange={setValue}
-                                                    suffixIcon={suffix}
-                                                    placeholder="Please select"
-                                                    options={optionsGuaranty}
-                                                />
-                                            </Form.Item>
-                                            <MinusCircleOutlined onClick={() => remove(name)} />
-                                        </Space>
-                                    ))}
-                                    <Form.Item>
-                                        <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />}>
-                                            Add field
-                                        </Button>
-                                    </Form.Item>
-                                </>
-                            )}
-                        </Form.List>
-                    ) : (
-                        <>
-                            <Row>
-                                <Col span={8}>
-                                    <Form.Item<ProductItem>
-                                        name="price"
-                                        initialValue={product?.items[0]?.price}
-                                        rules={[{ required: true, message: 'Missing price' }]}
-                                    >
-                                        <InputNumber
-                                            type="number"
-                                            placeholder="Price"
-                                            min={0}
-                                            style={{ width: '100%' }}
-                                        />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={8}>
-                                    <Form.Item<ProductItem>
-                                        name="stock"
-                                        initialValue={product?.items[0]?.stock}
-                                        rules={[{ required: true, message: 'Missing stock' }]}
-                                    >
-                                        <InputNumber
-                                            type="number"
-                                            placeholder="Stock"
-                                            min={0}
-                                            style={{ width: '100%' }}
-                                        />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={8}>
-                                    <Form.Item
-                                        name={'guaranty'}
-                                        rules={[{ required: true, message: 'Missing Guaranty' }]}
-                                    >
-                                        <Select
-                                            mode="multiple"
-                                            maxCount={MAX_COUNT}
-                                            value={value}
-                                            style={{ width: 250 }}
-                                            onChange={setValue}
-                                            suffixIcon={suffix}
-                                            placeholder="Please select"
-                                            options={optionsGuaranty}
-                                        />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                        </>
-                    )}
-                    <Form.Item>
                         <Button type="primary" htmlType="submit">
                             Submit
                         </Button>

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Sort } from '@/pages/ProductListShow'
 import * as request from '../utils/request'
-import { Order, PagingResult, Result } from './ResType'
+import { Order, PagingResult, Promotion, Result } from './ResType'
 import { Guaranty, Product } from '@/type'
 import { Filter } from '@/pages/ProductListShow/FilterType'
 import { Value } from 'sass'
@@ -316,6 +316,62 @@ export const addVariation = async(id:number, data:any[])=>{
             isSuccessed:res.isSuccessed,
             message:res.message,
             statusCode:200,
+            resultObj : resultObj
+        }
+        return resp
+    }catch(error:any){
+        console.log(error.response.data)
+        const resError: Result =error.response.data
+        return resError
+    }
+}
+export const assignGuaranties = async(id:number, data:Guaranty[])=>{
+    try{
+        const pro:any[]= []
+        data.forEach((element:Guaranty) => {
+            const item ={
+                id:element.id,
+                value:'',
+                name:'',
+                selected:true,
+            }
+            pro.push(item)
+        });
+        const res= await request.put(`/product/product-item/guaranties`,{id:id,items:pro})
+        const resultObj :Product  = res.resultObj
+        const resp: Result ={
+            error :'',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
+            statusCode:201,
+            resultObj : resultObj
+        }
+        return resp
+    }catch(error:any){
+        console.log(error.response.data)
+        const resError: Result =error.response.data
+        return resError
+    }
+}
+export const assignPromotion = async(id:number, data:Promotion[])=>{
+    try{
+        const pro:any[]= []
+        data.forEach((element:Promotion) => {
+            const item ={
+                id:element.id,
+                value:'',
+                name:'',
+                selected:true,
+            }
+            pro.push(item)
+        });
+        const res= await request.put(`/product/product-item/promotions`,{id:id,items:pro})
+        const resultObj:Product   = res.resultObj
+        const resp: Result ={
+            error :'',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
+            statusCode:201,
             resultObj : resultObj
         }
         return resp

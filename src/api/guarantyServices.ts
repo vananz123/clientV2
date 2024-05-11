@@ -110,31 +110,3 @@ export const deleteGuaranty = async(id:number)=>{
         return resError
     }
 }
-export const assignProduct = async(id:number, data:any[])=>{
-    try{
-        const pro:any[]= []
-        data.forEach((element:any) => {
-            const item ={
-                id:element.id,
-                value:'',
-                name:'',
-                selected:true,
-            }
-            pro.push(item)
-        });
-        const res= await request.post(`/guaranties/${encodeURIComponent(id)}`,pro)
-        const resultObj   = res.resultObj
-        const resp: Result ={
-            error :'',
-            isSuccessed:res.isSuccessed,
-            message:res.message,
-            statusCode:201,
-            resultObj : resultObj
-        }
-        return resp
-    }catch(error:any){
-        console.log(error.response.data)
-        const resError: Result =error.response.data
-        return resError
-    }
-}
