@@ -26,7 +26,7 @@ import {
     Empty,
 } from 'antd';
 import { MinusOutlined, PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import type { CollapseProps } from 'antd';
+import { CollapseProps, SelectProps, Badge } from 'antd';
 import { Collapse } from 'antd';
 type NotificationType = 'success' | 'error';
 import { useNavigate } from 'react-router-dom';
@@ -38,11 +38,38 @@ interface OptionSize {
     value: number;
     disabled?: boolean;
 }
+const optionsProductStatus: SelectProps['options'] = [
+    {
+        value: 0,
+        label: 'InActive',
+    },
+    {
+        value: 1,
+        label: 'Active',
+    },
+    {
+        value: 2,
+        label: 'New',
+    },
+    {
+        value: 3,
+        label: 'Hot',
+    },
+    {
+        value: 4,
+        label: 'Sale',
+        disabled: true,
+    },
+    {
+        value: 5,
+        label: 'UnActive',
+    },
+];
 function ProductDetail() {
     const Navigate = useNavigate();
     const { id } = useParams();
     const baseUrl = import.meta.env.VITE_BASE_URL;
-    const [data, setData] = React.useState<Product>();
+    const [data, setData] = React.useState<Product | undefined>();
     const user = useAppSelector(selectUser);
     const [listImage, setListImage] = React.useState<string[]>([]);
     const [listReview, setListReview] = React.useState<Review[]>([]);
@@ -91,17 +118,19 @@ function ProductDetail() {
                     {currentProductItem?.guaranties == undefined ? (
                         <Skeleton />
                     ) : (
-                        <Space direction='vertical'>
-                            {currentProductItem.guaranties?.length > 0
-                                ? currentProductItem?.guaranties?.map((e: Guaranty) => (
-                                      <>
-                                      <div key={e.id}>
-                                          <p>Loại bảo hành: {e.name}</p>
-                                          <p>Mô tả{e.description}</p>
-                                      </div>
-                                      </>
-                                  ))
-                                : <p>Sản phẩm này không được bảo hành</p>}
+                        <Space direction="vertical">
+                            {currentProductItem.guaranties?.length > 0 ? (
+                                currentProductItem?.guaranties?.map((e: Guaranty) => (
+                                    <>
+                                        <div key={e.id}>
+                                            <p>Loại bảo hành: {e.name}</p>
+                                            <p>Mô tả{e.description}</p>
+                                        </div>
+                                    </>
+                                ))
+                            ) : (
+                                <p>Sản phẩm này không được bảo hành</p>
+                            )}
                         </Space>
                     )}
                 </>
@@ -218,10 +247,22 @@ function ProductDetail() {
                 <>
                     <div>
                         <Row gutter={[8, 8]}>
-                            <Col xs={16} sm={16} md={16} lg={10} xl={10} className="gutter-row">
+                            <Col style={{position:'relative'}} xs={16} sm={16} md={16} lg={10} xl={10} className="gutter-row">
                                 <div style={{ padding: 20 }}>
                                     <Image width={'100%'} src={`${baseUrl + data.urlThumbnailImage}`} />
                                 </div>
+                                <span style={{ position: 'absolute', top: '5px', right: '5px' }}>
+                                    {data?.status == 2 ? (
+                                        <Badge.Ribbon text="New" style={{ display: '' }} color="red"></Badge.Ribbon>
+                                    ) : (
+                                        <Badge.Ribbon text="New" style={{ display: 'none' }}></Badge.Ribbon>
+                                    )}
+                                    {data?.status == 3 ? (
+                                        <Badge.Ribbon text="Hot" style={{ display: '' }} color="yellow"></Badge.Ribbon>
+                                    ) : (
+                                        <Badge.Ribbon text="New" style={{ display: 'none' }}></Badge.Ribbon>
+                                    )}
+                                </span>
                             </Col>
                             <Col xs={8} sm={8} md={8} lg={4} xl={4}>
                                 <Space align="center" direction="vertical" style={{ padding: 20 }}>
@@ -236,22 +277,55 @@ function ProductDetail() {
                                         <div style={{ marginBottom: 15 }}>
                                             <h1>{data.seoTitle}</h1>
                                             <p>{data.seoDescription}</p>
-                                            <span style={{color:'red',fontSize:18,fontWeight:500}}>{ChangeCurrence(currentProductItem?.price)}</span>
-                                            <span>{ChangeCurrence(currentProductItem?.priceBeforeDiscount)}</span>
-                                            {data.items?.length > 1 ? (
+                                            {typeof data.type === null ? (
                                                 <>
-                                                    <p>Size</p>
-                                                    <Segmented
-                                                        options={optionSize}
-                                                        value={currentProductItem?.id}
-                                                        onChange={onChangeSize}
-                                                        disabled={currentProductItem?.status == 2}
-                                                    />
+                                                    <span
+                                                        style={{
+                                                            color: 'red',
+                                                            fontSize: 18,
+                                                            fontWeight: 500,
+                                                            marginRight: 5,
+                                                        }}
+                                                    >
+                                                        {ChangeCurrence(currentProductItem?.priceBeforeDiscount)}
+                                                    </span>
                                                 </>
                                             ) : (
-                                                ''
+                                                <div>
+                                                    <span
+                                                        style={{
+                                                            color: 'red',
+                                                            fontSize: 18,
+                                                            fontWeight: 500,
+                                                            marginRight: 5,
+                                                        }}
+                                                    >
+                                                        {ChangeCurrence(currentProductItem?.price)}
+                                                    </span>
+                                                    <span style={{ textDecorationLine: 'line-through' }}>
+                                                        {ChangeCurrence(currentProductItem?.priceBeforeDiscount)}
+                                                    </span>
+                                                </div>
                                             )}
-                                            <p>In Stock: {currentProductItem?.stock}</p>
+                                            {typeof data.items !== 'undefined' ? (
+                                                <>
+                                                    {data.items.length > 1 ? (
+                                                        <>
+                                                            <p>Size</p>
+                                                            <Segmented
+                                                                options={optionSize}
+                                                                value={currentProductItem?.id}
+                                                                onChange={onChangeSize}
+                                                                disabled={currentProductItem?.status == 2}
+                                                            />
+                                                        </>
+                                                    ) : (
+                                                        <p>In Stock: {currentProductItem?.stock}</p>
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <Skeleton />
+                                            )}
                                         </div>
                                         <Flex justify="space-between">
                                             <Space.Compact>
@@ -261,7 +335,12 @@ function ProductDetail() {
                                                     }}
                                                     icon={<MinusOutlined />}
                                                 />
-                                                <InputNumber min={1} max={currentProductItem?.stock} value={quantity} />
+                                                <InputNumber
+                                                    style={{ width: '50px' }}
+                                                    min={1}
+                                                    max={currentProductItem?.stock}
+                                                    value={quantity}
+                                                />
 
                                                 <Button
                                                     onClick={() => {
@@ -364,10 +443,7 @@ function ProductDetail() {
                                             {data.similarProduct.map((item: Product) => (
                                                 <Card type="inner" key={item.id}>
                                                     <Space align="start">
-                                                        <Image
-                                                            width={100}
-                                                            src={baseUrl+ item.urlThumbnailImage}
-                                                        />
+                                                        <Image width={100} src={baseUrl + item.urlThumbnailImage} />
                                                         <Meta
                                                             title={item.seoTitle}
                                                             description={ChangeCurrence(item.price)}

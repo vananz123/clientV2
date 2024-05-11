@@ -190,7 +190,7 @@ function ProductListShow() {
                     </Space>
                     <Select
                         value={sortOder}
-                        style={{ width: 100 }}
+                        style={{ width: 120 }}
                         loading={loadingPage}
                         onChange={handleChangeSort}
                         options={optionsSort}

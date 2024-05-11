@@ -3,7 +3,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import * as productServices from '@/api/productServices';
 import * as categoryServices from '@/api/categoryServices';
 import React, { useEffect, useRef } from 'react';
-import { Category, Product } from '../Admin/Product/ProductList';
+import { Category, Product } from '@/type';
 import { Button, Card, Col, Flex, Result, Row, Select, SelectProps, Skeleton, Spin ,Breadcrumb } from 'antd';
 import {  ArrowLeftOutlined, LoadingOutlined } from '@ant-design/icons';
 import ProductCard from '@/conponents/ProductCard';
