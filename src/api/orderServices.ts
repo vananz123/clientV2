@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as request from '../utils/request'
-import { Result,PaymentType, PurchaseResult, Order, PagingResult } from './ResType'
+import { Result, PurchaseResult, Order, PagingResult } from './ResType'
 
 export const create = async(userId:string,addressId:number,paymentMethodId:number)=>{
     try{
@@ -79,9 +80,15 @@ export const canceled = async(id:number)=>{
         return resError
     }
 }
-export const getOrderAdmin = async()=>{
-    try{
-        const res = await request.get(`/order/admin?PageIndex=1&PageSize=100`)
+export const getOrderAdmin = async(statusName:string | undefined)=>{
+    try{ 
+        let res;
+        if(statusName == undefined){
+            res = await request.get(`/order/admin?PageIndex=1&PageSize=100`)
+        }else{
+            res = await request.get(`order/admin?StatusName=${encodeURIComponent(statusName)}&PageIndex=1&PageSize=100`)
+        }
+        
         const resultObj :Order[] = res.resultObj.items
         const paging: PagingResult = {
             items: resultObj,

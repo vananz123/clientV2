@@ -6,15 +6,10 @@ import {  Drawer,} from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
 import * as productServices from '@/api/productServices';
 import React, { useEffect } from 'react';
-import { DeleteOutlined, PlusOutlined, RetweetOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import type { BaseUrl } from '@/utils/request';
-import { TableRowSelection } from 'antd/es/table/interface';
-import type { ModePromotionType } from './ModePromotion';
-import ModePromotion from './ModePromotion';
 import { Product,ProductItem } from '@/type';
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
-
 
 const getBase64 = (file: FileType): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -39,8 +34,6 @@ function ProductList() {
     const [previewImage, setPreviewImage] = React.useState('');
     const [fileList, setFileList] = React.useState<UploadFile[]>([]);
     const [openDrawer, setOpenDrawer] = React.useState(false);
-    const [modePromotion, setModePromotion] = React.useState<ModePromotionType>('EDIT');
-    const [listSelectRow, setListSelectRow] = React.useState<Product[]>([]);
     const showDrawer = (id: number) => {
         const loadProductDetail = async () => {
             const res = await productServices.getProductDetail(id);
@@ -59,11 +52,6 @@ function ProductList() {
         const res = await productServices.getAllProduct();
         console.log(res);
         if (res.isSuccessed === true) {
-        // const arrSort: Product[] = res.resultObj.sort((a: Product, b: Product) => {
-        //     let aa = new Date(a.dateCreated).getTime();
-        //     let bb = new Date(b.dateCreated).getTime();
-        //     return bb - aa;
-        // });
             setData(res.resultObj);
         }
     };
@@ -108,6 +96,10 @@ function ProductList() {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+        },{
+            title: 'seoTitle',
+            dataIndex: 'seoTitle',
+            key: 'seoTitle',
         },
         {
             title: 'Price',
@@ -127,11 +119,6 @@ function ProductList() {
                     onClick={() => showModalImage(record.urlThumbnailImage, record.id)}
                 />
             ),
-        },
-        {
-            title: 'discountRate',
-            dataIndex: 'discountRate',
-            key: 'discountRate',
         },
         {
             title: 'Status',
@@ -165,25 +152,9 @@ function ProductList() {
         },{
             key: 'Promotion',
             label: 'Promotion',
-            children: (<span>{currentProductItem?.discountRate}</span>)
+            children: (<span>{currentProductItem?.valuePromotion}</span>)
         },
     ]
-    const rowSelection: TableRowSelection<Product> = {
-        onChange: (selectedRowKeys, selectedRows: Product[]) => {
-            setListSelectRow(selectedRows);
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-        },
-        // onSelect: (record, selected, selectedRows) => {
-        //     console.log(record, selected, selectedRows);
-        //   },
-        //   onSelectAll: (selected, selectedRows, changeRows) => {
-        //     console.log(selected, selectedRows, changeRows);
-        //   },
-        getCheckboxProps: (record: Product) => ({
-            disabled: modePromotion === 'DEL' ? record.discountRate == undefined : false, // Column configuration not to be checked
-            name: record.name,
-        }),
-    };
     const showModalImage = (url: string, id: number) => {
         //setPreviewImage(`http://${url}`)
         //setPreviewOpen(true)
@@ -231,50 +202,9 @@ function ProductList() {
                             Add
                         </Button>
                     </Link>
-                    <Space>
-                        {listSelectRow.length > 0 ? (
-                            <>
-                                {modePromotion === 'EDIT' ? (
-                                    <Button 
-                                    onClick={()=>{
-                                        setModalModePromotion(true)
-                                    }}
-                                    type="primary" 
-                                    icon={<PlusOutlined />} 
-                                    size="large">
-                                        Edit promotion
-                                    </Button>
-                                ) : (
-                                    <Button onClick={()=>{
-                                        setModalModePromotion(true)
-                                    }} type="primary" icon={<DeleteOutlined />} size="large">
-                                        Del
-                                    </Button>
-                                )}
-                            </>
-                        ) : (
-                            ''
-                        )}
-
-                        <Tooltip title="Promotion">
-                            <Button
-                                onClick={() => {
-                                    modePromotion === 'EDIT' ? setModePromotion('DEL') : setModePromotion('EDIT');
-                                }}
-                                type="primary"
-                                icon={<RetweetOutlined />}
-                                size="large"
-                            >
-                                {`Mode: ${modePromotion}`}
-                            </Button>
-                        </Tooltip>
-                    </Space>
-
-                    {/* <SearchC typeSearch={1} onSetState={setData} /> */}
                 </Flex>
                 <Table
                     rowKey={(record) => record.id}
-                    rowSelection={{ type: 'checkbox', ...rowSelection }}
                     pagination={{ position: ['bottomLeft'], pageSize: 4 }}
                     columns={columns}
                     dataSource={data}
@@ -325,7 +255,6 @@ function ProductList() {
             >
                 <p>{modalText}</p>
             </Modal>
-            <ModePromotion open={openModalModePromotion} setStateData={setData} setStateOpen={setModalModePromotion} modePromotion={modePromotion} listSelectRow={listSelectRow}/>
         </div>
     );
 }

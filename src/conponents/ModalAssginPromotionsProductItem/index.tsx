@@ -1,28 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { SetStateAction, useEffect } from 'react';
-import * as guarantyServieces from '@/api/guarantyServices';
+import * as promotionServices from '@/api/promotionServices';
 import * as productServices from '@/api/productServices';
-import { Guaranty, ProductItem } from '@/type';
+import { ProductItem } from '@/type';
 import { Button, Flex, Modal, Space, Table, TableColumnsType } from 'antd';
 import { Link } from 'react-router-dom';
 import { PlusOutlined } from '@ant-design/icons';
 import { TableRowSelection } from 'antd/es/table/interface';
 export type ModePromotionType = 'EDIT' | 'DEL';
 import { notification } from 'antd';
+import { Promotion } from '@/api/ResType';
+import dayjs from 'dayjs';
 type NotificationType = 'success' | 'error';
 interface Props {
     openModalAssignPI: boolean;
     setStateOpenModalAssignPI: SetStateAction<any>;
     productItemProps: ProductItem | undefined;
-    setStateProduct: SetStateAction<any>;
+    setStateProduct:SetStateAction<any>;
 }
-const ModalAssignGuarantiesProductItem: React.FC<Props> = ({
+const ModalAssginPromotionsProductItem: React.FC<Props> = ({
     openModalAssignPI,
     setStateOpenModalAssignPI,
-    productItemProps,
-    setStateProduct,
+    productItemProps,setStateProduct,
 }) => {
-    const [guaranties, setGuaranties] = React.useState<Guaranty[]>([]);
+    const [promotions, setPromotions] = React.useState<Promotion[]>([]);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [listSelectRowKeys, setListSelectRowKeys] = React.useState<number[]>([]);
     //const [listSelectRow, setListSelectRow] = React.useState<Guaranty[]>([]);
@@ -33,19 +34,19 @@ const ModalAssignGuarantiesProductItem: React.FC<Props> = ({
             description: mess,
         });
     };
-    const getAllGuaranty = async () => {
-        const res = await guarantyServieces.getAllGuaranty();
+    const getAllPromotions = async () => {
+        const res = await promotionServices.getAllPromotion();
         if (res.isSuccessed === true) {
-            setGuaranties(res.resultObj);
+            setPromotions(res.resultObj);
         }
     };
     const handleSaveGuaranties = async () => {
         setConfirmLoading(true);
         if (productItemProps != undefined) {
-            const res = await productServices.assignGuaranties(
-                productItemProps?.id,
-                guaranties.filter((s) => listSelectRowKeys.includes(s.id)),
-            );
+            const res = await productServices.assignPromotion( productItemProps?.id,
+                promotions.filter((s) => listSelectRowKeys.includes(s.id))
+            )
+            
             if (res.isSuccessed === true) {
                 openNotificationWithIcon('success', 'thêm bảo hành thành công');
                 setStateProduct(res.resultObj)
@@ -56,17 +57,22 @@ const ModalAssignGuarantiesProductItem: React.FC<Props> = ({
             }
         }
     };
-    useEffect(() => {
-        getAllGuaranty();
+    const GenaratorListSelectRowKeys = async()=>{
         if (typeof productItemProps !== 'undefined') {
+            const res = await promotionServices.getAllPromotionByPI(productItemProps.id)
             const arrKey: number[] = [];
-            productItemProps.guaranties?.forEach((e: Guaranty) => {
+            res.resultObj?.forEach((e: Promotion) => {
                 arrKey.push(e.id);
             });
             setListSelectRowKeys(arrKey);
         }
-    }, [openModalAssignPI, productItemProps]);
-    const columns: TableColumnsType<Guaranty> = [
+    }
+    useEffect(() => {
+        getAllPromotions();
+        GenaratorListSelectRowKeys()
+    }, [openModalAssignPI]);
+
+    const columns: TableColumnsType<Promotion> = [
         {
             title: 'Id',
             dataIndex: 'id',
@@ -76,32 +82,53 @@ const ModalAssignGuarantiesProductItem: React.FC<Props> = ({
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+        },{
+            title: 'value/type',
+            dataIndex: 'value',
+            key: 'Promotion',
+            render:(_,record)=>(
+                <p>{record.type == 'fixed' ? `${record.value}VNG`: `${record.value}%`}</p>
+            )
         },
         {
             title: 'Mô Tả',
             dataIndex: 'description',
             key: 'description',
+        },{
+            title: 'Bắt đầu',
+            dataIndex: 'startDate',
+            key: 'startDate',
+            render:(_,record)=>(
+                <p>{dayjs(record.startDate).format('YYYY/MM/DD')}</p>
+            ),
+        },{
+            title: 'Kết thúc',
+            dataIndex: 'endDate',
+            key: 'endDate',
+            render:(_,record)=>(
+                <p>{dayjs(record.endDate).format('YYYY/MM/DD')}</p>
+            ),
         },
         {
             title: 'Action',
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Link to={`/admin/guaranties-edit/${record.id}`}>Edit</Link>
+                    <Link to={`/admin/promotion-edit/${record.id}`}>Edit</Link>
                 </Space>
             ),
         },
     ];
-    const rowSelection: TableRowSelection<Guaranty> = {
+    const rowSelection: TableRowSelection<Promotion> = {
         selectedRowKeys: listSelectRowKeys,
-        onChange: (selectedRowKeys, selectedRows: Guaranty[]) => {
+        onChange: (selectedRowKeys, selectedRows: Promotion[]) => {
             const arrKey: number[] = [];
-            selectedRows.forEach((e: Guaranty) => {
+            selectedRows.forEach((e: Promotion) => {
                 arrKey.push(e.id);
             });
             setListSelectRowKeys(arrKey);
             //setListSelectRow(selectedRows);
-            //console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
         },
         // onSelect: (record, selected, selectedRows) => {
         //     console.log(record, selected, selectedRows);
@@ -109,23 +136,24 @@ const ModalAssignGuarantiesProductItem: React.FC<Props> = ({
         //   onSelectAll: (selected, selectedRows, changeRows) => {
         //     console.log(selected, selectedRows, changeRows);
         //   },
-        getCheckboxProps: (record: Guaranty) => ({
+        getCheckboxProps: (record: Promotion) => ({
             name: record.name,
-            // disabled: modePromotion === 'DEL' ? record.discountRate == undefined : false, // Column configuration not to be checked
+            //disabled: listSelectRowKeys.length > 1 ? false : true, // Column configuration not to be checked
         }),
     };
     return (
         <div>
             {contextHolder}
             <Modal
-                title="Thêm bảo hành"
+            width={800}
+                title="Thêm khuyến mãi"
                 open={openModalAssignPI}
                 confirmLoading={confirmLoading}
                 onCancel={() => setStateOpenModalAssignPI(false)}
                 footer=""
             >
                 <Flex justify="space-between" style={{ marginBottom: 10 }}>
-                    <Link to={'/admin/guaranties-add'}>
+                    <Link to={'/admin/promotion-add'}>
                         <Button type="primary" icon={<PlusOutlined />} size="large">
                             Add
                         </Button>
@@ -146,7 +174,7 @@ const ModalAssignGuarantiesProductItem: React.FC<Props> = ({
                     loading={confirmLoading}
                     pagination={{ position: ['none'] }}
                     columns={columns}
-                    dataSource={guaranties}
+                    dataSource={promotions}
                     rowKey={(record) => record.id}
                     rowSelection={{ type: 'checkbox', ...rowSelection }}
                 />
@@ -155,4 +183,4 @@ const ModalAssignGuarantiesProductItem: React.FC<Props> = ({
     );
 };
 
-export default ModalAssignGuarantiesProductItem;
+export default ModalAssginPromotionsProductItem;

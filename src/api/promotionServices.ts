@@ -37,6 +37,24 @@ export const getAllPromotionByType = async ( type:string) => {
         return resError;
     }
 }
+export const getAllPromotionByPI = async ( id:number) => {
+    try {
+        const res = await request.get(`/promotion/product-item/${encodeURIComponent(id)}`);
+        const resultObj: Promotion[] = res.resultObj;
+        const resp: Result = {
+            error: '',
+            isSuccessed: res.isSuccessed,
+            message: res.message,
+            statusCode: 200,
+            resultObj: resultObj,
+        };
+        return resp;
+    } catch (error: any) {
+        console.log(error.response.data);
+        const resError: Result = error.response.data;
+        return resError;
+    }
+}
 export const getById= async (id:number) => {
     try {
         const res = await request.get(`/promotion/${encodeURIComponent(id)}`);

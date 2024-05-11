@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect } from 'react';
-import { ProductItem } from '@/type';
+import React, { SetStateAction, useEffect } from 'react';
+import * as productServices from "@/api/productServices"
+import { Product, ProductItem } from '@/type';
 import { notification } from 'antd';
 type NotificationType = 'success' | 'error';
 import {
@@ -22,6 +23,7 @@ import {
 } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import ModalAssignGuarantiesProductItem from '../ModalAssignGuarantiesProductItem';
+import ModalAssginPromotionsProductItem from '../ModalAssginPromotionsProductItem';
 const formItemLayout = {
     labelCol: {
         xs: { span: 24 },
@@ -42,13 +44,17 @@ const optionsSku: SelectProps['options'] = [
         label: 'Size',
     },
 ];
-const ProductItemConfig: React.FC<{
+interface Props {
     productItem: ProductItem[] | undefined;
-}> = ({ productItem }) => {
+    product:Product | undefined;
+    onSetState :SetStateAction<any>;
+}
+const ProductItemConfig: React.FC<Props> = ({ productItem ,onSetState,product}) => {
     const [openProductItem, setOpenProductItem] = React.useState(false);
     const [isSize, setIsSize] = React.useState<boolean>(false);
     const [options, setOptions] = React.useState<SelectProps['options']>([]);
     const [openModalAssignPI, setOpenModalAssignPI] = React.useState<boolean>(false);
+    const [openModalAssignPromotionPI, setOpenModalAssignPromotionPI] = React.useState<boolean>(false);
     const [currentProductItem, setCurrentProductItem] = React.useState<ProductItem>();
     const [api, contextHolder] = notification.useNotification();
     const openNotificationWithIcon = (type: NotificationType, mess: string) => {
@@ -98,7 +104,7 @@ const ProductItemConfig: React.FC<{
             title: 'Action',
             key: 'action',
             render: (_, record) => (
-                <Space size={'small'}>
+                <Space size={'small'} direction='vertical'>
                     <Button
                         onClick={() => {
                             setCurrentProductItem(record);
@@ -107,30 +113,37 @@ const ProductItemConfig: React.FC<{
                     >
                         Add Guaranties
                     </Button>
+                    <Button
+                        onClick={() => {
+                            setCurrentProductItem(record);
+                            setOpenModalAssignPromotionPI(true);
+                        }}
+                    >
+                        Add Promotion
+                    </Button>
                 </Space>
             ),
         },
     ];
     const onFinishProductItem = async (values: any) => {
         console.log(values);
-        // if (product != undefined) {
-        //     if (isSize === true) {
-        //         const res = await productServices.addProductSize(product.id, values.items);
-        //         if (res.isSuccessed === true) {
-        //             onSetState(res.resultObj);
-        //             setOpenProductItem(false);
-        //             openNotificationWithIcon('success', 'Add Product item success');
-        //         }
-        //     } else {
-        //         const res = await productServices.addProductNoSize(product.id, values.price, values.stock);
-        //         console.log(product.id);
-        //         if (res.isSuccessed === true) {
-        //             onSetState(res.resultObj);
-        //             setOpenProductItem(false);
-        //             openNotificationWithIcon('success', 'Add Product item size success');
-        //         }
-        //     }
-        // }
+        if (productItem != undefined && product != undefined) {
+            if (isSize === true) {
+                const res = await productServices.addProductSize(product.id, values.items);
+                if (res.isSuccessed === true) {
+                    onSetState(res.resultObj);
+                    setOpenProductItem(false);
+                    openNotificationWithIcon('success', 'Add Product item success');
+                }
+            } else {
+                const res = await productServices.addProductNoSize(product.id, values.price, values.stock);
+                if (res.isSuccessed === true) {
+                    onSetState(res.resultObj);
+                    setOpenProductItem(false);
+                    openNotificationWithIcon('success', 'Add Product item size success');
+                }
+            }
+        }
     };
     return (
         <div>
@@ -250,7 +263,7 @@ const ProductItemConfig: React.FC<{
                         </Form.List>
                     ) : (
                         <>
-                            <Row>
+                            {typeof productItem !== 'undefined'? <Row>
                                 <Col span={8}>
                                     <Form.Item<ProductItem>
                                         name="price"
@@ -279,7 +292,7 @@ const ProductItemConfig: React.FC<{
                                         />
                                     </Form.Item>
                                 </Col>
-                            </Row>
+                            </Row>: <Skeleton/>}
                         </>
                     )}
                     <Form.Item>
@@ -293,6 +306,13 @@ const ProductItemConfig: React.FC<{
                 openModalAssignPI={openModalAssignPI}
                 setStateOpenModalAssignPI={setOpenModalAssignPI}
                 productItemProps={currentProductItem}
+                setStateProduct={onSetState}
+            />
+            <ModalAssginPromotionsProductItem
+            openModalAssignPI={openModalAssignPromotionPI}
+            setStateOpenModalAssignPI={setOpenModalAssignPromotionPI}
+            productItemProps={currentProductItem}
+            setStateProduct={onSetState}
             />
         </div>
     );
