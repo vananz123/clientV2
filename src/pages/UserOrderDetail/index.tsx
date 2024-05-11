@@ -60,7 +60,7 @@ function UserOrderDetail() {
                             ', ' +
                             order?.address?.urbanDistrict +
                             ', ' +
-                            order?.address?.city}
+                            order?.address?.province}
                     </p>
                 </>
             ),
@@ -73,7 +73,7 @@ function UserOrderDetail() {
         {
             key: 'orderTotal',
             label: 'Total',
-            children: `${order?.orderTotal}`,
+            children: `${ChangeCurrence(order?.orderTotal)}`,
         },
         {
             key: 'status',
@@ -209,7 +209,7 @@ function UserOrderDetail() {
                                     <p>Quantity: {e.quantity}</p>
                                 </Col>
                                 <Col span={4} xs={8} md={8} lg={5} xl={5}>
-                                    <p>Total: {ChangeCurrence(e.total)}</p>
+                                    {/* <p>Total:{ChangeCurrence(e.total)}</p> */}
                                 </Col>
                                 <Col span={8} xs={24} md={24} lg={8} xl={8}>
                                     <Col>

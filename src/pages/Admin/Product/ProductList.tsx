@@ -165,7 +165,7 @@ function ProductList() {
         },{
             key: 'Promotion',
             label: 'Promotion',
-            children: (<span>{currentProductItem?.discountRate}</span>)
+            children: (<span>{currentProductItem?.valuePromotion}</span>)
         },
     ]
     const rowSelection: TableRowSelection<Product> = {
@@ -180,7 +180,7 @@ function ProductList() {
         //     console.log(selected, selectedRows, changeRows);
         //   },
         getCheckboxProps: (record: Product) => ({
-            disabled: modePromotion === 'DEL' ? record.discountRate == undefined : false, // Column configuration not to be checked
+            disabled: modePromotion === 'DEL' ? record.valuePromotion == undefined : false, // Column configuration not to be checked
             name: record.name,
         }),
     };
