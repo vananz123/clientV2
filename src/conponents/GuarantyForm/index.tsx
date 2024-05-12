@@ -140,7 +140,7 @@ const GuarantyForm: React.FC<{ guaranty: Guaranty | undefined; onSetState: SetSt
                     //initialValue={promotion?.seoDescription}
                     rules={[{ required: true, message: 'Please input guaranty description!'}]}
                 >
-                     <InputNumber max={36} min={0} type='number' />
+                     <Input/>
                 </Form.Item>
                 <Form.Item<Guaranty>
                     name="status"
