@@ -99,6 +99,7 @@ function ProductListShow() {
     };
     useEffect(() => {
         if (id != undefined) {
+        
             if (id === 'promotion') {
                 setIsPromotion(true);
                 setTitleContent('Khuyến mãi');

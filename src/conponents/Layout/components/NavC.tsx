@@ -1,7 +1,7 @@
 import { Menu, MenuProps } from "antd";
 import { useAppSelector } from "@/app/hooks";
 import { selectCate } from "@/feature/category/cateSlice";
-import { useLocation, useNavigate  } from "react-router-dom";
+import { Link, useLocation, useNavigate  } from "react-router-dom";
 import { Category } from "@/type";
 import React from "react";
 import Logo from '/L.png'
@@ -23,7 +23,7 @@ const NavC:React.FC = ()=>{
     function renderSubCateItem (_cate: Category[]){
         const arr:MenuItem[] =[]
         _cate.forEach((element:Category) => {
-            const item = getItem(element.name,`product/${element.id}`)
+            const item = getItem(element.name,`/product/${element.id}`)
             arr.push(item)
         });
         return arr
@@ -31,12 +31,12 @@ const NavC:React.FC = ()=>{
     function renderCateItem () {
         const arr:MenuItem[] =[]
         cate.forEach((element:Category) => {
-            const item = getItem(element.name,`product/${element.id}`,'',renderSubCateItem(element.subCategory))
+            const item = getItem(<><Link style={{color:'black'}} to={`/product/${element.id}`}>{element.name}</Link></>,`/product/${element.id}`,'',renderSubCateItem(element.subCategory))
             arr.push(item)
         });
         return arr
     }
-    //const item:MenuProps['items'] = [getItem('Trang chủ','/home'),getItem('Khuyến mãi','/product/promotion'),getItem('Danh mục','cate','',renderSubItem())]
+   
     const item:MenuProps['items'] = [...renderCateItem(),getItem('Khuyến mãi','/product/promotion')]
     const handleClick: MenuProps['onClick'] = (e) =>{
         Navigate(`${e.key}`)
