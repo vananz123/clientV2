@@ -1,35 +1,38 @@
 import { Order, OrderDetail, OrderStatus, Review } from '@/api/ResType';
 import React, { useEffect } from 'react';
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import * as orderServices from '@/api/orderServices';
 import {
     Button,
     Card,
     Col,
     Descriptions,
+    Divider,
     Drawer,
     Form,
     FormProps,
     Input,
+    Modal,
     Popconfirm,
     Rate,
     Row,
     Timeline,
     notification,
 } from 'antd';
-import { DescriptionsProps, Space } from 'antd';
-import { BaseUrl } from '@/utils/request';
+import { DescriptionsProps } from 'antd';
 import * as reviewServices from '@/api/reviewServices';
-import { ArrowDownOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/feature/user/userSlice';
+import dayjs from 'dayjs';
 type NotificationType = 'success' | 'error';
 type TimeLineProps = {
     label?: string;
     children: string;
 };
+type ConfirmType = 'CANCELED' | 'SUCCESSED' | 'RETURNED' 
 function UserOrderDetail() {
-    let { id } = useParams();
+    const { id } = useParams();
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const [form] = Form.useForm();
     const user = useAppSelector(selectUser);
@@ -44,7 +47,8 @@ function UserOrderDetail() {
     const [order, setOrder] = React.useState<Order>();
     const [currentOD, setCurrentOD] = React.useState<OrderDetail>();
     const [statusTimeLine, setStatusTimeLine] = React.useState<TimeLineProps[]>([]);
-    const [openCancel, setOpenCancel] = React.useState(false);
+    const [openModal, setOpenModal] = React.useState(false);
+    const [confirm,setConfirm] = React.useState<ConfirmType>()
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const desOrder: DescriptionsProps['items'] = [
         {
@@ -135,11 +139,11 @@ function UserOrderDetail() {
             if (res.isSuccessed == true) {
                 console.log(res.resultObj);
                 setOrder(res.resultObj);
-                let arr: TimeLineProps[] = [];
+                const arr: TimeLineProps[] = [];
                 res.resultObj.status?.forEach((element: OrderStatus) => {
                     const line: TimeLineProps = {
                         //label:new Date(element.createAt).toUTCString(),
-                        children: element.name + ': ' + new Date(element.createAt).toUTCString(),
+                        children: element.name + ': ' + dayjs(element.createAt).format('MM/DD/YYYY, HH:MM'),
                     };
                     arr.push(line);
                 });
@@ -151,22 +155,25 @@ function UserOrderDetail() {
     useEffect(() => {
         getOrderByOrderId();
     }, [id]);
-    const comfirmCacel = async()=>{
+    const handleOk =async() => {
         setConfirmLoading(true);
-        setTimeout(async() => {
-            if(typeof order != 'undefined'){
-                const res = await orderServices.canceled(order.id)
-                if(res.isSuccessed === true){
-                    openNotificationWithIcon('success',res.message)
-                    getOrderByOrderId()
-                }else{
-                    openNotificationWithIcon('error',res.message)
-                }
+        if (typeof order != 'undefined') {
+            let res
+            if(confirm =='CANCELED'){
+                res = await orderServices.canceled(order.id);
+            }else{
+                res = await orderServices.successed(order.id);
             }
-            setOpenCancel(false);
-            setConfirmLoading(false);
-        }, 300);
-    }
+            if (res.isSuccessed === true) {
+                openNotificationWithIcon('success', res.message);
+                getOrderByOrderId();
+            } else {
+                openNotificationWithIcon('error', res.message);
+            }
+        }
+        setOpenModal(false);
+        setConfirmLoading(false);
+      }
     return (
         <div>
             {contextHolder}
@@ -182,68 +189,105 @@ function UserOrderDetail() {
                 Go back
             </Button>
             <Row gutter={16}>
-            <Col span={8}  xs={24} md={24} lg={8} xl={8}>
-                    <Descriptions title="Order Info" column={1} size="middle" items={desOrder} bordered/>
-                    <Popconfirm
-                            title="Xác nhận"
-                            description="Thao táo này không thể hoàn tác!"
-                            placement='topLeft'
-                            open={openCancel}
-                            onConfirm={comfirmCacel}
-                            okButtonProps={{ loading: confirmLoading }}
-                            onCancel={()=>{setOpenCancel(false);}}
+                <Col span={8} xs={24} md={24} lg={8} xl={8}>
+                    <Descriptions title="Order Info" column={1} size="middle" items={desOrder} bordered />
+                    <Button
+                            disabled={order?.status?.some((s) => s.name === 'Đã hủy' || s.name === 'Đang xủ lý' || s.name ==='Đã hoàng thành')}
+                            style={{ marginTop: 10 }}
+                            type="primary"
+                            danger
+                            block
+                            onClick={() => {
+
+                                setConfirm('SUCCESSED')
+                                setOpenModal(true)
+                            }}
                         >
-                            <Button disabled={order?.status?.some(s => s.name ==="Đã hủy" || s.name ==="Đã tiếp nhận")} style={{marginTop:10}} type='primary' danger block onClick={()=>{setOpenCancel(true)}}>Cancel</Button>
-                        </Popconfirm>
-                    
+                            Đã nhận hàng
+                        </Button>
+                        <Button
+                            disabled={order?.status?.some((s) => s.name === 'Đã hủy' || s.name === 'Đã tiếp nhận')}
+                            style={{ marginTop: 10 }}
+                            type="primary"
+                            danger
+                            block
+                            onClick={() => {
+                                setConfirm('CANCELED')
+                                setOpenModal(true)
+                            }}
+                        >
+                            Hủy
+                        </Button>
+                        <Button
+                            disabled={order?.status?.some((s) => s.name === 'Đã hủy' || s.name === 'Đã tiếp nhận')}
+                            style={{ marginTop: 10 }}
+                            type="primary"
+                            
+                            block
+                            onClick={() => {
+                                setConfirm('RETURNED')
+                                setOpenModal(true)
+                            }}
+                        >
+                            Yêu cầu trả hàng/hoàn tiền
+                        </Button>
+                     
                 </Col>
                 <Col span={16} xs={24} md={24} lg={16} xl={16}>
-                    <div>
-                        {order?.orderDetail?.map((e: OrderDetail) => (
-                            <Row align={'top'}>
-                                <Col span={8} xs={12} md={12} lg={8} xl={8}>
-                                    <p><Link to={`/product/detail/${e.productId}`}>{e.seoTitle}</Link></p>
-                                    <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: 70 }} />
-                                </Col>
-                                <Col span={4} xs={4} md={4} lg={3} xl={3}>
-                                    <p>Quantity: {e.quantity}</p>
-                                </Col>
-                                <Col span={4} xs={8} md={8} lg={5} xl={5}>
-                                    {/* <p>Total:{ChangeCurrence(e.total)}</p> */}
-                                </Col>
-                                <Col span={8} xs={24} md={24} lg={8} xl={8}>
-                                    <Col>
-                                        <Card
-                                            size="small"
-                                            title="Review"
-                                            extra={
-                                                <Button
-                                                    type="primary"
+                    <Card title="Danh sách sản phẩm" bordered={false}>
+                        <div>
+                            {order?.orderDetail?.map((e: OrderDetail) => (
+                                <>
+                                    <Row align={'top'}>
+                                        <Col span={8} xs={12} md={12} lg={8} xl={8}>
+                                            <p>
+                                                <Link to={`/product/detail/${e.productId}`}>{e.seoTitle}</Link>
+                                            </p>
+                                            <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: 70 }} />
+                                        </Col>
+                                        <Col span={4} xs={4} md={4} lg={3} xl={3}>
+                                            <p>Số lượng: {e.quantity}</p>
+                                            <p>Giá: {e.price}</p>
+                                            {e.value != undefined ? <p>Size: {e.value + ' ' + e.sku}</p> : ''}
+                                        </Col>
+                                        <Col span={4} xs={8} md={8} lg={5} xl={5}>
+                                            {/* <p>Total:{ChangeCurrence(e.total)}</p> */}
+                                        </Col>
+                                        <Col span={8} xs={24} md={24} lg={8} xl={8}>
+                                            <Col>
+                                                <Card
                                                     size="small"
-                                                    onClick={() => {
-                                                        showDrawer(e);
-                                                    }}
+                                                    title="Review"
+                                                    extra={
+                                                        <Button
+                                                            type="primary"
+                                                            size="small"
+                                                            onClick={() => {
+                                                                showDrawer(e);
+                                                            }}
+                                                        >
+                                                            {e.review?.comment == null ? 'Review' : 'Edit review'}
+                                                        </Button>
+                                                    }
                                                 >
-                                                    {e.review?.comment == null ? 'Review' : 'Edit review'}
-                                                </Button>
-                                            }
-                                        >
-                                            {e.review != undefined ? (
-                                                <div style={{ marginBottom: 10 }}>
-                                                    <p>{e.review?.comment || ''}</p>
-                                                    <Rate value={e.review?.rate} />
-                                                </div>
-                                            ) : (
-                                                "Don't hava comment"
-                                            )}
-                                        </Card>
-                                    </Col>
-                                </Col>
-                            </Row>
-                        ))}
-                    </div>
+                                                    {e.review != undefined ? (
+                                                        <div style={{ marginBottom: 10 }}>
+                                                            <p>{e.review?.comment || ''}</p>
+                                                            <Rate value={e.review?.rate} />
+                                                        </div>
+                                                    ) : (
+                                                        "Don't hava comment"
+                                                    )}
+                                                </Card>
+                                            </Col>
+                                        </Col>
+                                    </Row>
+                                    <Divider />
+                                </>
+                            ))}
+                        </div>
+                    </Card>
                 </Col>
-                
             </Row>
 
             <Drawer title="Basic Drawer" onClose={onClose} open={open}>
@@ -282,6 +326,15 @@ function UserOrderDetail() {
                     ''
                 )}
             </Drawer>
+            <Modal
+        title="Xác nhận"
+        open={openModal}
+        onOk={handleOk}
+        confirmLoading={confirmLoading}
+        onCancel={()=>{setOpenModal(false)}}
+      >
+        <p>Thao táo này không thể hoàn tác!</p>
+      </Modal>
         </div>
     );
 }

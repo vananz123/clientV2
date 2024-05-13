@@ -148,6 +148,7 @@ const ProductForm: React.FC<{
             setIsLoading(false);
         } else {
             const res = await productServices.addProduct(values);
+            console.log(values)
             if (res.statusCode == 201) {
                 if (values.file != undefined) {
                     console.log(values.file);
@@ -249,23 +250,22 @@ const ProductForm: React.FC<{
                 >
                     <Select size={'middle'} onChange={handleChange} style={{ width: 200 }} options={options} />
                 </Form.Item>
-                {typeof product !== 'undefined' ? (
-                    <Form.Item<Product>
+                <Form.Item<Product>
                         name="status"
                         label="Status"
+                        
                         initialValue={1}
                         rules={[{ required: true, message: 'Please select Status!' }]}
                     >
                         <Select
+                        disabled={ (product?.items?.length < 1 || typeof product === 'undefined') }
                             size={'middle'}
                             //onChange={handleChange}
                             style={{ width: 200 }}
                             options={optionsProductStatus}
                         />
                     </Form.Item>
-                ) : (
-                    <Skeleton/>
-                )}
+                
                 <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit" loading={isLoading}>
                         Save

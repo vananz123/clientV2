@@ -50,7 +50,6 @@ export const getProductPagingByFilter = async(filter:Filter)=>{
         filter.optionMaterial?.forEach((e:string)=>{
             material += e + ","
         })
-        console.log(material)
         const params ={
             categoryId:filter.categoryId,
             productName:filter.productName,
@@ -118,10 +117,9 @@ export const addProduct = async(data:Product)=>{
             seoDescription: data.seoDescription,
             seoTitle: data.seoTitle,
             categoryId: data.categoryId,
-            status:data.status
         }
         const res= await request.post(`/product`,pro)
-        const resultObj   = res.resultObj
+        const resultObj :Product  = res.resultObj
         const resp: Result ={
             error :'',
             isSuccessed:res.isSuccessed,
@@ -325,19 +323,9 @@ export const addVariation = async(id:number, data:any[])=>{
         return resError
     }
 }
-export const assignGuaranties = async(id:number, data:Guaranty[])=>{
+export const assignGuaranties = async(id:number, guarantyId:number)=>{
     try{
-        const pro:any[]= []
-        data.forEach((element:Guaranty) => {
-            const item ={
-                id:element.id,
-                value:'',
-                name:'',
-                selected:true,
-            }
-            pro.push(item)
-        });
-        const res= await request.put(`/product/product-item/guaranties`,{id:id,items:pro})
+        const res= await request.put(`/product/product-item/guaranties`,{productItemId:id,guarantyId:guarantyId})
         const resultObj :Product  = res.resultObj
         const resp: Result ={
             error :'',

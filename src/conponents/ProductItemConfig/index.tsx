@@ -111,7 +111,7 @@ const ProductItemConfig: React.FC<Props> = ({ productItem ,onSetState,product}) 
                             setOpenModalAssignPI(true);
                         }}
                     >
-                        Add Guaranties
+                        Edit Guaranties
                     </Button>
                     <Button
                         onClick={() => {

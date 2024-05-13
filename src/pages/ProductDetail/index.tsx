@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from 'react-router';
-import { Guaranty, Product, ProductItem, Variation } from '@/type';
+import { Product, ProductItem, Variation } from '@/type';
 import React, { useEffect } from 'react';
 import * as productServices from '@/api/productServices';
 import * as reviewServices from '@/api/reviewServices';
@@ -26,7 +26,7 @@ import {
     Empty,
 } from 'antd';
 import { MinusOutlined, PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import { CollapseProps, SelectProps, Badge } from 'antd';
+import { CollapseProps, Badge } from 'antd';
 import { Collapse } from 'antd';
 type NotificationType = 'success' | 'error';
 import { useNavigate } from 'react-router-dom';
@@ -38,33 +38,6 @@ interface OptionSize {
     value: number;
     disabled?: boolean;
 }
-const optionsProductStatus: SelectProps['options'] = [
-    {
-        value: 0,
-        label: 'InActive',
-    },
-    {
-        value: 1,
-        label: 'Active',
-    },
-    {
-        value: 2,
-        label: 'New',
-    },
-    {
-        value: 3,
-        label: 'Hot',
-    },
-    {
-        value: 4,
-        label: 'Sale',
-        disabled: true,
-    },
-    {
-        value: 5,
-        label: 'UnActive',
-    },
-];
 function ProductDetail() {
     const Navigate = useNavigate();
     const { id } = useParams();
@@ -96,14 +69,16 @@ function ProductDetail() {
             children: (
                 <Space direction="vertical">
                     {data?.variation != undefined ? (
-                        data?.variation.map((e: Variation) => (
-                            <p>
-                                {e.name}: {e.value}
-                            </p>
-                        ))
+                        <>
+                            {data?.variation.map((e: Variation) => (
+                                <p>
+                                    {e.name}: {e.value}
+                                </p>
+                            ))}
+                            <p>{data.seoDescription}</p>
+                        </>
                     ) : (
                         <>
-                            <Skeleton />
                             <Skeleton />
                         </>
                     )}
@@ -115,24 +90,13 @@ function ProductDetail() {
             label: 'Dịch vụ sau mua',
             children: (
                 <>
-                    {currentProductItem?.guaranties == undefined ? (
-                        <Skeleton />
-                    ) : (
-                        <Space direction="vertical">
-                            {currentProductItem.guaranties?.length > 0 ? (
-                                currentProductItem?.guaranties?.map((e: Guaranty) => (
-                                    <>
-                                        <div key={e.id}>
-                                            <p>Loại bảo hành: {e.name}</p>
-                                            <p>Mô tả{e.description}</p>
-                                        </div>
-                                    </>
-                                ))
-                            ) : (
-                                <p>Sản phẩm này không được bảo hành</p>
-                            )}
-                        </Space>
-                    )}
+                    <Space direction="vertical">
+                        <div key={currentProductItem?.guaranty.id}>
+                            <p>Loại bảo hành: {currentProductItem?.guaranty.name}</p>
+                            <p>Thời gian: {currentProductItem?.guaranty.period + ' ' + currentProductItem?.sku}</p>
+                            <p>Mô tả{currentProductItem?.guaranty.description}</p>
+                        </div>
+                    </Space>
                 </>
             ),
         },
@@ -182,8 +146,6 @@ function ProductDetail() {
     useEffect(() => {
         if (id != undefined) {
             getData();
-        }
-        if (typeof data !== 'undefined') {
         }
     }, [id]);
     const handleChangeColl = (key: string | string[]) => {
@@ -247,7 +209,15 @@ function ProductDetail() {
                 <>
                     <div>
                         <Row gutter={[8, 8]}>
-                            <Col style={{position:'relative'}} xs={16} sm={16} md={16} lg={10} xl={10} className="gutter-row">
+                            <Col
+                                style={{ position: 'relative' }}
+                                xs={16}
+                                sm={16}
+                                md={16}
+                                lg={10}
+                                xl={10}
+                                className="gutter-row"
+                            >
                                 <div style={{ padding: 20 }}>
                                     <Image width={'100%'} src={`${baseUrl + data.urlThumbnailImage}`} />
                                 </div>
@@ -272,12 +242,11 @@ function ProductDetail() {
                                 </Space>
                             </Col>
                             <Col xs={24} sm={24} md={24} lg={10} xl={10} className="gutter-row">
-                                {data != undefined ? (
+                                <h2>{data.seoTitle}</h2>
+                                {typeof currentProductItem !== 'undefined' ? (
                                     <>
                                         <div style={{ marginBottom: 15 }}>
-                                            <h1>{data.seoTitle}</h1>
-                                            <p>{data.seoDescription}</p>
-                                            {typeof data.type === null ? (
+                                            { currentProductItem.type == undefined ? (
                                                 <>
                                                     <span
                                                         style={{
@@ -364,7 +333,7 @@ function ProductDetail() {
                                         <Collapse items={items} defaultActiveKey={['1']} onChange={handleChangeColl} />
                                     </>
                                 ) : (
-                                    ''
+                                    <Skeleton.Input/>
                                 )}
                             </Col>
                         </Row>
@@ -437,7 +406,7 @@ function ProductDetail() {
                             <Col span={10}>
                                 <Card style={{ width: '100%', marginTop: 16 }} title="Sản phẩm tương tự">
                                     {data.similarProduct == undefined ? (
-                                        <Skeleton />
+                                        <Skeleton/>
                                     ) : data.similarProduct.length > 0 ? (
                                         <>
                                             {data.similarProduct.map((item: Product) => (

@@ -25,7 +25,7 @@ export type ProductItem = {
     dateModify: string;
     name: string;
     value: string;
-    guaranties?:Guaranty[]
+    guaranty:Guaranty
 };
 export type Variation = {
     id: number;

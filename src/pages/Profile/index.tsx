@@ -19,12 +19,13 @@ import * as orderServices from '@/api/orderServices';
 import * as userServices from '@/api/userServices';
 import { useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/feature/user/userSlice';
-import { Address, Cart, Order, Review } from '@/api/ResType';
+import { Address, Order } from '@/api/ResType';
 import { Tabs } from 'antd';
-import type { DescriptionsProps, RadioChangeEvent, TabsProps } from 'antd';
+import type { DescriptionsProps, TabsProps } from 'antd';
 import { TypeFormAddress } from '../Purchase';
 import AddressForm from '@/conponents/AddressForm';
 import { StatusForm } from '../Admin/Category/Type';
+import dayjs from 'dayjs';
 function Profile() {
     const Navigate = useNavigate();
     const user = useAppSelector(selectUser);
@@ -99,17 +100,19 @@ function Profile() {
                         data.map((e: Order) => (
                             <>
                                 <Row key={e.id} align={'middle'} style={{ padding: 10 }}>
-                                    <Col span={6}>
+                                    <Col xs={24} md={10} lg={10}>
                                         <Space wrap>
                                             <p>Thành tiền: {ChangeCurrence(e.orderTotal)}</p>
-                                            <p>{new Date(e.orderDate).toUTCString()}</p>
+                                            <em>{dayjs(e.orderDate).format('MM/DD/YYYY, HH:MM')}</em>
                                         </Space>
                                     </Col>
-                                    <Col span={6}>
-                                        <p>{e.paymentMethod?.paymentType}</p>
-                                        <Badge status="processing" text={e.status?.pop()?.name} />
+                                    <Col xs={24} md={10} lg={10}>
+                                        <Space>
+                                            <p>Tình trạng: </p>
+                                            <Badge status="processing" text={e.status?.pop()?.name} />
+                                        </Space>
                                     </Col>
-                                    <Col span={10} xs={24} lg={10}>
+                                    <Col xs={24} md={10} lg={4}>
                                         <Link to={`/profile/order-detail/${e.id}`}>
                                             <Button>Detail</Button>
                                         </Link>

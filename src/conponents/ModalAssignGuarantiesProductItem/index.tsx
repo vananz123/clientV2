@@ -6,7 +6,7 @@ import { Guaranty, ProductItem } from '@/type';
 import { Button, Flex, Modal, Space, Table, TableColumnsType } from 'antd';
 import { Link } from 'react-router-dom';
 import { PlusOutlined } from '@ant-design/icons';
-import { TableRowSelection } from 'antd/es/table/interface';
+import { RowSelectMethod, TableRowSelection } from 'antd/es/table/interface';
 export type ModePromotionType = 'EDIT' | 'DEL';
 import { notification } from 'antd';
 type NotificationType = 'success' | 'error';
@@ -42,13 +42,10 @@ const ModalAssignGuarantiesProductItem: React.FC<Props> = ({
     const handleSaveGuaranties = async () => {
         setConfirmLoading(true);
         if (productItemProps != undefined) {
-            const res = await productServices.assignGuaranties(
-                productItemProps?.id,
-                guaranties.filter((s) => listSelectRowKeys.includes(s.id)),
-            );
+            const res = await productServices.assignGuaranties(productItemProps?.id, listSelectRowKeys[0]);
             if (res.isSuccessed === true) {
                 openNotificationWithIcon('success', 'thêm bảo hành thành công');
-                setStateProduct(res.resultObj)
+                setStateProduct(res.resultObj);
                 setConfirmLoading(false);
             } else {
                 openNotificationWithIcon('error', 'lỗi');
@@ -58,11 +55,9 @@ const ModalAssignGuarantiesProductItem: React.FC<Props> = ({
     };
     useEffect(() => {
         getAllGuaranty();
-        if (typeof productItemProps !== 'undefined') {
+        if (typeof productItemProps?.guaranty !== 'undefined') {
             const arrKey: number[] = [];
-            productItemProps.guaranties?.forEach((e: Guaranty) => {
-                arrKey.push(e.id);
-            });
+            arrKey.push(productItemProps.guaranty.id);
             setListSelectRowKeys(arrKey);
         }
     }, [openModalAssignPI, productItemProps]);
@@ -94,14 +89,14 @@ const ModalAssignGuarantiesProductItem: React.FC<Props> = ({
     ];
     const rowSelection: TableRowSelection<Guaranty> = {
         selectedRowKeys: listSelectRowKeys,
-        onChange: (selectedRowKeys, selectedRows: Guaranty[]) => {
+        type: 'radio',
+        onChange: (selectedRowKeys, selectedRows: Guaranty[], info: { type: RowSelectMethod }) => {
             const arrKey: number[] = [];
             selectedRows.forEach((e: Guaranty) => {
                 arrKey.push(e.id);
             });
             setListSelectRowKeys(arrKey);
-            //setListSelectRow(selectedRows);
-            //console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            console.log(`${info},selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
         },
         // onSelect: (record, selected, selectedRows) => {
         //     console.log(record, selected, selectedRows);
@@ -148,7 +143,7 @@ const ModalAssignGuarantiesProductItem: React.FC<Props> = ({
                     columns={columns}
                     dataSource={guaranties}
                     rowKey={(record) => record.id}
-                    rowSelection={{ type: 'checkbox', ...rowSelection }}
+                    rowSelection={rowSelection}
                 />
             </Modal>
         </div>

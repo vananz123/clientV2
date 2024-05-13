@@ -1,21 +1,18 @@
 import type { Address, Cart, PaymentMethod, PaymentType } from '@/api/ResType';
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import {  useAppSelector } from '@/app/hooks';
 import { selectCart } from '@/feature/cart/cartSlice';
 import { BaseUrl } from '@/utils/request';
 import {
-    Avatar,
+    
     Button,
     Divider,
-    Input,
+   
     Select,
     Card,
     Col,
     Descriptions,
-    Empty,
-    InputNumber,
-    List,
     Modal,
-    Popconfirm,
+   
     Row,
     Space,
     Typography,
@@ -24,7 +21,7 @@ import {
 } from 'antd';
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import type { InputRef, RadioChangeEvent, SelectProps } from 'antd';
+import type {  RadioChangeEvent, SelectProps } from 'antd';
 import type { DescriptionsProps } from 'antd';
 import * as userServices from '@/api/userServices';
 import * as orderServices from '@/api/orderServices';
@@ -48,13 +45,11 @@ function Purchase() {
     const [type, setType] = React.useState<string>('');
     const [open, setOpen] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
-    const [modalText, setModalText] = React.useState('Do you want to detele!');
     const [openDrawAddress, setOpenDrawAddress] = useState(false);
     const [typeFormAddress, setTypeFormAddress] = React.useState<TypeFormAddress>('EDIT');
     const showDrawerAddress = () => {
         setOpenDrawAddress(true);
     };
-
     const onCloseDrawAddress = () => {
         setOpenDrawAddress(false);
     };
@@ -81,7 +76,7 @@ function Purchase() {
             const res = await paymentServices.getPaymentMethodByUserId(user.id);
             if (res.isSuccessed == true) {
                 setType(res.resultObj[0].id.toString());
-                let op: SelectProps['options'] = [];
+                const op: SelectProps['options'] = [];
                 res.resultObj.map((e: PaymentMethod) => {
                     op.push({
                         value: e.id.toString(),
@@ -224,7 +219,7 @@ function Purchase() {
                         block
                         type="primary"
                         style={{ marginTop: 10 }}
-                        disabled={cart.items.length <=0 || cart.items.some(s=> s.stock ==0 || s.stock < s.quantity)}
+                        disabled={cart.items.length <=0 || cart.items.some(s=> s.stock ==0 || s.stock < s.quantity || currentAddress == undefined)}
                         onClick={() => {
                             createOrder();
                         }}
@@ -262,7 +257,7 @@ function Purchase() {
                                             ', ' +
                                             e?.urbanDistrict +
                                             ', ' +
-                                            e?.city}
+                                            e?.province}
                                     </p>
                                     <Divider />
                                 </Radio>

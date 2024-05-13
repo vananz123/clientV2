@@ -62,6 +62,24 @@ export const comfirm = async(id:number)=>{
         return resError
     }
 }
+export const successed = async(id:number)=>{
+    try{
+        const res = await request.put(`/order/successed/${encodeURIComponent(id)}`)
+        const resultObj = res.resultObj
+        const resp: Result ={
+            error :'',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
+            statusCode:200,
+            resultObj : resultObj
+        }
+        return resp
+    }catch(error:any){
+        console.log(error.response.data)
+        const resError: Result =error.response.data
+        return resError
+    }
+}
 export const canceled = async(id:number)=>{
     try{
         const res = await request.put(`/order/canceled/${encodeURIComponent(id)}`)
