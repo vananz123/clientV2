@@ -32,6 +32,7 @@ export const optionsPrice: OptionPrice[] = [
 export const optionsMaterial :OptionBase[]= [
     {label:"VA",value:"VA"},
     {label:"ROLEX",value:"ROLEX"},
+    {label:"PNJ",value:"PNJ"}
 ]
 export const optionsSort : OptionSort[]=[
     {
