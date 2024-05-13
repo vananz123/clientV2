@@ -254,6 +254,7 @@ function ProductDetail() {
                                                             fontSize: 18,
                                                             fontWeight: 500,
                                                             marginRight: 5,
+                                                            display:''
                                                         }}
                                                     >
                                                         {ChangeCurrence(currentProductItem?.priceBeforeDiscount)}
@@ -287,9 +288,10 @@ function ProductDetail() {
                                                                 onChange={onChangeSize}
                                                                 disabled={currentProductItem?.status == 2}
                                                             />
+                                                            <p>Số Tồn: {currentProductItem?.stock}</p>
                                                         </>
                                                     ) : (
-                                                        <p>In Stock: {currentProductItem?.stock}</p>
+                                                        <p>Số Tồn: {currentProductItem?.stock}</p>
                                                     )}
                                                 </>
                                             ) : (

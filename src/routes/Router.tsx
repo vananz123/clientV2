@@ -88,6 +88,10 @@ const Router: React.FC = () => {
                     ),
                 },
                 {
+                    path: 'product',
+                    element: <ProductListShow />,
+                },
+                {
                     path: 'product/:id',
                     element: <ProductListShow />,
                 },

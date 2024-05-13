@@ -96,7 +96,7 @@ function Cart() {
                                     imageStyle={{ height: 60 }}
                                 >
                                     <Link to={'/product/all'}>
-                                        <Button type="primary">Shopping now !</Button>
+                                        <Button type="primary">Mua Hàng Ngay!</Button>
                                     </Link>
                                 </Empty>
                             </>
@@ -104,24 +104,31 @@ function Cart() {
                             cart.items.map((e) => (
                                 <Card key={e.id} style={{ width: '100%', marginBottom: 10 }}>
                                     <Row gutter={[8, 8]}>
-                                        <Col className="gutter-row" span={6}>
+                                        <Col className="gutter-row" span={5}>
+                                            <h3>Sản Phẩm</h3>
                                             <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: '100%' }} />
                                         </Col>
-                                        <Col className="gutter-row" span={10}>
-                                            <Space align="start" direction="vertical">
-                                                <p>{e.seoTitle}</p>
-                                                <p>
-                                                    {e?.name} {e?.value}
-                                                </p>
-                                                {e.stock == 0? <Alert type='error' message="Product out of stock! Please delete proudct"/>: ''}
-                                                {e.stock < e.quantity ? <Alert type='error' message="Product kh đủ!"/>: ''}
-                                                <Space.Compact size='small'>
-                                                    <Button
-                                                        onClick={() => {
-                                                            decline(e);
-                                                        }}
-                                                        icon={ <MinusOutlined />}
-                                                    />
+                                        <Col className="gutter-row" span={5}>
+                                            <h3>Tên Sản Phẩm</h3>
+                                            <p>{e.seoTitle}</p>
+                                        </Col>
+                                        <Col className="gutter-row" span={2}>
+                                            <h3>Kích Cỡ</h3>
+                                            <p>
+                                                {e?.name}: {e?.value}
+                                            </p>
+                                        </Col>
+                                        <Col className="gutter-row" span={4}>
+                                            <h3>Số Lượng</h3>
+                                            {e.stock == 0? <Alert type='error' message="Product out of stock! Please delete proudct"/>: ''}
+                                            {e.stock < e.quantity ? <Alert type='error' message="Product kh đủ!"/>: ''}
+                                            <Space.Compact size='small'>
+                                                <Button
+                                                    onClick={() => {
+                                                    decline(e);
+                                                    }}
+                                                    icon={ <MinusOutlined />}
+                                                />
                                                     <InputNumber min={1} max={e?.stock} style={{width:70}} value={e.quantity} />
     
                                                     <Button
@@ -131,24 +138,25 @@ function Cart() {
                                                         icon={<PlusOutlined />}
                                                     />
                                                 </Space.Compact>
-                                            </Space>
                                         </Col>
-                                        <Col span={6}>
-                                            {e.discountRate != null ? (
-                                                <p style={{ textDecoration: 'line-through', color: 'red' }}>
+                                        <Col span={5}>
+                                            <h3>Tổng Giá</h3>
+                                            {e.valuePromotion != null ? (
+                                                <p style={{ textDecoration: 'line-through'}}>
                                                     {ChangeCurrence(e?.priceBeforeDiscount* e?.quantity)}
                                                 </p>
                                             ) : (
                                                 ''
                                             )}
-                                            <p>{ChangeCurrence(e?.total)}</p>
+                                            <p style={{ fontWeight:500, color: 'red' }}>{ChangeCurrence(e?.total)}</p>
                                         </Col>
                                         <Col span={2}>
+                                            <h3>Xóa</h3>
                                             <Avatar
                                                 onClick={() => {
                                                     showModal(e);
                                                 }}
-                                                style={{ cursor: 'pointer', position: 'absolute', top: 10, right: 0 }}
+                                                style={{ cursor: 'pointer', top: 10, right: 0, backgroundColor:'red' }}
                                                 shape="square"
                                                 icon={<DeleteOutlined />}
                                             ></Avatar>
@@ -159,18 +167,18 @@ function Cart() {
                         )}
                     </Col>
                     <Col className="gutter-row" span={8} xs={24} md={8} lg={8} xl={8}>
-                        <Descriptions title="Order infomation" bordered column={1}>
-                            <Descriptions.Item label="Total price ">
+                        <Descriptions title="Thông Tin Sản Phẩm" bordered column={1}>
+                            <Descriptions.Item label="Giá Sản Phẩm ">
                                 {ChangeCurrence(cart.totalPriceBeforeDiscount)}
                             </Descriptions.Item>
-                            <Descriptions.Item label="Total Discount">
+                            <Descriptions.Item label="Giá Giảm">
                                 {ChangeCurrence(cart.totalDiscount)}
                             </Descriptions.Item>
-                            <Descriptions.Item label="Total payment">{ChangeCurrence(cart.totalPrice)}</Descriptions.Item>
+                            <Descriptions.Item style={{color:'red'}} label="Giá Thanh Toán">{ChangeCurrence(cart.totalPrice)}</Descriptions.Item>
                         </Descriptions>
                         <Link to={`/purchase`}>
                             <Button size="large" block type="primary" disabled={cart.items.length <=0 || cart.items.some(s=> s.stock ==0 || s.stock < s.quantity)} style={{ marginTop: 10 }}>
-                                Purchase now!
+                                Thanh Toán Ngay
                             </Button>
                         </Link>
                     </Col>
