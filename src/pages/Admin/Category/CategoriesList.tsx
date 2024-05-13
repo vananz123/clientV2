@@ -20,12 +20,12 @@ function CategoriesList() {
             key: 'id',
         },
         {
-            title: 'Name',
+            title: 'Tên ',
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: 'status',
+            title: 'Trạng Thái',
             dataIndex: 'status',
             key: 'status',
             render:(_,record)=>(
@@ -51,12 +51,12 @@ function CategoriesList() {
             key: 'id',
         },
         {
-            title: 'Name',
+            title: 'Tên',
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: 'status',
+            title: 'Trạng Thái',
             dataIndex: 'status',
             key: 'status',render:(_,record)=>(
                 <Select value={record.status} disabled options={OPTIONS_STATUS}/>
@@ -111,7 +111,7 @@ function CategoriesList() {
                 <Flex justify="space-between">
                     <Link to={'/admin/category-add'}>
                         <Button type="primary" icon={<PlusOutlined />} size="large">
-                            Add
+                            Thêm
                         </Button>
                     </Link>
                 </Flex>
@@ -120,11 +120,11 @@ function CategoriesList() {
                     pagination={{ position: ['bottomLeft'], pageSize: 4 }}
                     columns={columns}
                     dataSource={data}
-                   expandable={{
+                    expandable={{
                     expandedRowRender:(recore)=>{
                         return <Table rowKey={(recore)=> recore.id} columns={columnss} dataSource={recore.subCategory}/>
                     }
-                   }}
+                }}
                 />
             </Space>
             <Modal

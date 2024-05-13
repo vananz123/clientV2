@@ -210,7 +210,7 @@ const ProductForm: React.FC<{
             >
                 <Form.Item<Product>
                     name="name"
-                    label="Product name"
+                    label="Tên sản phẩm"
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={product?.name}
@@ -220,7 +220,7 @@ const ProductForm: React.FC<{
                 </Form.Item>
                 <Form.Item<Product>
                     name="seoTitle"
-                    label="Seo Title"
+                    label="Tiêu đề"
                     //initialValue={product?.seoTitle}
                     rules={[{ required: true, message: 'Please input seo title' }]}
                 >
@@ -228,13 +228,13 @@ const ProductForm: React.FC<{
                 </Form.Item>
                 <Form.Item<Product>
                     name="seoDescription"
-                    label="Seo Description"
+                    label="Mô Tả"
                     //initialValue={product?.seoDescription}
                     rules={[{ required: true, message: 'Please input seo description' }]}
                 >
                     <Input.TextArea showCount maxLength={500} />
                 </Form.Item>
-                <Form.Item name="file" label="Upload thumbnail" valuePropName="fileList" getValueFromEvent={normFile}>
+                <Form.Item name="file" label="Ảnh Nền" valuePropName="fileList" getValueFromEvent={normFile}>
                     <Upload listType="picture-card" maxCount={1}>
                         <button style={{ border: 0, background: 'none' }} type="button">
                             <PlusOutlined />
@@ -244,7 +244,7 @@ const ProductForm: React.FC<{
                 </Form.Item>
                 <Form.Item<Product>
                     name="categoryId"
-                    label="Category"
+                    label="Loại Sản Phẩm"
                     //initialValue={product?.categoryId}
                     rules={[{ required: true, message: 'Please select categories!' }]}
                 >
@@ -252,7 +252,7 @@ const ProductForm: React.FC<{
                 </Form.Item>
                 <Form.Item<Product>
                         name="status"
-                        label="Status"
+                        label="Trạng Thái"
                         
                         initialValue={1}
                         rules={[{ required: true, message: 'Please select Status!' }]}

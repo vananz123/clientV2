@@ -93,20 +93,20 @@ function Profile() {
     const items: TabsProps['items'] = [
         {
             key: '1',
-            label: 'List purchase',
+            label: 'Danh Sách Đơn Hàng',
             children: (
                 <>
                     {typeof data !== 'undefined' ? (
                         data.map((e: Order) => (
                             <>
-                                <Row key={e.id} align={'middle'} style={{ padding: 10 }}>
-                                    <Col xs={24} md={10} lg={10}>
+                                <Row key={e.id} align={'middle'} style={{ padding: 10}}>
+                                    <Col style={{fontSize:17}} xs={24} md={10} lg={10}>
                                         <Space wrap>
                                             <p>Thành tiền: {ChangeCurrence(e.orderTotal)}</p>
                                             <em>{dayjs(e.orderDate).format('MM/DD/YYYY, HH:MM')}</em>
                                         </Space>
                                     </Col>
-                                    <Col xs={24} md={10} lg={10}>
+                                    <Col style={{fontSize:18}} xs={24} md={10} lg={10}>
                                         <Space>
                                             <p>Tình trạng: </p>
                                             <Badge status="processing" text={e.status?.pop()?.name} />
@@ -114,7 +114,7 @@ function Profile() {
                                     </Col>
                                     <Col xs={24} md={10} lg={4}>
                                         <Link to={`/profile/order-detail/${e.id}`}>
-                                            <Button>Detail</Button>
+                                            <Button style={{fontSize:17, backgroundColor:'#ff4d4f'}} >Xem</Button>
                                         </Link>
                                     </Col>
                                 </Row>
@@ -142,7 +142,7 @@ function Profile() {
         },
         {
             key: '2',
-            label: 'User info',
+            label: 'Thông Tin Khách Hàng',
             children: (
                 <>
                     <Row gutter={16}>

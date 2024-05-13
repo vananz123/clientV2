@@ -216,7 +216,7 @@ const ProductItemConfig: React.FC<Props> = ({ productItem ,onSetState,product}) 
                                                     type="number"
                                                     placeholder="Price"
                                                     min={0}
-                                                    style={{ width: 90, marginRight: '5px' }}
+                                                    style={{ width: 120, marginRight: '5px' }}
                                                 />
                                             </Form.Item>
                                             <Form.Item
@@ -228,7 +228,7 @@ const ProductItemConfig: React.FC<Props> = ({ productItem ,onSetState,product}) 
                                                     type="number"
                                                     placeholder="Stock"
                                                     min={0}
-                                                    style={{ width: 50, marginRight: '5px' }}
+                                                    style={{ width: 70, marginRight: '5px' }}
                                                 />
                                             </Form.Item>
                                             <Form.Item
@@ -236,7 +236,7 @@ const ProductItemConfig: React.FC<Props> = ({ productItem ,onSetState,product}) 
                                                 name={[name, 'value']}
                                                 rules={[{ required: true, message: 'Missing value' }]}
                                             >
-                                                <Input placeholder="value" style={{ width: 50, marginRight: '5px' }} />
+                                                <Input placeholder="value" style={{ width: 70, marginRight: '5px' }} />
                                             </Form.Item>
                                             <Form.Item
                                                 {...restField}

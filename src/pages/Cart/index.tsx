@@ -110,7 +110,7 @@ function Cart() {
                                         </Col>
                                         <Col className="gutter-row" span={5}>
                                             <h3>Tên Sản Phẩm</h3>
-                                            <p>{e.seoTitle}</p>
+                                            <Link to={`/product/detail/${e.productId}`}>{e.seoTitle}</Link>
                                         </Col>
                                         <Col className="gutter-row" span={2}>
                                             <h3>Kích Cỡ</h3>

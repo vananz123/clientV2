@@ -2,7 +2,8 @@ import { Order, OrderDetail, OrderStatus } from '@/api/ResType';
 import React, { useEffect } from 'react';
 import {  useParams } from 'react-router-dom';
 import * as orderServices from '@/api/orderServices';
-import { Button, Col, Descriptions, Popconfirm, Row, Timeline ,notification} from 'antd';
+import { Link } from 'react-router-dom';
+import { Button, Col, Descriptions, Popconfirm, Row, Timeline ,notification, Divider, Card} from 'antd';
 import { DescriptionsProps, Space } from 'antd';
 type NotificationType = 'success' | 'error';
 type TimeLineProps = {
@@ -13,7 +14,6 @@ function OrderConfirm() {
     const { id } = useParams();
     const baseUrl =import.meta.env.VITE_BASE_URL
     const [api, contextHolder] = notification.useNotification();
-   
     const openNotificationWithIcon = (type: NotificationType,mess:string) => {
         api[type]({
             message: 'Notification Title',
@@ -25,7 +25,7 @@ function OrderConfirm() {
     const desOrder: DescriptionsProps['items'] = [
         {
             key: 'address',
-            label: 'Address',
+            label: 'Địa chỉ',
             children: (
                 <>
                     <p>{order?.address?.phoneNumber}</p>
@@ -36,7 +36,7 @@ function OrderConfirm() {
                             ', ' +
                             order?.address?.urbanDistrict +
                             ', ' +
-                            order?.address?.city}
+                            order?.address?.province}
                     </p>
                 </>
             ),
@@ -44,62 +44,62 @@ function OrderConfirm() {
         },
         {
             key: 'paymentMethod',
-            label: 'Payment method',
+            label: 'Loại Thanh Toán',
             children: `${order?.paymentMethod?.paymentType}`,
             span: 1,
         },
         {
-            key: 'orderTotal',
-            label: 'Total',
-            children: `${order?.orderTotal}`,
+            key: 'total',
+            label: 'Tổng Tiền',
+            children: `${ChangeCurrence(order?.orderTotal)}`,
         },
         {
             key: 'status',
-            label: 'Status',
+            label: 'Trạng Thái',
             children: (
                 <div>
                     <Timeline mode={'left'} items={statusTimeLine} />
                 </div>
             ),
         },
-        {
-            key: 'orderDetail',
-            label: 'Products',
-            children: (
-                <div>
-                    {order?.orderDetail?.map((e: OrderDetail) => (
-                        <Row align={'middle'}>
-                            <Col span={12}>
-                                <p>{e.seoTitle}</p>
-                                <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: 70 }} />
-                            </Col>
-                            <Col span={6}>
-                                <p>{e.quantity}</p>
-                            </Col>
-                            <Col span={6}>
-                                <p>{e.total}</p>
-                            </Col>
-                        </Row>
-                    ))}
-                </div>
-            ),
-            span: 2,
-        },
+        // {
+        //     key: 'orderDetail',
+        //     label: 'Sản Phẩm',
+        //     children: (
+        //         <div>
+        //             {order?.orderDetail?.map((e: OrderDetail) => (
+        //                 <Row align={'middle'}>
+        //                     <Col span={12}>
+        //                         <p>{e.seoTitle}</p>
+        //                         <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: 70 }} />
+        //                     </Col>
+        //                     <Col span={6}>
+        //                         <p>{e.quantity}</p>
+        //                     </Col>
+        //                     <Col span={6}>
+        //                         <p>{e.total}</p>
+        //                     </Col>
+        //                 </Row>
+        //             ))}
+        //         </div>
+        //     ),
+        //     span: 2,
+        // },
     ];
     const desUser: DescriptionsProps['items'] = [
         {
             key: 'fullName',
-            label: 'Full name',
+            label: 'Tên Khách Hàng',
             children: `${order?.user.fullName}`,
         },
         {
             key: 'Email',
-            label: 'email',
+            label: 'Email',
             children: `${order?.user.email}`,
         },
         {
             key: 'Phone number',
-            label: 'Phone number',
+            label: 'Số Điện Thoại',
             children: `${order?.user.phoneNumber}`,
         },
     ];
@@ -167,9 +167,9 @@ function OrderConfirm() {
     }, [id]);
     return (
         <div>
-             {contextHolder}
-            <Descriptions
-                title="Order Info"
+            {contextHolder}
+            {/* <Descriptions
+                title="Thông Tin Đơn Hàng"
                 column={2}
                 size="middle"
                 items={desOrder}
@@ -199,11 +199,54 @@ function OrderConfirm() {
                         </Popconfirm>
                     </Space>
                 }
-            />
-           
-            <Descriptions title="User Info" column={3} size="middle" items={desUser} bordered />
+            />   */}
+            <Row gutter={16}>
+                <Col span={8} xs={24} md={24} lg={8} xl={8}>
+                    <Descriptions title="Thông Tin Đơn Hàng" column={1} size="middle" items={desOrder} bordered />
+                </Col>
+                <Col span={16} xs={24} md={24} lg={16} xl={16}>
+                    <Card title="Danh sách sản phẩm" bordered={false}>
+                        <div>
+                            {order?.orderDetail?.map((e: OrderDetail) => (
+                                <>
+                                    <Row align={'top'}>
+                                        <Col span={8} xs={12} md={12} lg={8} xl={8}>
+                                            <p>
+                                                <Link to={`/product/detail/${e.productId}`}>{e.seoTitle}</Link>
+                                            </p>
+                                            <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: 70 }} />
+                                        </Col>
+                                        <Col span={3}>
+                                            <p>Số lượng: {e.quantity}</p>
+                                        </Col>
+                                        <Col span={4} xs={4} md={4} lg={3} xl={3}>
+                                            <p>Giá: {ChangeCurrence(e.price)}</p>
+                                            {e.value != undefined ? <p>Size: {e.value + ' ' + e.sku}</p> : ''}
+                                        </Col>
+                                        <Col span={4} xs={8} md={8} lg={5} xl={5}>
+                                            {/* <p>Total:{ChangeCurrence(e.total)}</p> */}
+                                        </Col>
+                                    </Row>
+                                    <Divider />
+                                </>
+                            ))}
+                        </div>
+                    </Card>
+                </Col>
+            </Row>
+            <Descriptions title="Thông Tin Khách Hàng" column={3} size="middle" items={desUser} bordered />
         </div>
     );
 }
-
+const ChangeCurrence = (number: number | undefined) => {
+    if (number) {
+        const formattedNumber = number.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+            currencyDisplay: 'code',
+        });
+        return formattedNumber;
+    }
+    return 0;
+};
 export default OrderConfirm;

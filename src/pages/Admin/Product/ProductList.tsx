@@ -93,16 +93,16 @@ function ProductList() {
             key: 'id',
         },
         {
-            title: 'Name',
+            title: 'Tên',
             dataIndex: 'name',
             key: 'name',
         },{
-            title: 'seoTitle',
+            title: 'Tiêu Đề',
             dataIndex: 'seoTitle',
             key: 'seoTitle',
         },
         {
-            title: 'Price',
+            title: 'Giá',
             dataIndex: 'price',
             key: 'price',
             render: (_, record) => (
@@ -110,7 +110,7 @@ function ProductList() {
             ),
         },
         {
-            title: 'Picture',
+            title: 'Ảnh',
             key: 'picture',
             render: (_, record) => (
                 <img
@@ -121,12 +121,12 @@ function ProductList() {
             ),
         },
         {
-            title: 'Status',
+            title: 'Trạng Thái',
             dataIndex: 'status',
             key: 'status',
         },
         {
-            title: 'ViewCount',
+            title: 'Lượt Xem',
             dataIndex: 'viewCount',
             key: 'viewCount',
         },
@@ -199,7 +199,7 @@ function ProductList() {
                 <Flex justify="space-between">
                     <Link to={'/admin/product-add'}>
                         <Button type="primary" icon={<PlusOutlined />} size="large">
-                            Add
+                            Thêm
                         </Button>
                     </Link>
                 </Flex>

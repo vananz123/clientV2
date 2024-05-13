@@ -19,6 +19,7 @@ import {
     Drawer,
     Radio,
 } from 'antd';
+import { Link } from 'react-router-dom';
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import type {  RadioChangeEvent, SelectProps } from 'antd';
@@ -156,7 +157,7 @@ function Purchase() {
                                 </Col>
                                 <Col className='gutter-row' span={6}>
                                     <h3>Tên Sản Phẩm</h3>
-                                    <p>{e.seoTitle}</p>
+                                    <Link to={`/product/detail/${e.productId}`}>{e.seoTitle}</Link>
                                 </Col>
                                 <Col className="gutter-row" span={3}>
                                     <h3>Kích Cỡ</h3>

@@ -28,11 +28,11 @@ function Dashboard() {
         <div>
             <Row gutter={16}>
                 <Col span={8}>
-                    <Statistic title="Total Sales" value={analysis?.totalSales} formatter={formatter} />
+                    <Statistic title="Tổng Doanh Thu" value={analysis?.totalSales} formatter={formatter} />
                 </Col>
                 <Col span={8}>
                     <Statistic
-                        title="Total orders"
+                        title="Tổng Số Đơn"
                         value={analysis?.totalOrder}
                         precision={2}
                         formatter={formatter}
@@ -40,7 +40,7 @@ function Dashboard() {
                 </Col>
                 <Col span={8}>
                     <Statistic
-                        title="Total product"
+                        title="Tổng Sản Phẩm"
                         value={analysis?.totalProduct}
                         precision={2}
                         formatter={formatter}

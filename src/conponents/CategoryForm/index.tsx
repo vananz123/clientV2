@@ -14,8 +14,8 @@ interface Props {
 }
 const CategoryForm: React.FC<Props> = ({ category, onSetState, onSetStatus }) => {
     const [form] = Form.useForm();
-    form.setFieldsValue(category);
-    const cate = useAppSelector(selectCate);
+    form.setFieldsValue(category)
+    const cate = useAppSelector(selectCate)
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [optionParent, setOptionParent] = React.useState<SelectProps['options']>([]);
     useEffect(() => {

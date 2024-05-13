@@ -6,19 +6,19 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { Link } from 'react-router-dom';
 import * as userServices from '@/api/userServices'
 
-import { ResponseUser } from '@/api/userServices';
+import { ResponseUser } from '@/api/ResType';
 function UserList() {
     const dispatch = useAppDispatch();
     const [data, setData] = React.useState<ResponseUser[]>();
     const [currentId, setCurrentId] = React.useState<number>(0);
     const columns: TableProps<ResponseUser>['columns'] = [
        {
-            title: 'UserN',
+            title: 'Tên',
             dataIndex: 'userName',
             key: 'name',
         },
         {
-            title: 'FullN',
+            title: 'Họ Tên',
             dataIndex: 'fullName',
             key: 'name',
         },
@@ -27,11 +27,11 @@ function UserList() {
             dataIndex: 'email',
             key: 'name',
         },{
-            title: 'PN',
+            title: 'SĐT',
             dataIndex: 'phoneNumber',
             key: 'name',
         },{
-            title: 'Role',
+            title: 'Quyền',
             dataIndex: 'roles',
             key: 'roles',
             render:((_,record)=>(

@@ -213,9 +213,9 @@ function Home() {
                         )}
                     </Card>
                     <Card bordered={false} title="Sản phẩm mới" style={{ marginTop: 24 }} extra={<Link to={'/product/new'}>Xem thêm</Link>}>
-                        {typeof productsHot !== 'undefined' ? (
+                        {typeof productsNew !== 'undefined' ? (
                             <Row gutter={[12, 12]}>
-                                {productsHot.map((e: Product) => (
+                                {productsNew.map((e: Product) => (
                                     <Col
                                         style={{ display: 'flex', justifyContent: 'center' }}
                                         xs={12}
