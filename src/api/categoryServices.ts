@@ -2,9 +2,27 @@
 import * as request from '../utils/request'
 import { Result } from './ResType'
 import { Category } from '@/type'
-export const getAllCate = async(type:string = 'sub')=>{ 
+export const getAllCate = async()=>{ 
     try{
-        const res = await request.get(`/category?type=${type}`)
+        const res = await request.get(`/category`)
+        const resultObj : Category[]  = res.resultObj
+        const resp: Result ={
+            error :'',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
+            statusCode:200,
+            resultObj : resultObj
+        }
+        return resp
+    }catch(error:any){
+        console.log(error.response.data)
+        const resError: Result =error.response.data
+        return resError
+    }
+}
+export const getAllAdminCate = async(type:string = 'sub')=>{ 
+    try{
+        const res = await request.get(`/category/admin?type=${type}`)
         const resultObj : Category[]  = res.resultObj
         const resp: Result ={
             error :'',
@@ -61,12 +79,13 @@ export const createCate = async(data:Category)=>{
         return resError
     }
 }
-export const updateCate = async(id:string,data:Category)=>{
+export const updateCate = async(data:Category)=>{
     try{
         const cate = {
-            id:id,
+            id:data.id,
             name:data.name,
-            parentId:data.parentId
+            parentId:data.parentId,
+            status:data.status
         }
         const res = await request.put(`/category`,cate)
         const resultObj:Category  = res.resultObj

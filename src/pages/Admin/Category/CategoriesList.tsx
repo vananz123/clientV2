@@ -1,25 +1,18 @@
-import { Table, Space, Modal, Button, Flex } from 'antd';
-import type { TableColumnsType, TableProps } from 'antd';
+import { Table, Space, Modal, Button, Flex, Select } from 'antd';
+import type { TableColumnsType } from 'antd';
 import * as categoryServices from '@/api/categoryServices';
 import React, { useEffect } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { addCateAsync, selectCate } from '@/feature/category/cateSlice';
 import { Link } from 'react-router-dom';
 import { Category } from '@/type';
-
-
+import { OPTIONS_STATUS } from '@/common/common';
 function CategoriesList() {
-    const dispatch = useAppDispatch();
     const [data, setData] = React.useState<Category[]>();
-    const dataGlobal = useAppSelector(selectCate);
     const [currentId, setCurrentId] = React.useState<string>('');
     const [open, setOpen] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [modalText, setModalText] = React.useState('Do you want delete!');
     const [context, setContext] = React.useState<string>('OK');
-    
-
     const columnss: TableColumnsType<Category> = [
         {
             title: 'Id',
@@ -35,12 +28,10 @@ function CategoriesList() {
             title: 'Trạng Thái',
             dataIndex: 'status',
             key: 'status',
+            render:(_,record)=>(
+                <Select value={record.status} disabled options={OPTIONS_STATUS}/>
+            )
         },
-        // {
-        //     title: 'subCategory',
-        //     dataIndex: 'subCategory',
-        //     key: 'subCategory',
-        // },
         {
             title: 'Action',
             key: 'action',
@@ -67,13 +58,10 @@ function CategoriesList() {
         {
             title: 'Trạng Thái',
             dataIndex: 'status',
-            key: 'status',
+            key: 'status',render:(_,record)=>(
+                <Select value={record.status} disabled options={OPTIONS_STATUS}/>
+            )
         },
-        // {
-        //     title: 'subCategory',
-        //     dataIndex: 'subCategory',
-        //     key: 'subCategory',
-        // },
         {
             title: 'Action',
             key: 'action',
@@ -85,9 +73,16 @@ function CategoriesList() {
             ),
         },
     ];
+    const loadAllCate = async () => {
+        const res = await categoryServices.getAllAdminCate("sub");
+        if (res.isSuccessed == true) {
+            setData(res.resultObj)
+        }
+    };
+    
     useEffect(() => {
-        setData(dataGlobal);
-    }, [dataGlobal]);
+        loadAllCate();
+    }, [data]);
     const showModalDel = (id: string, name: string) => {
         setModalText(`Do you want category ${name}!`);
         setCurrentId(id);
@@ -100,13 +95,9 @@ function CategoriesList() {
         setTimeout(async () => {
             const res = await categoryServices.deleteCate(currentId);
             if (res.statusCode == 204) {
-                const ref = await categoryServices.getAllCate();
-                if (ref.statusCode == 200) {
-                    setData(ref.resultObj);
-                    setOpen(false);
-                    dispatch(addCateAsync(ref.resultObj));
-                    setConfirmLoading(false);
-                }
+                loadAllCate()
+                setOpen(false);
+                setConfirmLoading(false);
             } else {
                 setModalText('error!');
                 setConfirmLoading(false);
@@ -123,7 +114,6 @@ function CategoriesList() {
                             Thêm
                         </Button>
                     </Link>
-                    {/* <SearchC typeSearch={2} onSetState={setData} /> */}
                 </Flex>
                 <Table
                     rowKey={(record) => record.id}
