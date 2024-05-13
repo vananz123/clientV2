@@ -277,7 +277,7 @@ function ProductDetail() {
                                         <div style={{ marginBottom: 15 }}>
                                             <h1>{data.seoTitle}</h1>
                                             <p>{data.seoDescription}</p>
-                                            {typeof data.type === null ? (
+                                            {currentProductItem?.type === null ? (
                                                 <>
                                                     <span
                                                         style={{
@@ -285,6 +285,7 @@ function ProductDetail() {
                                                             fontSize: 18,
                                                             fontWeight: 500,
                                                             marginRight: 5,
+                                                            display:''
                                                         }}
                                                     >
                                                         {ChangeCurrence(currentProductItem?.priceBeforeDiscount)}
@@ -318,9 +319,10 @@ function ProductDetail() {
                                                                 onChange={onChangeSize}
                                                                 disabled={currentProductItem?.status == 2}
                                                             />
+                                                            <p>Số Tồn: {currentProductItem?.stock}</p>
                                                         </>
                                                     ) : (
-                                                        <p>In Stock: {currentProductItem?.stock}</p>
+                                                        <p>Số Tồn: {currentProductItem?.stock}</p>
                                                     )}
                                                 </>
                                             ) : (

@@ -61,13 +61,13 @@ function Purchase() {
     let items: DescriptionsProps['items'] = [
         {
             key: 'phoneNumber',
-            label: 'Phone number',
+            label: 'Số Điện Thoại',
             children: `${currentAddress?.phoneNumber}`,
         },
         {
             key: 'address',
-            label: 'Address',
-            children: `${currentAddress?.streetNumber + ', ' + currentAddress?.wardCommune + ', ' + currentAddress?.urbanDistrict + ', ' + currentAddress?.city}`,
+            label: 'Địa chỉ',
+            children: `${currentAddress?.streetNumber + ', ' + currentAddress?.wardCommune + ', ' + currentAddress?.urbanDistrict + ', ' + currentAddress?.province}`,
         },
     ];
     if (typeof currentAddress === 'undefined') {
@@ -143,7 +143,7 @@ function Purchase() {
         <div>
             <Row gutter={24}>
                 <Col className="gutter-row" span={16} xs={24} md={16} lg={16} xl={16}>
-                    <Title level={3}>Payment type</Title>
+                    <Title level={3}>Phương Thức Thanh Toán</Title>
                     <Select
                         size={'middle'}
                         value={type}
@@ -151,8 +151,49 @@ function Purchase() {
                         style={{ width: 300 }}
                         options={options}
                     />
+                    <Col className="gutter-row" span={24}>
+                    {cart.items.map((e) => (
+                    <Card key={e.id} style={{ width: '100%', marginBottom: 10 }}>
+                            <Row gutter={[8, 8]}>
+                                <Col className="gutter-row" span={4}>
+                                    <h3>Sản Phẩm</h3>
+                                    <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: '100%' }} />
+                                </Col>
+                                <Col className='gutter-row' span={6}>
+                                    <h3>Tên Sản Phẩm</h3>
+                                    <p>{e.seoTitle}</p>
+                                </Col>
+                                <Col className="gutter-row" span={3}>
+                                    <h3>Kích Cỡ</h3>
+                                    <p>
+                                        {e?.name} {e?.value}
+                                    </p>
+                                </Col>
+                                <Col className="gutter-row" span={3}>
+                                    <h3>Số Lượng</h3>
+                                    <p>
+                                        {e.quantity}
+                                    </p>
+                                </Col>
+                                <Col span={8}>
+                                    <h3>Tổng Giá</h3>
+                                    {e.valuePromotion != null ? (
+                                        <p style={{ textDecoration: 'line-through'}}>
+                                            {ChangeCurrence(e?.priceBeforeDiscount)}
+                                        </p>
+                                    ) : (
+                                        ''
+                                    )}
+                                    <p style={{fontWeight:500, color: 'red' }}>{ChangeCurrence(e?.total)}</p>
+                                </Col>
+                            </Row>
+                        </Card>
+                    ))}
+                </Col>
+                </Col>
+                <Col className="gutter-row" span={8} xs={24} md={8} lg={8} xl={8}>
                     <Descriptions
-                        title="Address Info"
+                        title="Thông Tin Địa Chỉ"
                         column={1}
                         items={items}
                         style={{ marginTop: 10 }}
@@ -165,7 +206,7 @@ function Purchase() {
                                         showDrawerAddress();
                                     }}
                                 >
-                                    Edit
+                                    Sửa
                                 </Button>
                             ) : (
                                 <Button
@@ -176,48 +217,19 @@ function Purchase() {
                                         setOpen(true);
                                     }}
                                 >
-                                    Add address
+                                    Thêm Địa Chỉ
                                 </Button>
                             )
     )}
                     />
-                </Col>
-                <Col className="gutter-row" span={8} xs={24} md={8} lg={8} xl={8}>
-                    {cart.items.map((e) => (
-                        <Card key={e.id} style={{ width: '100%', marginBottom: 10 }}>
-                            <Row gutter={[8, 8]}>
-                                <Col className="gutter-row" span={6}>
-                                    <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: '100%' }} />
-                                </Col>
-                                <Col className="gutter-row" span={10}>
-                                    <Space align="start" direction="vertical">
-                                        <p>{e.seoTitle}</p>
-                                        <p>
-                                            {e?.name} {e?.value}
-                                        </p>
-                                    </Space>
-                                </Col>
-                                <Col span={8}>
-                                    {e.discountRate != null ? (
-                                        <p style={{ textDecoration: 'line-through', color: 'red' }}>
-                                            {ChangeCurrence(e?.priceBeforeDiscount)}
-                                        </p>
-                                    ) : (
-                                        ''
-                                    )}
-                                    <p>{ChangeCurrence(e?.total)}</p>
-                                </Col>
-                            </Row>
-                        </Card>
-                    ))}
-                    <Descriptions title="Order infomation" bordered column={1}>
-                        <Descriptions.Item label="Total price ">
+                    <Descriptions title="Chi Tiết Đơn Hàng" bordered column={1}>
+                        <Descriptions.Item label="Giá Sản Phẩm">
                             {ChangeCurrence(cart.totalPriceBeforeDiscount)}
                         </Descriptions.Item>
-                        <Descriptions.Item label="Total Discount">
+                        <Descriptions.Item label="Giá Giảm">
                             {ChangeCurrence(cart.totalDiscount)}
                         </Descriptions.Item>
-                        <Descriptions.Item label="Total payment">{ChangeCurrence(cart.totalPrice)}</Descriptions.Item>
+                        <Descriptions.Item style={{color:'red'}} label="Giá Thanh Toán">{ChangeCurrence(cart.totalPrice)}</Descriptions.Item>
                     </Descriptions>
                     <Button
                         size="large"
@@ -229,7 +241,7 @@ function Purchase() {
                             createOrder();
                         }}
                     >
-                        Payment now!
+                        Thanh Toán Ngay
                     </Button>
                 </Col>
             </Row>
@@ -248,7 +260,7 @@ function Purchase() {
                     onSetStatus={setStatus}
                 />
             </Modal>
-            <Drawer title="Address edit" onClose={onCloseDrawAddress} open={openDrawAddress}>
+            <Drawer title="Sửa Địa Chỉ" onClose={onCloseDrawAddress} open={openDrawAddress}>
                 <Radio.Group value={currentAddress?.id} onChange={handleChangeAddresses}>
                     <Space direction="vertical">
                         {addresses.map((e: Address) => (
@@ -262,7 +274,7 @@ function Purchase() {
                                             ', ' +
                                             e?.urbanDistrict +
                                             ', ' +
-                                            e?.city}
+                                            e?.province}
                                     </p>
                                     <Divider />
                                 </Radio>
@@ -273,7 +285,7 @@ function Purchase() {
                                         setOpen(true);
                                     }}
                                 >
-                                    Edit
+                                    Sửa
                                 </Button>
                             </Space>
                         ))}
@@ -288,7 +300,7 @@ function Purchase() {
                         setOpen(true);
                     }}
                 >
-                    Add
+                    Thêm
                 </Button>
             </Drawer>
         </div>
