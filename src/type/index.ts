@@ -9,7 +9,7 @@ export type Category = {
 };
 export type ProductItem = {
     id: number;
-    productId: number;
+    productId?: number;
     price: number;
     priceBeforeDiscount: number;
     valuePromotion?:number;
