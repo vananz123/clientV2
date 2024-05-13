@@ -53,7 +53,7 @@ function UserOrderDetail() {
     const desOrder: DescriptionsProps['items'] = [
         {
             key: 'address',
-            label: 'Address',
+            label: 'Địa Chỉ',
             children: (
                 <>
                     <p>{order?.address?.phoneNumber}</p>
@@ -71,17 +71,17 @@ function UserOrderDetail() {
         },
         {
             key: 'paymentMethod',
-            label: 'Payment method',
+            label: 'Loại Thanh Toán',
             children: `${order?.paymentMethod?.paymentType}`,
         },
         {
             key: 'orderTotal',
-            label: 'Total',
+            label: 'Tổng Tiền',
             children: `${ChangeCurrence(order?.orderTotal)}`,
         },
         {
             key: 'status',
-            label: 'Status',
+            label: 'Tình Trạng',
             children: (
                 <div>
                     <Timeline mode={'left'} items={statusTimeLine} />
@@ -173,7 +173,7 @@ function UserOrderDetail() {
         }
         setOpenModal(false);
         setConfirmLoading(false);
-      }
+    }
     return (
         <div>
             {contextHolder}
@@ -190,7 +190,7 @@ function UserOrderDetail() {
             </Button>
             <Row gutter={16}>
                 <Col span={8} xs={24} md={24} lg={8} xl={8}>
-                    <Descriptions title="Order Info" column={1} size="middle" items={desOrder} bordered />
+                    <Descriptions title="Thông Tin Đơn Hàng" column={1} size="middle" items={desOrder} bordered />
                     <Button
                             disabled={order?.status?.some((s) => s.name === 'Đã hủy' || s.name === 'Đang xủ lý' || s.name ==='Đã hoàng thành')}
                             style={{ marginTop: 10 }}
@@ -198,7 +198,6 @@ function UserOrderDetail() {
                             danger
                             block
                             onClick={() => {
-
                                 setConfirm('SUCCESSED')
                                 setOpenModal(true)
                             }}
@@ -230,8 +229,7 @@ function UserOrderDetail() {
                             }}
                         >
                             Yêu cầu trả hàng/hoàn tiền
-                        </Button>
-                     
+                        </Button>  
                 </Col>
                 <Col span={16} xs={24} md={24} lg={16} xl={16}>
                     <Card title="Danh sách sản phẩm" bordered={false}>
@@ -332,9 +330,9 @@ function UserOrderDetail() {
         onOk={handleOk}
         confirmLoading={confirmLoading}
         onCancel={()=>{setOpenModal(false)}}
-      >
+    >
         <p>Thao táo này không thể hoàn tác!</p>
-      </Modal>
+    </Modal>
         </div>
     );
 }

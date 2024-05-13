@@ -49,7 +49,7 @@ const CategoryForm: React.FC<{ category: Category | undefined; onSetState: SetSt
 }) => {
     const [form] = Form.useForm();
     form.setFieldsValue(category)
-   const cate = useAppSelector(selectCate)
+    const cate = useAppSelector(selectCate)
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [optionParent,setOptionParent] = React.useState<SelectProps['options']>([])
     useEffect(()=>{

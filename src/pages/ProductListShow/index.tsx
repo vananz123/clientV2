@@ -38,6 +38,16 @@ function ProductListShow() {
     const [optionMaterial, setOptionMaterial] = React.useState<string[]>([]);
     const [isPromotion, setIsPromotion] = React.useState<boolean>(false);
     const [titleContent, setTitleContent] = React.useState<string | undefined>('');
+    const [data, setData] = React.useState<Product[]>();
+
+    const loadAllProduct = async () => {
+        const res = await productServices.getAllProduct();
+        // console.log(res);
+        if (res.isSuccessed === true) {
+            setData(res.resultObj);
+        }
+    };
+
     const getProductPaging = async () => {
         const filter: Filter = {
             categoryId: Number(id),
@@ -126,6 +136,7 @@ function ProductListShow() {
                 }
             }
         }
+        loadAllProduct()
     }, [id, page, optionPrice, optionMaterial, sortOder, isPromotion]);
     // useEffect(() => {
     //     getProductPaging();

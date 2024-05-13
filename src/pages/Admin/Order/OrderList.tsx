@@ -22,18 +22,18 @@ function OrderList() {
             render: (_, record) => <p>{record.user.email}</p>,
         },
         {
-            title: 'Order total',
+            title: 'Tổng Tiền Hóa Đơn',
             dataIndex: 'orderTotal',
             key: 'orderTotal',
         },
         {
-            title: 'orderDate',
+            title: 'Ngày Tạo',
             dataIndex: 'orderDate',
             key: 'orderDate',
             render: (_, record) => <p>{dayjs(record.orderDate).format('MM/DD/YYYY, HH:mm')}</p>,
         },
         {
-            title: 'Status',
+            title: 'Trạng Thái',
             dataIndex: 'status',
             key: 'status',
             render: (_, record) => <Badge status="processing" text={record.status?.pop()?.name} />,
@@ -43,9 +43,9 @@ function OrderList() {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <a>Delete</a>
+                    <a>Xóa</a>
                     <Link key={`a-${record.id}`} to={`/admin/order/detail/${record.id}`}>
-                        View Detail
+                        Xem Đơn Hàng
                     </Link>
                 </Space>
             ),
