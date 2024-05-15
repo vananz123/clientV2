@@ -10,16 +10,6 @@ import type { MenuProps } from 'antd';
 import React from 'react';
 const { Header } = Layout;
 import NavC from './NavC';
-type MenuItem = Required<MenuProps>['items'][number];
-
-function getItem(label: React.ReactNode, key: React.Key, children?: MenuItem[]): MenuItem {
-    return {
-        label,
-        key,
-        children,
-    } as MenuItem;
-}
-
 import { useNavigate } from 'react-router-dom';
 import './style.scss';
 import SearchC from '@/conponents/SearchC';
@@ -29,10 +19,11 @@ function HeaderC() {
     const user = useAppSelector(selectUser);
     const cart = useAppSelector(selectCart);
     const [data, setData] = React.useState<Product[]>();
+    console.log(data)
     const dispatch = useAppDispatch();
 
     const {
-        token: { colorBgContainer, borderRadiusLG },
+        token: { colorBgContainer },
     } = theme.useToken();
     const items: MenuProps['items'] = [
         {

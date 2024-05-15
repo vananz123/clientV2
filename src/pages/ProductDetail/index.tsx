@@ -115,6 +115,7 @@ function ProductDetail() {
         if (res.isSuccessed == true) {
             const arr: string[] = res.resultObj.urlImage.split('*');
             const t = arr.pop();
+            console.log(t)
             setListImage(arr);
             setData(res.resultObj);
             setCurrentProductItem(res.resultObj.items[0]);

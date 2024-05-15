@@ -1,9 +1,6 @@
 import React from 'react';
-import { Button, Checkbox, Form, type FormProps, Input, Space, Alert, Row, Col } from 'antd';
+import { Button, Form, type FormProps, Input, Alert, Row, Col } from 'antd';
 import { UserOutlined, LockOutlined, InfoCircleOutlined, MailOutlined } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { signIn } from '@/feature/user/userSlice';
-import * as loginServices from '@/api/loginServices';
 import * as userServices from '@/api/userServices';
 import { Result } from '@/api/ResType';
 import { Link, useNavigate } from 'react-router-dom';
@@ -16,11 +13,9 @@ export type RegisterUser = {
     password: string;
     confirmPassword: string;
 };
-
 function Register() {
     const [message, setMessage] = React.useState<Result>();
     const navigator = useNavigate();
-    const dispatch = useAppDispatch();
     const onFinish: FormProps<RegisterUser>['onFinish'] = async (values) => {
         console.log(values);
         const register = await userServices.Register(values);

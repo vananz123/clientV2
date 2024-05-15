@@ -1,5 +1,5 @@
 import * as categoryServices from '@/api/categoryServices';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useAppDispatch } from '@/app/hooks';
 import { addCateAsync } from '@/feature/category/cateSlice';
 import './App.css';
@@ -20,7 +20,7 @@ function App() {
       
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
+        getAnalytics(app);
     const dispatch = useAppDispatch();
     useEffect(() => {
         const loadAllCate = async () => {

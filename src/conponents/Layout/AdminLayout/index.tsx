@@ -6,7 +6,7 @@ import { Outlet } from 'react-router-dom';
 const { Content } = Layout;
 import './style.scss';
 import {FooterC} from '../components';
-function AdminLayout({ children }:any){
+function AdminLayout(){
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();

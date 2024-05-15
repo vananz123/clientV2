@@ -1,10 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 import { Result, addressGHTK } from './ResType';
-
 const baseUrl =import.meta.env.VITE_BASE_URL_GHTK
-// const request = axios.create({
-//     baseURL:`${baseUrl}`
-// });
 export const getAllProvince = async()=>{
     try{
         const response = await axios.get(`${baseUrl}/address/list`)

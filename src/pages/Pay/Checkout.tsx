@@ -1,12 +1,11 @@
-import queryString from 'query-string';
+
 import React, { useEffect } from 'react';
-import * as orderServices from '@/api/orderServices';
 import { Button, Result } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch } from '@/app/hooks';
 import { emptyCart } from '@/feature/cart/cartSlice';
 function Checkout() {
-    let {id} = useParams()
+    const {id} = useParams()
     const [content,setContent] = React.useState<string>('')
     const [status,setStatus] = React.useState<boolean>(false)
     const navigate = useNavigate()

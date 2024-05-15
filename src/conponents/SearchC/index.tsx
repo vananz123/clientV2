@@ -13,7 +13,7 @@ import { Filter } from '@/pages/ProductListShow/FilterType';
 const SearchC: React.FC<{
     typeSearch: number;
     onSetState: SetStateAction<any>;
-}> = ({ typeSearch, onSetState }) => {
+}> = ({ onSetState }) => {
     const { Search } = Input;
     const baseUrl: BaseUrl = 'https://localhost:7005';
     const [searchValue, setSearchValue] = React.useState('');

@@ -1,9 +1,6 @@
-import CategoryForm from '@/conponents/CategoryForm';
 import React, { useEffect } from 'react';
-import { Button, notification, DatePicker } from 'antd';
+import {  notification } from 'antd';
 type NotificationType = 'success' | 'error';
-import * as promotionServices from '@/api/promotionServices';
-const { RangePicker } = DatePicker;
 import type { StatusForm } from '../Category/Type';
 import { useNavigate } from 'react-router-dom';
 import PromotionForm from '@/conponents/PromotionForm';

@@ -1,18 +1,14 @@
-import type { Address, Cart, PaymentMethod, PaymentType } from '@/api/ResType';
+import type { Address, PaymentMethod } from '@/api/ResType';
 import {  useAppSelector } from '@/app/hooks';
 import { selectCart } from '@/feature/cart/cartSlice';
-import { BaseUrl } from '@/utils/request';
 import {
-    
     Button,
     Divider,
-   
     Select,
     Card,
     Col,
     Descriptions,
     Modal,
-   
     Row,
     Space,
     Typography,
@@ -45,7 +41,6 @@ function Purchase() {
     const [currentAddressForm, setCurrentAddressForm] = React.useState<Address>();
     const [type, setType] = React.useState<string>('');
     const [open, setOpen] = React.useState(false);
-    const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [openDrawAddress, setOpenDrawAddress] = useState(false);
     const [typeFormAddress, setTypeFormAddress] = React.useState<TypeFormAddress>('EDIT');
     const showDrawerAddress = () => {
@@ -105,14 +100,6 @@ function Purchase() {
             handleCancel();
         }
     }, [status]);
-    const showModal = (cart: Cart) => {
-        setOpen(true);
-    };
-
-    const handleOk = () => {
-        setConfirmLoading(true);
-    };
-
     const handleCancel = () => {
         setOpen(false);
     };
@@ -245,7 +232,6 @@ function Purchase() {
                 title="Notification"
                 open={open}
                 //onOk={handleOk}
-                confirmLoading={confirmLoading}
                 onCancel={handleCancel}
                 footer={''}
             >

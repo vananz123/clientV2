@@ -3,8 +3,8 @@ import React, { useEffect } from 'react';
 import {  useParams } from 'react-router-dom';
 import * as orderServices from '@/api/orderServices';
 import { Link } from 'react-router-dom';
-import { Button, Col, Descriptions, Popconfirm, Row, Timeline ,notification, Divider, Card} from 'antd';
-import { DescriptionsProps, Space } from 'antd';
+import {  Col, Descriptions, Row, Timeline ,notification, Divider, Card, Space, Popconfirm, Button} from 'antd';
+import { DescriptionsProps } from 'antd';
 type NotificationType = 'success' | 'error';
 type TimeLineProps = {
     label?: string;
@@ -168,7 +168,7 @@ function OrderConfirm() {
     return (
         <div>
             {contextHolder}
-            {/* <Descriptions
+            <Descriptions
                 title="Thông Tin Đơn Hàng"
                 column={2}
                 size="middle"
@@ -199,7 +199,7 @@ function OrderConfirm() {
                         </Popconfirm>
                     </Space>
                 }
-            />   */}
+            />  
             <Row gutter={16}>
                 <Col span={8} xs={24} md={24} lg={8} xl={8}>
                     <Descriptions title="Thông Tin Đơn Hàng" column={1} size="middle" items={desOrder} bordered />

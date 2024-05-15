@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Table,  Space,  Image, Modal, Upload, Button, Flex, Tooltip, Descriptions } from 'antd';
+import { Table,  Space,  Image, Modal, Upload, Button, Flex, Descriptions } from 'antd';
 import type {  TableColumnsType, DescriptionsProps } from 'antd';
 import {  Drawer,} from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
@@ -8,7 +8,7 @@ import * as productServices from '@/api/productServices';
 import React, { useEffect } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { Product,ProductItem } from '@/type';
+import { Product } from '@/type';
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
 const getBase64 = (file: FileType): Promise<string> =>
@@ -26,7 +26,6 @@ function ProductList() {
     const [currentProductItem, setCurrentProductItem] = React.useState<Product>();
     const [modal2Open, setModal2Open] = React.useState(false);
     const [confirmLoadinModal2, setConfirmLoadingModal2] = React.useState(false);
-    const [openModalModePromotion, setModalModePromotion] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [modalText, setModalText] = React.useState('Do you want delete!');
@@ -116,7 +115,7 @@ function ProductList() {
                 <img
                     src={`${baseUrl + record.urlThumbnailImage}`}
                     style={{ width: '100px', height: 'auto', cursor: 'pointer' }}
-                    onClick={() => showModalImage(record.urlThumbnailImage, record.id)}
+                    onClick={() => showModalImage(record.id)}
                 />
             ),
         },
@@ -155,9 +154,7 @@ function ProductList() {
             children: (<span>{currentProductItem?.valuePromotion}</span>)
         },
     ]
-    const showModalImage = (url: string, id: number) => {
-        //setPreviewImage(`http://${url}`)
-        //setPreviewOpen(true)
+    const showModalImage = ( id: number) => {
         setCurrentId(id);
         setModal2Open(true);
     };

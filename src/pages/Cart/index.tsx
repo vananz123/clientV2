@@ -27,7 +27,6 @@ function Cart() {
     const [currentCart, setCurrentCart] = React.useState<Cart>();
     const [open, setOpen] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
-    const [modalText, setModalText] = React.useState('Do you want to detele!');
     const [loadingHandleQuantity, setLoadingHandleQuantity] = React.useState(false);
     const showModal = (cart: Cart) => {
         setOpen(true);
@@ -191,7 +190,7 @@ function Cart() {
                 confirmLoading={confirmLoading}
                 onCancel={handleCancel}
             >
-                <p>{modalText}</p>
+               Do you want to detele!
             </Modal>
         </div>
     );

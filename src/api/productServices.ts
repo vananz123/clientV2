@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Sort } from '@/pages/ProductListShow'
 import * as request from '../utils/request'
-import { Order, PagingResult, Promotion, Result } from './ResType'
-import { Guaranty, Product } from '@/type'
+import {  PagingResult, Promotion, Result } from './ResType'
+import {  Product } from '@/type'
 import { Filter } from '@/pages/ProductListShow/FilterType'
-import { Value } from 'sass'
 export const getAllProduct = async()=>{
     try{
         const res = await request.get(`/product`)
@@ -43,7 +41,6 @@ export const getProductDetail = async(id:number)=>{
         return resError
     }
 }
-const pageSize = 8
 export const getProductPagingByFilter = async(filter:Filter)=>{
     try{
         let material:string = ""
@@ -62,31 +59,6 @@ export const getProductPagingByFilter = async(filter:Filter)=>{
             productStatus:filter.productStatus
         }
         const res = await request.post(`/product/filter`,params)
-        const resultObj :Product[] = res.resultObj.items
-        const paging: PagingResult = {
-            items: resultObj,
-            pageIndex : res.resultObj.pageIndex,
-            pageCount:res.resultObj.pageCount,
-            pageSize:res.resultObj.pageSize,
-            totalRecords:res.resultObj.totalRecords
-        }
-        const resp: Result ={
-            error :'',
-            isSuccessed:res.isSuccessed,
-            message:res.message,
-            statusCode:200,
-            resultObj : paging,
-        }
-        return resp
-    }catch(error:any){
-        console.log(error.response.data)
-        const resError: Result =error.response.data
-        return resError
-    }
-}
-export const getProductPagingBySeoTitle = async(seoTitle:any, page:number, pageSize:number)=>{
-    try{
-        const res= await request.get(`/product/search?seoTitle=${encodeURIComponent(seoTitle)}&PageIndex=1&PageSize=100`)
         const resultObj :Product[] = res.resultObj.items
         const paging: PagingResult = {
             items: resultObj,
@@ -135,14 +107,7 @@ export const addProduct = async(data:Product)=>{
     }
 }
 export const updateProduct = async(id:number, data:Product)=>{
-    try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
+    try{ 
         const pro ={
             id:id,
             name: data.name,
@@ -169,13 +134,6 @@ export const updateProduct = async(id:number, data:Product)=>{
 }
 export const deleteProduct = async(id:number)=>{
     try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
         const res= await request.del(`/product/${encodeURIComponent(id)}`)
         const resultObj   = res.resultObj
         const resp: Result ={
@@ -290,13 +248,6 @@ export const addProductSize = async(id:number, data:any[])=>{
 }
 export const addVariation = async(id:number, data:any[])=>{
     try{
-        const token = localStorage.getItem('accessToken')
-        const option = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }
         const pro:any[]= []
         data.forEach((element:any) => {
             const item ={

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as request from '../utils/request'
 import { Result,CartResult } from './ResType'
 export const getCart = async(id:number)=>{

@@ -7,7 +7,6 @@ import * as productServices from '@/api/productServices';
 import { Filter } from '../ProductListShow/FilterType';
 import { Link } from 'react-router-dom';
 import './style.css';
-import * as addressGHTKServices from '@/api/addressGHTKServices'
 const contentStyle: React.CSSProperties = {
     margin: 0,
     height: 'auto',
@@ -20,80 +19,6 @@ const imgStyles: React.CSSProperties = {
     width: '100%',
     height: '500px',
 };
-// const productEx :Product [] =[
-//     {
-//         name: 'Nhẫn Cưới Vàng 244',
-//         urlThumbnailImage: ProductEx,
-//         id: 2,
-//         categoryId: 0,
-//         seoDescription: '',
-//         discountRate: 0,
-//         price: 2000000,
-//         priceBeforeDiscount: 0,
-//         seoTitle: 'Nhẫn Cưới Vàng 24K',
-//         file: undefined,
-//         viewCount: 0,
-//         status: 0,
-//         dateCreated: '',
-//         dateModify: '',
-//         items: [],
-//         variation: []
-//     },
-//     {
-//         name: 'Nhẫn Cưới Vàng 244',
-//         urlThumbnailImage: ProductEx,
-//         id: 2,
-//         categoryId: 0,
-//         seoDescription: '',
-//         discountRate: 0,
-//         price: 2000000,
-//         priceBeforeDiscount: 0,
-//         seoTitle: 'Nhẫn Cưới Vàng 24K',
-//         file: undefined,
-//         viewCount: 0,
-//         status: 0,
-//         dateCreated: '',
-//         dateModify: '',
-//         items: [],
-//         variation: []
-//     },
-//     {
-//         name: 'Nhẫn Cưới Vàng 24K',
-//         urlThumbnailImage: ProductEx,
-//         id: 2,
-//         categoryId: 0,
-//         seoDescription: '',
-//         discountRate: 0,
-//         price: 2000000,
-//         priceBeforeDiscount: 0,
-//         seoTitle: 'Nhẫn Cưới Vàng 24K',
-//         file: undefined,
-//         viewCount: 0,
-//         status: 0,
-//         dateCreated: '',
-//         dateModify: '',
-//         items: [],
-//         variation: []
-//     },
-//     {
-//         name: 'Nhẫn Cưới Vàng 244',
-//         urlThumbnailImage: ProductEx,
-//         id: 2,
-//         categoryId: 0,
-//         seoDescription: '',
-//         discountRate: 0,
-//         price: 2000000,
-//         priceBeforeDiscount: 0,
-//         seoTitle: 'Nhẫn Cưới Vàng 24K',
-//         file: undefined,
-//         viewCount: 0,
-//         status: 0,
-//         dateCreated: '',
-//         dateModify: '',
-//         items: [],
-//         variation: []
-//     }
-// ]
 function Home() {
     const [productsNew, setProductsNew] = React.useState<Product[]>();
     const [productsHot, setProductsHot] = React.useState<Product[]>();

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { SetStateAction, useEffect } from 'react';
-
 import {
     Button,
     type FormProps,
@@ -13,48 +12,26 @@ import {
     Drawer,
     Col,
     Row,
-    Skeleton,
 } from 'antd';
 import { notification } from 'antd';
 type NotificationType = 'success' | 'error';
-import { MinusCircleOutlined, PlusOutlined, DownOutlined } from '@ant-design/icons';
-import { Product, ProductItem, Category } from '@/type';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { Product, Category } from '@/type';
 import * as productServices from '@/api/productServices';
 import type { SelectProps } from 'antd';
 import type { StatusForm } from '@/pages/Admin/Category/Type';
 import * as categoryServices from "@/api/categoryServices"
-import type { GetProp, UploadFile, UploadProps } from 'antd';
+//import type { GetProp, UploadProps } from 'antd';
 import ProductItemConfig from '../ProductItemConfig';
-type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
-const getBase64 = (file: FileType): Promise<string> =>
-    new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = (error) => reject(error);
-    });
-const formItemLayout = {
-    labelCol: {
-        xs: { span: 24 },
-        sm: { span: 8 },
-    },
-    wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 },
-    },
-};
-const tailFormItemLayout = {
-    wrapperCol: {
-        xs: {
-            span: 24,
-            offset: 0,
-        },
-        sm: {
-            span: 16,
-            offset: 8,
-        },
-    },
-};
+//type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+import { FORM_ITEM_LAYOUT,TAIL_FORM_ITEM_LAYOUT } from '@/common/common';
+// const getBase64 = (file: FileType): Promise<string> =>
+//     new Promise((resolve, reject) => {
+//         const reader = new FileReader();
+//         reader.readAsDataURL(file);
+//         reader.onload = () => resolve(reader.result as string);
+//         reader.onerror = (error) => reject(error);
+//     });
 const normFile = (e: any) => {
     if (Array.isArray(e)) {
         return e;
@@ -94,7 +71,6 @@ const ProductForm: React.FC<{
     onSetStatus: SetStateAction<any>;
 }> = ({ product, onSetState, onSetStatus }) => {
     const [form] = Form.useForm();
-    const baseUrl = import.meta.env.VITE_BASE_URL;
     form.setFieldsValue(product);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [options, setOptions] = React.useState<SelectProps['options']>([]);
@@ -114,7 +90,7 @@ const ProductForm: React.FC<{
         setOpenUploadImages(true);
     };
     const getAllCate  =async ()=>{
-        const res  =await categoryServices.getAllCate("all")
+        const res  =await categoryServices.getAllCate()
         const options: SelectProps['options'] = [];
         res.resultObj.forEach((e: Category) => {
             options.push({
@@ -127,7 +103,6 @@ const ProductForm: React.FC<{
     useEffect(() => {
         getAllCate()
     }, []);
-    const handleChange = (value: string[]) => {};
     const onFinish: FormProps<Product>['onFinish'] = async (values) => {
         setIsLoading(true);
         if (product != undefined) {
@@ -200,7 +175,7 @@ const ProductForm: React.FC<{
             <Row gutter={16}>
                 <Col xs={24} xl={12} >
                 <Form
-                {...formItemLayout}
+                {...FORM_ITEM_LAYOUT}
                 form={form}
                 name="productFrom"
                 onFinish={onFinish}
@@ -248,7 +223,7 @@ const ProductForm: React.FC<{
                     //initialValue={product?.categoryId}
                     rules={[{ required: true, message: 'Please select categories!' }]}
                 >
-                    <Select size={'middle'} onChange={handleChange} style={{ width: 200 }} options={options} />
+                    <Select size={'middle'} style={{ width: 200 }} options={options} />
                 </Form.Item>
                 <Form.Item<Product>
                         name="status"
@@ -258,7 +233,7 @@ const ProductForm: React.FC<{
                         rules={[{ required: true, message: 'Please select Status!' }]}
                     >
                         <Select
-                        disabled={ (product?.items?.length < 1 || typeof product === 'undefined') }
+                        disabled={ (product?.items && product.items.length < 1 || typeof product === 'undefined') }
                             size={'middle'}
                             //onChange={handleChange}
                             style={{ width: 200 }}
@@ -266,7 +241,7 @@ const ProductForm: React.FC<{
                         />
                     </Form.Item>
                 
-                <Form.Item {...tailFormItemLayout}>
+                <Form.Item {...TAIL_FORM_ITEM_LAYOUT}>
                     <Button type="primary" htmlType="submit" loading={isLoading}>
                         Save
                     </Button>
@@ -278,7 +253,6 @@ const ProductForm: React.FC<{
                 </Col>
             </Row>
             
-
             {product != undefined ? (
                 <>
                     <Space>
@@ -322,7 +296,7 @@ const ProductForm: React.FC<{
             </Drawer>
             <Drawer title="Create variation" width={600} onClose={() => setOpenVariaton(false)} open={openVariaton}>
                 <Form
-                    {...formItemLayout}
+                    {...FORM_ITEM_LAYOUT}
                     name="dynamic_form_nest_item"
                     onFinish={onFinishVariation}
                     style={{ maxWidth: 600 }}
@@ -358,7 +332,7 @@ const ProductForm: React.FC<{
                             </>
                         )}
                     </Form.List>
-                    <Form.Item {...tailFormItemLayout}>
+                    <Form.Item {...TAIL_FORM_ITEM_LAYOUT}>
                         <Button type="primary" htmlType="submit">
                             Submit
                         </Button>

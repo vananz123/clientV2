@@ -1,9 +1,9 @@
 import { PhoneOutlined } from '@ant-design/icons';
-import { HeaderC, FooterC ,SiderC} from '../components';
+import { HeaderC, FooterC } from '../components';
 import { Avatar, Layout, theme } from 'antd';
 const { Content } = Layout;
 import { Outlet } from 'react-router-dom';
-function DefaultLayout({ children }: any) {
+function DefaultLayout() {
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();

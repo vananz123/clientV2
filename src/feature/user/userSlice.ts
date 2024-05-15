@@ -1,5 +1,5 @@
 import { createAppSlice } from '../../app/createAppSlice';
-import type { ResponseUser } from '@/api/userServices';
+import { ResponseUser } from '@/api/ResType';
 import { UserAPI } from './userAPI';
 export interface UserliceState {
     isAuthenticated: boolean,

@@ -1,25 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Button, Tooltip, Input, Space, Image } from 'antd';
-import { Flex, Layout, Menu, theme, Badge, Avatar, Dropdown } from 'antd';
+import {  Space } from 'antd';
+import {  Layout,  theme, Avatar, Dropdown } from 'antd';
 import { UserOutlined, DownOutlined } from '@ant-design/icons';
 import { useAppSelector ,useAppDispatch} from '@/app/hooks';
-import { selectUser, selectStatus ,signOut} from '@/feature/user/userSlice';
-import * as loginServices from '@/api/loginServices';
-import { Link } from 'react-router-dom';
+import { selectUser ,signOut} from '@/feature/user/userSlice';
 import type { MenuProps } from 'antd';
-import React, { useEffect, useState } from 'react';
-const { Header, Content } = Layout;
-import NavC from './NavC';
-type MenuItem = Required<MenuProps>['items'][number];
-
-function getItem(label: React.ReactNode, key: React.Key, children?: MenuItem[]): MenuItem {
-    return {
-        label,
-        key,
-        children,
-    } as MenuItem;
-}
-
+const { Header } = Layout;
 import { useNavigate } from 'react-router-dom';
 import './style.scss';
 function HeaderA() {
@@ -27,7 +13,7 @@ function HeaderA() {
     const user = useAppSelector(selectUser);
     const dispatch = useAppDispatch()
     const {
-        token: { colorBgContainer, borderRadiusLG },
+        token: { colorBgContainer },
     } = theme.useToken();
     const items: MenuProps['items'] = [
         {
@@ -52,7 +38,6 @@ function HeaderA() {
     ];
     const Logout = async () => {
         const accessToken = localStorage.getItem('accessToken');
-        const refreshToken = localStorage.getItem('refreshToken');
         if (accessToken != null) {
             localStorage.removeItem('accessToken');
                 //localStorage.removeItem('refreshToken');

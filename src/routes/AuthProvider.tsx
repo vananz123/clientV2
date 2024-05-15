@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect } from "react"
+import  { useEffect } from "react"
 import { useAppDispatch } from '@/app/hooks';
 import { addToCart,emptyCart } from "@/feature/cart/cartSlice";
 import {  initialize,initializeActive} from '@/feature/user/userSlice';

@@ -6,7 +6,6 @@ import { StatusForm } from '../Category/Type';
 import { Guaranty } from '@/type';
 import GuarantyForm from '@/conponents/GuarantyForm';
 import * as guarantyServices from '@/api/guarantyServices'
-import dayjs, { Dayjs } from 'dayjs';
 function GuarantiesEdit() {
     const { id } = useParams();
     const [guaranty, setGuaranty] = React.useState<Guaranty>();

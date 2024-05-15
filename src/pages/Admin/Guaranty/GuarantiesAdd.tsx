@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { notification } from 'antd';
 type NotificationType = 'success' | 'error';
-import * as guarantyServices from '@/api/guarantyServices'
 import { StatusForm } from '../Category/Type';
 import { useNavigate } from 'react-router-dom';
 import { Guaranty } from '@/type';

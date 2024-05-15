@@ -18,7 +18,6 @@ import Purchase from '@/pages/Purchase';
 import Checkout from '@/pages/Pay/Checkout';
 import CheckoutVnpay from '@/pages/Pay/CheckoutVnpay';
 import { OrderConfirm, OrderList } from '@/pages/Admin/Order';
-import ProductListSearch from '@/pages/ProductListSearch';
 import UserOrderDetail from '@/pages/UserOrderDetail';
 import { PromotionAdd, PromotionEdit, PromotionList } from '@/pages/Admin/Promotion';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -98,10 +97,6 @@ const Router: React.FC = () => {
                 {
                     path: 'product/detail/:id',
                     element: <ProductDetail />,
-                },
-                {
-                    path: 'product/search/:keyword',
-                    element: <ProductListSearch />,
                 },
                 {
                     path: 'profile',

@@ -24,31 +24,29 @@ import { optionsPrice, optionsSort, optionsMaterial } from './FilterType';
 import type { Filter } from './FilterType';
 import { Space, Tooltip } from 'antd';
 export type Sort = 'ascending' | 'descending';
+const pageSize: number = 6
 function ProductListShow() {
     const { id } = useParams();
     const [products, setProducts] = React.useState<Product[]>();
-    const [pageSize, setPageSize] = React.useState<number>(6);
     const cate = useAppSelector(selectCate);
     const [page, setPage] = React.useState<number>(1);
     //const [isLoading, setIsLoading] = React.useState<boolean>(true);
-    const [loadingPage, setLoadingPage] = React.useState<boolean>(false);
-    const [loadingSearch, setLoadingSearch] = React.useState<boolean>(false);
     const [sortOder, setSortOder] = React.useState<Sort>('ascending');
     const [optionPrice, setOptionPrice] = React.useState<number[]>([]);
     const [optionMaterial, setOptionMaterial] = React.useState<string[]>([]);
     const [isPromotion, setIsPromotion] = React.useState<boolean>(false);
     const [titleContent, setTitleContent] = React.useState<string | undefined>('');
-    const [data, setData] = React.useState<Product[]>();
-
-    const loadAllProduct = async () => {
-        const res = await productServices.getAllProduct();
-        // console.log(res);
-        if (res.isSuccessed === true) {
-            setData(res.resultObj);
-        }
-    };
+    const [isLoading,setIsLoading] = React.useState<boolean>(false)
+    // const loadAllProduct = async () => {
+    //     const res = await productServices.getAllProduct();
+    //     // console.log(res);
+    //     if (res.isSuccessed === true) {
+    //         setData(res.resultObj);
+    //     }
+    // };
 
     const getProductPaging = async () => {
+        setIsLoading(true)
         const filter: Filter = {
             categoryId: Number(id),
             page: page,
@@ -61,9 +59,11 @@ function ProductListShow() {
         const res = await productServices.getProductPagingByFilter(filter);
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
+            setIsLoading(false)
         }
     };
     const getProductPromotionPaging = async () => {
+        setIsLoading(true)
         const filter: Filter = {
             page: page,
             sortOder: sortOder,
@@ -75,9 +75,11 @@ function ProductListShow() {
         const res = await productServices.getProductPagingByFilter(filter);
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
+            setIsLoading(false)
         }
     };
     const getProductPNPaging = async () => {
+        setIsLoading(true)
         const filter: Filter = {
             page: page,
             sortOder: sortOder,
@@ -90,6 +92,7 @@ function ProductListShow() {
         const res = await productServices.getProductPagingByFilter(filter);
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
+            setIsLoading(false)
         }
     };
     const getProductStatusPaging = async (status:number) => {
@@ -137,11 +140,8 @@ function ProductListShow() {
                 }
             }
         }
-        loadAllProduct()
+        //loadAllProduct()
     }, [id, page, optionPrice, optionMaterial, sortOder, isPromotion]);
-    // useEffect(() => {
-    //     getProductPaging();
-    // }, [page, optionPrice, optionMaterial, sortOder, isPromotion]);
     const handleChangeSort = (value: Sort) => {
         setSortOder(value);
     };
@@ -203,12 +203,11 @@ function ProductListShow() {
                     <Select
                         value={sortOder}
                         style={{ width: 120 }}
-                        loading={loadingPage}
                         onChange={handleChangeSort}
                         options={optionsSort}
                     />
                 </Flex>
-                <Spin spinning={loadingSearch} indicator={<LoadingOutlined style={{ fontSize: 24 }} />}>
+                <Spin spinning={isLoading} indicator={<LoadingOutlined style={{ fontSize: 24 }} />}>
                     {products != undefined ? (
                         <>
                             {products.length > 0 ? (
@@ -288,15 +287,4 @@ function ProductListShow() {
         </>
     );
 }
-const ChangeCurrence = (number: number | undefined) => {
-    if (number) {
-        const formattedNumber = number.toLocaleString('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-            currencyDisplay: 'code',
-        });
-        return formattedNumber;
-    }
-    return 0;
-};
 export default ProductListShow;

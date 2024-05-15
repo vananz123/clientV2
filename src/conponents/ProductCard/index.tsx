@@ -2,7 +2,7 @@
 import { Card } from 'antd';
 import { Product } from '@/type';
 import { Link } from 'react-router-dom';
-import { SelectProps, Badge } from 'antd';
+import { Badge } from 'antd';
 const styleTitle: React.CSSProperties = {
     textAlign: 'center',
     color: '#000000E0',
@@ -11,33 +11,6 @@ const styleTitle: React.CSSProperties = {
     marginTop: 10,
     marginBottom: 10,
 };
-const optionsProductStatus: SelectProps['options'] = [
-    {
-        value: 0,
-        label: 'InActive',
-    },
-    {
-        value: 1,
-        label: 'Active',
-    },
-    {
-        value: 2,
-        label: 'New',
-    },
-    {
-        value: 3,
-        label: 'Hot',
-    },
-    {
-        value: 4,
-        label: 'Sale',
-        disabled: true,
-    },
-    {
-        value: 5,
-        label: 'UnActive',
-    },
-];
 const ProductCard: React.FC<{ product: Product | undefined }> = ({ product }) => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
     return (

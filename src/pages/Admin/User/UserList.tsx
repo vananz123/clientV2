@@ -11,6 +11,7 @@ interface ItemRole {
 function UserList() {
     const [data, setData] = React.useState<ResponseUser[]>();
     const [currentUser, setCurrentUser] = React.useState<ResponseUser>();
+    console.log(currentUser)
     const [listRoles, setListRoles] = React.useState<ItemRole[]>([]);
     const columns: TableProps<ResponseUser>['columns'] = [
         {

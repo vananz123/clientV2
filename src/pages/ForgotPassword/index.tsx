@@ -1,12 +1,11 @@
 import queryString from 'query-string';
-import React, { useEffect } from 'react';
 import * as userServices from '@/api/userServices';
-import { Button, Checkbox, Form, type FormProps, Input, Space, Alert, Modal, message } from 'antd';
+import { Button, Form, type FormProps, Input, message } from 'antd';
 import { RegisterUser } from '../Register';
 import { useNavigate } from 'react-router-dom';
 import { LockOutlined } from '@ant-design/icons';
 function ForgotPassword() {
-    let p = queryString.parse(window.location.search);
+    const p = queryString.parse(window.location.search);
     const Navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
     const onFinish: FormProps<RegisterUser>['onFinish'] = async (values) => {

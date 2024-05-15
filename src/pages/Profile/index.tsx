@@ -7,8 +7,6 @@ import {
     Descriptions,
     Divider,
     Flex,
-    Form,
-
     Modal,
     Result,
     Row,
@@ -31,16 +29,15 @@ import dayjs from 'dayjs';
 function Profile() {
     const Navigate = useNavigate();
     const user = useAppSelector(selectUser);
-    const [form] = Form.useForm();
+    //const [form] = Form.useForm();
     const [data, setData] = React.useState<Order[]>();
-    const [currentData, setCurrentData] = React.useState<Order>();
+    //const [currentData, setCurrentData] = React.useState<Order>();
     const [addresses, setAddresses] = React.useState<Address[]>([]);
     const [currentAddress, setCurrentAddress] = React.useState<Address>();
     const [currentAddressForm, setCurrentAddressForm] = React.useState<Address>();
     const [open, setOpen] = React.useState(false);
     const [openDel, setOpenDel] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
-    const [modalText, setModalText] = React.useState('Do you want to detele!');
     const [status, setStatus] = React.useState<StatusForm>('loading');
     const [typeFormAddress, setTypeFormAddress] = React.useState<TypeFormAddress>('EDIT');
     const getAllPurchase = async () => {
@@ -270,7 +267,7 @@ function Profile() {
                 confirmLoading={confirmLoading}
                 onCancel={()=>{setOpenDel(false)}}
             >
-                {modalText}
+                Do you want to detele!
             </Modal>
         </div>
     );
