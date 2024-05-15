@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+export type StatusForm = 'success' | 'error' | 'loading'
 export type Category = {
     id: number;
     name: string;

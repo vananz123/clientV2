@@ -1,7 +1,8 @@
-import {ArrowLeftOutlined} from '@ant-design/icons';
+import {ArrowLeftOutlined, DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {
     Badge,
     Button,
+    Card,
     Col,
     Descriptions,
     Divider,
@@ -22,6 +23,7 @@ import { selectUser } from '@/feature/user/userSlice';
 import { Address, Order } from '@/api/ResType';
 import { Tabs } from 'antd';
 import type { DescriptionsProps, TabsProps } from 'antd';
+
 import { TypeFormAddress } from '../Purchase';
 import AddressForm from '@/conponents/AddressForm';
 import { StatusForm } from '../Admin/Category/Type';
@@ -145,13 +147,13 @@ function Profile() {
             label: 'Thông Tin Khách Hàng',
             children: (
                 <>
-                    <Row gutter={16}>
-                        <Col span={14}>
-                            <Descriptions size="middle" items={desUser} bordered />
+                    <Row gutter={[24,8]}>
+                        <Col xs={24} lg={14}>
+                            <Descriptions title="Thông tin tài khoản" size="middle" items={desUser} bordered />
                         </Col>
-                        <Col span={10}>
-                            <div>
-                                <Space direction='vertical'>
+                        <Col  xs={24} lg={10}>
+                            <Card title="Thông tin địa chỉ">
+                                <div>
                                     {addresses.map((e: Address) => (
                                         <>
                                             <Flex align='center' justify='space-between'>
@@ -171,40 +173,42 @@ function Profile() {
                                                 </Space>
                                                 <Space direction="vertical">
                                                     <Button
+                                                    icon={<EditOutlined/>}
                                                         onClick={() => {
                                                             setCurrentAddressForm(e);
                                                             setTypeFormAddress('EDIT');
                                                             setOpen(true);
                                                         }}
                                                     >
-                                                        Edit
                                                     </Button>
                                                     <Button
+                                                    icon={<DeleteOutlined/>}
                                                         onClick={() => {
                                                             setCurrentAddress(e);
                                                             setOpenDel(true);
                                                             
                                                         }}
                                                     >
-                                                        Del
                                                     </Button>
                                                 </Space>
                                             </Flex>
                                         </>
                                     ))}
-                                </Space>
+                                </div>
                                 <Button
                                     type="primary"
-                                    block
+                                    icon={<PlusOutlined/>}
+                                    shape="round"
+                                    size='large'
                                     onClick={() => {
                                         setCurrentAddressForm(undefined);
                                         setTypeFormAddress('ADD');
                                         setOpen(true);
                                     }}
                                 >
-                                    Add
+                                    
                                 </Button>
-                            </div>
+                            </Card>
                         </Col>
                     </Row>
                 </>

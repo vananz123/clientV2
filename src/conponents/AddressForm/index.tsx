@@ -1,46 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { SetStateAction, useEffect } from 'react';
-import { Button, type FormProps, Form, Input, Select } from 'antd';
+import { Button, type FormProps, Form, Input, Select, Spin } from 'antd';
 import * as userServices from '@/api/userServices';
 import * as addressGHTKServices from '@/api/addressGHTKServices';
 import type { SelectProps } from 'antd';
-import type { StatusForm } from '@/pages/Admin/Category/Type';
+import { StatusForm } from '@/type';
 import { useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/feature/user/userSlice';
 import { Address, addressGHTK } from '@/api/ResType';
 import type { TypeFormAddress } from '@/pages/Purchase';
-const formItemLayout = {
-    labelCol: {
-        xs: { span: 24 },
-        sm: { span: 8 },
-    },
-    wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 },
-    },
-};
-const tailFormItemLayout = {
-    wrapperCol: {
-        xs: {
-            span: 24,
-            offset: 0,
-        },
-        sm: {
-            span: 16,
-            offset: 8,
-        },
-    },
-};
-const AddressForm: React.FC<{
+import { FORM_ITEM_LAYOUT, TAIL_FORM_ITEM_LAYOUT } from '@/common/common';
+interface Props {
     typeForm: TypeFormAddress | undefined;
     address: Address | undefined;
     onSetState: SetStateAction<any> | undefined;
     onSetStatus: SetStateAction<any>;
-}> = ({ typeForm, address, onSetState, onSetStatus }) => {
+}
+const AddressForm: React.FC<Props> = ({ typeForm, address, onSetState, onSetStatus }) => {
     const [form] = Form.useForm();
     const [province, setProvince] = React.useState<addressGHTK[]>([]);
     const [district, setDistrict] = React.useState<addressGHTK[]>([]);
-    const [ward, setWard] = React.useState<addressGHTK[]>([]);
     const [optionsProvince, setOptionsProvince] = React.useState<SelectProps['options']>();
     const [optionsDistrict, setOptionsDistrict] = React.useState<SelectProps['options']>();
     const [optionsWard, setOptionsWard] = React.useState<SelectProps['options']>();
@@ -69,18 +48,18 @@ const AddressForm: React.FC<{
                 setContext('Save');
             } else {
                 if (typeForm == 'EDIT') {
-                    values.province =address.province
+                    values.province = address.province;
                     values.userId = user.id;
                     values.id = address.id;
                     console.log(values);
-                    const res = await userServices.updateAddress(values)
+                    const res = await userServices.updateAddress(values);
                     if (res.statusCode === 201) {
                         onSetState(res.resultObj);
-                        const status : StatusForm ='success'
-                        onSetStatus(status)
-                    }else{
-                        const status : StatusForm ='error'
-                        onSetStatus(status)
+                        const status: StatusForm = 'success';
+                        onSetStatus(status);
+                    } else {
+                        const status: StatusForm = 'error';
+                        onSetStatus(status);
                     }
                 }
                 setIsLoading(false);
@@ -126,6 +105,7 @@ const AddressForm: React.FC<{
     };
     useEffect(() => {
         const getAllProvince = async () => {
+            setIsLoading(true);
             const res = await addressGHTKServices.getAllProvince();
             if (res.isSuccessed === true) {
                 setOptionsProvince(GeneratorSelectOption(res.resultObj));
@@ -139,101 +119,91 @@ const AddressForm: React.FC<{
                         const ward = resDis.resultObj.find((x: addressGHTK) => x.name == address.urbanDistrict);
                         const resW = await addressGHTKServices.getAllWard(Number(ward?.id));
                         if (resW.isSuccessed === true) {
-                            setWard(resW.resultObj);
                             setOptionsWard(GeneratorSelectOption(resW.resultObj));
+                            setIsLoading(false);
                         }
                     }
                     form.setFieldsValue(address);
-                }else{
-                    form.setFieldValue('streetNumber','')
-                    form.setFieldValue('phoneNumber','')
-                    form.setFieldValue('wardCommune','Chọn Xã/Phường')
-                    form.setFieldValue('urbanDistrict','Chọn Quận/Huyện')
-                    form.setFieldValue('province','Chọn Tỉnh/Thành phố')
+                } else {
+                    form.setFieldValue('streetNumber', '');
+                    form.setFieldValue('phoneNumber', '');
+                    form.setFieldValue('wardCommune', 'Chọn Xã/Phường');
+                    form.setFieldValue('urbanDistrict', 'Chọn Quận/Huyện');
+                    form.setFieldValue('province', 'Chọn Tỉnh/Thành phố');
+                    setIsLoading(false);
                 }
             }
         };
         getAllProvince();
     }, [address]);
     return (
-        <Form
-            {...formItemLayout}
-            form={form}
-            name="productFrom"
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-            style={{ maxWidth: 600 }}
-            scrollToFirstError
-        >
-            <Form.Item<Address>
-                name="province"
-                label="Tỉnh/Thành Phố"
-                tooltip="What do you want others to call you?"
-          
-                initialValue={address?.province || "Chọn Tỉnh/ Thành Phố"}
-                rules={[{ required: true, message: 'Chọn Tỉnh/Thành Phố!' }]}
+        <Spin spinning={isLoading}>
+            <Form
+                {...FORM_ITEM_LAYOUT}
+                form={form}
+                name="productFrom"
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
+                style={{ maxWidth: 600 }}
+                scrollToFirstError
             >
-                <Select
-                 disabled={typeForm =='EDIT'}
-                    style={{ width: 200 }}
-                    onChange={handleChangeProvince}
-                    options={optionsProvince}
-                />
-            </Form.Item>
-            <Form.Item<Address>
-                name="urbanDistrict"
-                label="Quận/ Huyện"
-                tooltip="What do you want others to call you?"
-         
-                initialValue={address?.urbanDistrict || "Chọn Quận/ Huyện"}
-                rules={[{ required: true, message: 'Chọn Quận/Huyện!' }]}
-            >
-                <Select
-                    style={{ width: 200 }}
-                    onChange={handleChangeDistrict}
-                    options={optionsDistrict}
-                />
-            </Form.Item>
-            <Form.Item<Address>
-                name="wardCommune"
-                label="Xã/Phường"
-                tooltip="What do you want others to call you?"
-             
-                
-                initialValue={address?.wardCommune || "Chọn Xã/Phường"}
-                rules={[{ required: true, message: 'Chọn Xã/Phường!' }]}
-            >
-                <Select
-                    style={{ width: 200 }}
-                    options={optionsWard}
-                />
-            </Form.Item>
-            <Form.Item<Address>
-                name="streetNumber"
-                label="Số Đường"
-                tooltip="What do you want others to call you?"
-               
-                //initialValue={''}
-                rules={[{ required: true, message: 'Chọn Số Đường!', whitespace: true }]}
-            >
-                <Input></Input>
-            </Form.Item>
-            <Form.Item<Address>
-                name="phoneNumber"
-                label="Phone number"
-                tooltip="What do you want others to call you?"
-         
-                initialValue={''}
-                rules={[{ required: true, message: 'Please input Phone number!', whitespace: true }]}
-            >
-                <Input value={address?.phoneNumber} />
-            </Form.Item>
-            <Form.Item {...tailFormItemLayout}>
-                <Button type="primary" htmlType="submit" loading={isLoading} style={{ width: '100px' }}>
-                    {context}
-                </Button>
-            </Form.Item>
-        </Form>
+                <Form.Item<Address>
+                    name="province"
+                    label="Tỉnh/Thành Phố"
+                    tooltip="What do you want others to call you?"
+                    initialValue={address?.province || 'Chọn Tỉnh/ Thành Phố'}
+                    rules={[{ required: true, message: 'Chọn Tỉnh/Thành Phố!' }]}
+                >
+                    <Select
+                        disabled={typeForm == 'EDIT'}
+                        style={{ width: 200 }}
+                        onChange={handleChangeProvince}
+                        options={optionsProvince}
+                    />
+                </Form.Item>
+                <Form.Item<Address>
+                    name="urbanDistrict"
+                    label="Quận/ Huyện"
+                    tooltip="What do you want others to call you?"
+                    initialValue={address?.urbanDistrict || 'Chọn Quận/ Huyện'}
+                    rules={[{ required: true, message: 'Chọn Quận/Huyện!' }]}
+                >
+                    <Select style={{ width: 200 }} onChange={handleChangeDistrict} options={optionsDistrict} />
+                </Form.Item>
+                <Form.Item<Address>
+                    name="wardCommune"
+                    label="Xã/Phường"
+                    tooltip="What do you want others to call you?"
+                    initialValue={address?.wardCommune || 'Chọn Xã/Phường'}
+                    rules={[{ required: true, message: 'Chọn Xã/Phường!' }]}
+                >
+                    <Select style={{ width: 200 }} options={optionsWard} />
+                </Form.Item>
+                <Form.Item<Address>
+                    name="streetNumber"
+                    label="Số Đường"
+                    tooltip="What do you want others to call you?"
+                    //initialValue={''}
+                    rules={[{ required: true, message: 'Chọn Số Đường!', whitespace: true }]}
+                >
+                    <Input></Input>
+                </Form.Item>
+                <Form.Item<Address>
+                    name="phoneNumber"
+                    label="Phone number"
+                    tooltip="What do you want others to call you?"
+                    initialValue={''}
+                    rules={[{ required: true, message: 'Please input Phone number!', whitespace: true }]}
+                >
+                    <Input value={address?.phoneNumber} />
+                </Form.Item>
+                <Form.Item {...TAIL_FORM_ITEM_LAYOUT}>
+                    <Button type="primary" htmlType="submit" loading={isLoading} style={{ width: '100px' }}>
+                        {context}
+                    </Button>
+                </Form.Item>
+            </Form>
+        </Spin>
     );
 };
 export default AddressForm;

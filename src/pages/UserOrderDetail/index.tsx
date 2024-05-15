@@ -13,7 +13,6 @@ import {
     FormProps,
     Input,
     Modal,
-    Popconfirm,
     Rate,
     Row,
     Timeline,
@@ -30,7 +29,7 @@ type TimeLineProps = {
     label?: string;
     children: string;
 };
-type ConfirmType = 'CANCELED' | 'SUCCESSED' | 'RETURNED' 
+type ConfirmType = 'CANCELED' | 'SUCCESSED' | 'RETURNED';
 function UserOrderDetail() {
     const { id } = useParams();
     const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -48,7 +47,7 @@ function UserOrderDetail() {
     const [currentOD, setCurrentOD] = React.useState<OrderDetail>();
     const [statusTimeLine, setStatusTimeLine] = React.useState<TimeLineProps[]>([]);
     const [openModal, setOpenModal] = React.useState(false);
-    const [confirm,setConfirm] = React.useState<ConfirmType>()
+    const [confirm, setConfirm] = React.useState<ConfirmType>();
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const desOrder: DescriptionsProps['items'] = [
         {
@@ -113,9 +112,6 @@ function UserOrderDetail() {
     const onFinishFailed: FormProps<Review>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
-    const onChange = (key: string) => {
-        console.log(key);
-    };
     const [open, setOpen] = React.useState(false);
 
     const showDrawer = (e: OrderDetail) => {
@@ -142,7 +138,6 @@ function UserOrderDetail() {
                 const arr: TimeLineProps[] = [];
                 res.resultObj.status?.forEach((element: OrderStatus) => {
                     const line: TimeLineProps = {
-                        //label:new Date(element.createAt).toUTCString(),
                         children: element.name + ': ' + dayjs(element.createAt).format('MM/DD/YYYY, HH:MM'),
                     };
                     arr.push(line);
@@ -155,13 +150,13 @@ function UserOrderDetail() {
     useEffect(() => {
         getOrderByOrderId();
     }, [id]);
-    const handleOk =async() => {
+    const handleOk = async () => {
         setConfirmLoading(true);
         if (typeof order != 'undefined') {
-            let res
-            if(confirm =='CANCELED'){
+            let res;
+            if (confirm == 'CANCELED') {
                 res = await orderServices.canceled(order.id);
-            }else{
+            } else {
                 res = await orderServices.successed(order.id);
             }
             if (res.isSuccessed === true) {
@@ -173,7 +168,7 @@ function UserOrderDetail() {
         }
         setOpenModal(false);
         setConfirmLoading(false);
-    }
+    };
     return (
         <div>
             {contextHolder}
@@ -192,44 +187,45 @@ function UserOrderDetail() {
                 <Col span={8} xs={24} md={24} lg={8} xl={8}>
                     <Descriptions title="Thông Tin Đơn Hàng" column={1} size="middle" items={desOrder} bordered />
                     <Button
-                            disabled={order?.status?.some((s) => s.name === 'Đã hủy' || s.name === 'Đang xủ lý' || s.name ==='Đã hoàng thành')}
-                            style={{ marginTop: 10 }}
-                            type="primary"
-                            danger
-                            block
-                            onClick={() => {
-                                setConfirm('SUCCESSED')
-                                setOpenModal(true)
-                            }}
-                        >
-                            Đã nhận hàng
-                        </Button>
-                        <Button
-                            disabled={order?.status?.some((s) => s.name === 'Đã hủy' || s.name === 'Đã tiếp nhận')}
-                            style={{ marginTop: 10 }}
-                            type="primary"
-                            danger
-                            block
-                            onClick={() => {
-                                setConfirm('CANCELED')
-                                setOpenModal(true)
-                            }}
-                        >
-                            Hủy
-                        </Button>
-                        <Button
-                            disabled={order?.status?.some((s) => s.name === 'Đã hủy' || s.name === 'Đã tiếp nhận')}
-                            style={{ marginTop: 10 }}
-                            type="primary"
-                            
-                            block
-                            onClick={() => {
-                                setConfirm('RETURNED')
-                                setOpenModal(true)
-                            }}
-                        >
-                            Yêu cầu trả hàng/hoàn tiền
-                        </Button>  
+                        disabled={order?.status?.some(
+                            (s) => s.name === 'Đã hủy' || s.name === 'Đang xủ lý' || s.name === 'Đã hoàng thành',
+                        )}
+                        style={{ marginTop: 10 }}
+                        type="primary"
+                        danger
+                        block
+                        onClick={() => {
+                            setConfirm('SUCCESSED');
+                            setOpenModal(true);
+                        }}
+                    >
+                        Đã nhận hàng
+                    </Button>
+                    <Button
+                        disabled={order?.status?.some((s) => s.name === 'Đã hủy' || s.name === 'Đã tiếp nhận')}
+                        style={{ marginTop: 10 }}
+                        type="primary"
+                        danger
+                        block
+                        onClick={() => {
+                            setConfirm('CANCELED');
+                            setOpenModal(true);
+                        }}
+                    >
+                        Hủy
+                    </Button>
+                    <Button
+                        disabled={order?.status?.some((s) => s.name === 'Đã hủy' || s.name === 'Đã tiếp nhận')}
+                        style={{ marginTop: 10 }}
+                        type="primary"
+                        block
+                        onClick={() => {
+                            setConfirm('RETURNED');
+                            setOpenModal(true);
+                        }}
+                    >
+                        Yêu cầu trả hàng/hoàn tiền
+                    </Button>
                 </Col>
                 <Col span={16} xs={24} md={24} lg={16} xl={16}>
                     <Card title="Danh sách sản phẩm" bordered={false}>
@@ -237,21 +233,21 @@ function UserOrderDetail() {
                             {order?.orderDetail?.map((e: OrderDetail) => (
                                 <>
                                     <Row align={'top'}>
-                                        <Col span={8} xs={12} md={12} lg={8} xl={8}>
+                                        <Col xs={8} lg={6}>
                                             <p>
                                                 <Link to={`/product/detail/${e.productId}`}>{e.seoTitle}</Link>
                                             </p>
                                             <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: 70 }} />
                                         </Col>
-                                        <Col span={4} xs={4} md={4} lg={3} xl={3}>
+                                        <Col xs={8} lg={5}>
                                             <p>Số lượng: {e.quantity}</p>
                                             <p>Giá: {e.price}</p>
                                             {e.value != undefined ? <p>Size: {e.value + ' ' + e.sku}</p> : ''}
                                         </Col>
-                                        <Col span={4} xs={8} md={8} lg={5} xl={5}>
-                                            {/* <p>Total:{ChangeCurrence(e.total)}</p> */}
+                                        <Col xs={8} lg={5}>
+                                            <p>Total:{ChangeCurrence(e.total)}</p>
                                         </Col>
-                                        <Col span={8} xs={24} md={24} lg={8} xl={8}>
+                                        <Col xs={24} lg={8}>
                                             <Col>
                                                 <Card
                                                     size="small"
@@ -325,14 +321,16 @@ function UserOrderDetail() {
                 )}
             </Drawer>
             <Modal
-        title="Xác nhận"
-        open={openModal}
-        onOk={handleOk}
-        confirmLoading={confirmLoading}
-        onCancel={()=>{setOpenModal(false)}}
-    >
-        <p>Thao táo này không thể hoàn tác!</p>
-    </Modal>
+                title="Xác nhận"
+                open={openModal}
+                onOk={handleOk}
+                confirmLoading={confirmLoading}
+                onCancel={() => {
+                    setOpenModal(false);
+                }}
+            >
+                <p>Thao táo này không thể hoàn tác!</p>
+            </Modal>
         </div>
     );
 }

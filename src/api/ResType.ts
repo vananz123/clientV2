@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 export type Role = 'admin' | 'customer' | 'sale' | undefined;
+export interface RoleType{
+    description:string;
+    id:string;
+    name:string;
+}
 export type ResponseUser = {
     id: string;
     roles: Role[];
@@ -115,28 +119,6 @@ export type OrderDetail = {
     review?: Review;
 };
 export type OrderPayment = {
-<<<<<<< HEAD
-    id: number;
-    orderId: number;
-    paymentDate: string;
-    paymentType: string;
-    privoder: string;
-    accountNumber: string;
-};
-export type Order = {
-    id: number;
-    userId: string;
-    user: ResponseUser;
-    orderDate: string;
-    orderTotal: number;
-    totalProduct: number;
-    orderDiscount: number;
-    status?: OrderStatus[];
-    address?: Address;
-    paymentMethod?: OrderPayment;
-    orderDetail?: OrderDetail[];
-};
-=======
     id:number,
     orderId:number,
     paymentDate:string,
@@ -158,7 +140,6 @@ export type Order={
     orderDetail?:OrderDetail[],
     
 }
->>>>>>> fee4f69e697fdc50b23181ecdd962a8c28047083
 export interface Promotion {
     id: number;
     name: string;
