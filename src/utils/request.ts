@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 import.meta.env.BASE_URL
 export type BaseUrl = 'https://localhost:7005'
@@ -58,7 +59,7 @@ export const post = async (path: string, data: any, options: object = {}) => {
     const response = await request.post(path, data, options);
     return response.data;
 };
-export const put = async (path: string, data?: any, options: object = {}) => {
+export const put = async (path: string, data: any, options: object = {}) => {
     const response = await request.put(path, data, options);
     return response.data;
 };
