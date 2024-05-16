@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as request from '../utils/request';
 import {  Result } from './ResType';
 export const getAnalysis = async () => {
