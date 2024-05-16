@@ -202,7 +202,7 @@ function ProductList() {
                 </Flex>
                 <Table
                     rowKey={(record) => record.id}
-                    pagination={{ position: ['bottomLeft'], pageSize: 4 }}
+                    pagination={{ position: ['bottomLeft'], pageSize: 10 }}
                     columns={columns}
                     dataSource={data}
                 />

@@ -25,11 +25,11 @@ import {
     Rate,
     Empty,
 } from 'antd';
-import { MinusOutlined, PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { MinusOutlined, PlusOutlined, ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import { CollapseProps, Badge } from 'antd';
 import { Collapse } from 'antd';
 type NotificationType = 'success' | 'error';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Meta from 'antd/es/card/Meta';
 import { Review } from '@/api/ResType';
 import dayjs from 'dayjs';
@@ -370,7 +370,7 @@ function ProductDetail() {
                                                         >
                                                             <Meta
                                                                 avatar={
-                                                                    <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
+                                                                    <Avatar icon={<UserOutlined/>} />
                                                                 }
                                                                 title={'Feedback of admin'}
                                                                 description={
@@ -396,6 +396,7 @@ function ProductDetail() {
                                     </>
                                 ) : (
                                     <Empty
+                                    
                                         image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
                                         imageStyle={{ height: 60 }}
                                         description={
@@ -407,21 +408,23 @@ function ProductDetail() {
                                 )}
                             </Col>
                             <Col span={10}>
-                                <Card style={{ width: '100%', marginTop: 16 }} title="Sản phẩm tương tự">
+                                <Card  bordered={false} style={{ width: '100%', marginTop: 16 }} title="Sản phẩm tương tự">
                                     {data.similarProduct == undefined ? (
                                         <Skeleton/>
                                     ) : data.similarProduct.length > 0 ? (
                                         <>
                                             {data.similarProduct.map((item: Product) => (
-                                                <Card type="inner" key={item.id}>
-                                                    <Space align="start">
-                                                        <Image width={100} src={baseUrl + item.urlThumbnailImage} />
-                                                        <Meta
-                                                            title={item.seoTitle}
-                                                            description={ChangeCurrence(item.price)}
-                                                        />
-                                                    </Space>
-                                                </Card>
+                                                <Link to={`/product/detail/${item.id}`}>
+                                                    <Card type="inner" key={item.id} style={{marginBottom:10}}>
+                                                        <Space align="start">
+                                                            <Image width={100} src={baseUrl + item.urlThumbnailImage} />
+                                                            <div>
+                                                                <p>{item.seoTitle}</p>
+                                                                <p>{ChangeCurrence(item.price)}</p>
+                                                            </div>
+                                                        </Space>
+                                                    </Card>
+                                                </Link>
                                             ))}
                                         </>
                                     ) : (

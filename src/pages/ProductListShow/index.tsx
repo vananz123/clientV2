@@ -73,6 +73,7 @@ function ProductListShow() {
             isPromotion: isPromotion,
         };
         const res = await productServices.getProductPagingByFilter(filter);
+        console.log(res)
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
             setIsLoading(false)
@@ -211,7 +212,7 @@ function ProductListShow() {
                     {products != undefined ? (
                         <>
                             {products.length > 0 ? (
-                                <Row gutter={[12, 12]}>
+                                <Row gutter={[24, 24]}>
                                     {products.map((e: Product) => (
                                         <Col
                                             style={{ display: 'flex', justifyContent: 'center' }}
@@ -242,7 +243,7 @@ function ProductListShow() {
                                 xl={6}
                                 className="gutter-row"
                             >
-                                <Skeleton />
+                                <Skeleton/>
                             </Col>
                             <Col
                                 style={{ display: 'flex', justifyContent: 'center' }}

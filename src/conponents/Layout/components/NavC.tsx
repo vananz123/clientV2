@@ -44,7 +44,7 @@ const NavC:React.FC = ()=>{
     return (
         <>
             <div className="demo-logo" style={{width:100,height:64}}>
-                <a href="/home">
+                <a href="/">
                     <img style={{width:'100%',height:'100%'}} src={Logo}/>    
                 </a>    
             </div>

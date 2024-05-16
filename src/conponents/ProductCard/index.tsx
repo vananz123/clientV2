@@ -3,6 +3,7 @@ import { Card } from 'antd';
 import { Product } from '@/type';
 import { Link } from 'react-router-dom';
 import { Badge } from 'antd';
+import * as productServices from "@/api/productServices"
 const styleTitle: React.CSSProperties = {
     textAlign: 'center',
     color: '#000000E0',
@@ -13,8 +14,13 @@ const styleTitle: React.CSSProperties = {
 };
 const ProductCard: React.FC<{ product: Product | undefined }> = ({ product }) => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
+    const viewConut = async ()=>{
+        if(typeof product !== 'undefined'){
+            await productServices.productViewCount(product?.id)
+        }
+    }
     return (
-        <Link to={`/product/detail/${product?.id}`}>
+        <Link to={`/product/detail/${product?.id}`} onClick={()=> viewConut()}>
             <Card
                 bordered={false}
                 hoverable

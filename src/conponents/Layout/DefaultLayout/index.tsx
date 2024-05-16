@@ -23,6 +23,7 @@ function DefaultLayout() {
                             }}
                         >
                            <Outlet/>
+                           
                         </div>
                     </Content>
 

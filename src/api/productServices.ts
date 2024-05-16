@@ -320,3 +320,41 @@ export const assignPromotion = async(id:number, data:Promotion[])=>{
         return resError
     }
 }
+export const productViewCount = async(id:number)=>{
+    try{
+        
+        const res= await request.put(`/product/view-count/${id}`)
+        const resultObj   = res.resultObj
+        const resp: Result ={
+            error :'',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
+            statusCode:201,
+            resultObj : resultObj
+        }
+        return resp
+    }catch(error:any){
+        console.log(error.response.data)
+        const resError: Result =error.response.data
+        return resError
+    }
+}
+export const productItemViewCount = async(id:number)=>{
+    try{
+        
+        const res= await request.put(`/product/product-item/view-count/${id}`)
+        const resultObj   = res.resultObj
+        const resp: Result ={
+            error :'',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
+            statusCode:201,
+            resultObj : resultObj
+        }
+        return resp
+    }catch(error:any){
+        console.log(error.response.data)
+        const resError: Result =error.response.data
+        return resError
+    }
+}

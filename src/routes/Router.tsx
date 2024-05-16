@@ -22,7 +22,8 @@ import UserOrderDetail from '@/pages/UserOrderDetail';
 import { PromotionAdd, PromotionEdit, PromotionList } from '@/pages/Admin/Promotion';
 import ForgotPassword from '@/pages/ForgotPassword';
 import UserList from '@/pages/Admin/User/UserList';
-import { GuarantiesAdd ,GuarantiesList, GuarantiesEdit} from '@/pages/Admin/Guaranty';
+import { GuarantiesAdd, GuarantiesList, GuarantiesEdit } from '@/pages/Admin/Guaranty';
+import Page404 from '@/pages/Page404/Page404';
 const Router: React.FC = () => {
     return useRoutes([
         {
@@ -55,15 +56,20 @@ const Router: React.FC = () => {
             ],
         },
         {
+            path: '*',
+            element: <DefaultLayout />,
+            children: [{ path: '*', element: <Page404/> }],
+        },
+        {
             path: '/',
             element: <DefaultLayout />,
             children: [
+                // {
+                //     index: true,
+                //     element: <Navigate to={'/'} replace />,
+                // },
                 {
-                    index: true,
-                    element: <Navigate to={'/'} replace />,
-                },
-                {
-                    path: '/home',
+                    path: '/',
                     element: <Home />,
                 },
                 {

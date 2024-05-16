@@ -67,17 +67,21 @@ function OrderList() {
             label: 'Đang xử lý',
             children: <></>,
         },
-        {
-            key: 'Đã thanh toán',
-            label: 'Đã thanh toán',
-            children:  <></>,
-        }, {
+         {
             key: 'Đã tiếp nhận',
             label: 'Đã tiếp nhận',
             children:  <></>,
         }, {
+            key: 'Đã hoàn thành',
+            label: 'Đã hoàn thành',
+            children:  <></>,
+        },{
             key: 'Đã hủy',
             label: 'Đã hủy',
+            children:  <></>,
+        },{
+            key: 'Trả hàng',
+            label: 'Trả hàng',
             children:  <></>,
         },
         {

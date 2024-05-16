@@ -1,24 +1,11 @@
 import type { Address, PaymentMethod } from '@/api/ResType';
-import {  useAppSelector } from '@/app/hooks';
+import { useAppSelector } from '@/app/hooks';
 import { selectCart } from '@/feature/cart/cartSlice';
-import {
-    Button,
-    Divider,
-    Select,
-    Card,
-    Col,
-    Descriptions,
-    Modal,
-    Row,
-    Space,
-    Typography,
-    Drawer,
-    Radio,
-} from 'antd';
+import { Button, Divider, Select, Card, Col, Descriptions, Modal, Row, Space, Typography, Drawer, Radio } from 'antd';
 import { Link } from 'react-router-dom';
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import type {  RadioChangeEvent, SelectProps } from 'antd';
+import type { RadioChangeEvent, SelectProps } from 'antd';
 import type { DescriptionsProps } from 'antd';
 import * as userServices from '@/api/userServices';
 import * as orderServices from '@/api/orderServices';
@@ -125,8 +112,8 @@ function Purchase() {
     return (
         <div>
             <Row gutter={24}>
-                <Col className="gutter-row" span={16} xs={24} md={16} lg={16} xl={16}>
-                    <Title level={3}>Phương Thức Thanh Toán</Title>
+                <Col className="gutter-row" xs={24} md={16} lg={16} xl={16}>
+                    <Title level={4}>Phương Thức Thanh Toán</Title>
                     <Select
                         size={'middle'}
                         value={type}
@@ -135,44 +122,42 @@ function Purchase() {
                         options={options}
                     />
                     <Col className="gutter-row" span={24}>
-                    {cart.items.map((e) => (
-                    <Card key={e.id} style={{ width: '100%', marginBottom: 10 }}>
-                            <Row gutter={[8, 8]}>
-                                <Col className="gutter-row" span={4}>
-                                    <h3>Sản Phẩm</h3>
-                                    <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: '100%' }} />
-                                </Col>
-                                <Col className='gutter-row' span={6}>
-                                    <h3>Tên Sản Phẩm</h3>
-                                    <Link to={`/product/detail/${e.productId}`}>{e.seoTitle}</Link>
-                                </Col>
-                                <Col className="gutter-row" span={3}>
-                                    <h3>Kích Cỡ</h3>
-                                    <p>
-                                        {e?.name} {e?.value}
-                                    </p>
-                                </Col>
-                                <Col className="gutter-row" span={3}>
-                                    <h3>Số Lượng</h3>
-                                    <p>
-                                        {e.quantity}
-                                    </p>
-                                </Col>
-                                <Col span={8}>
-                                    <h3>Tổng Giá</h3>
-                                    {e.valuePromotion != null ? (
-                                        <p style={{ textDecoration: 'line-through'}}>
-                                            {ChangeCurrence(e?.priceBeforeDiscount)}
+                        {cart.items.map((e) => (
+                            <Card key={e.id} style={{ width: '100%', marginBottom: 10 }}>
+                                <Row gutter={[8, 8]}>
+                                    <Col className="gutter-row" span={4}>
+                                        <h3>Sản Phẩm</h3>
+                                        <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: '100%' }} />
+                                    </Col>
+                                    <Col className="gutter-row" span={6}>
+                                        <h3>Tên Sản Phẩm</h3>
+                                        <Link to={`/product/detail/${e.productId}`}>{e.seoTitle}</Link>
+                                    </Col>
+                                    <Col className="gutter-row" span={3}>
+                                        <h3>Kích Cỡ</h3>
+                                        <p>
+                                            {e?.name} {e?.value}
                                         </p>
-                                    ) : (
-                                        ''
-                                    )}
-                                    <p style={{fontWeight:500, color: 'red' }}>{ChangeCurrence(e?.total)}</p>
-                                </Col>
-                            </Row>
-                        </Card>
-                    ))}
-                </Col>
+                                    </Col>
+                                    <Col className="gutter-row" span={3}>
+                                        <h3>Số Lượng</h3>
+                                        <p>{e.quantity}</p>
+                                    </Col>
+                                    <Col span={8}>
+                                        <h3>Tổng Giá</h3>
+                                        {e.valuePromotion != null ? (
+                                            <p style={{ textDecoration: 'line-through' }}>
+                                                {ChangeCurrence(e?.priceBeforeDiscount)}
+                                            </p>
+                                        ) : (
+                                            ''
+                                        )}
+                                        <p style={{ fontWeight: 500, color: 'red' }}>{ChangeCurrence(e?.total)}</p>
+                                    </Col>
+                                </Row>
+                            </Card>
+                        ))}
+                    </Col>
                 </Col>
                 <Col className="gutter-row" span={8} xs={24} md={8} lg={8} xl={8}>
                     <Descriptions
@@ -181,7 +166,7 @@ function Purchase() {
                         items={items}
                         style={{ marginTop: 10 }}
                         bordered
-                        extra={(
+                        extra={
                             typeof currentAddress !== 'undefined' ? (
                                 <Button
                                     type="primary"
@@ -203,23 +188,26 @@ function Purchase() {
                                     Thêm Địa Chỉ
                                 </Button>
                             )
-    )}
+                        }
                     />
                     <Descriptions title="Chi Tiết Đơn Hàng" bordered column={1}>
                         <Descriptions.Item label="Giá Sản Phẩm">
                             {ChangeCurrence(cart.totalPriceBeforeDiscount)}
                         </Descriptions.Item>
-                        <Descriptions.Item label="Giá Giảm">
-                            {ChangeCurrence(cart.totalDiscount)}
+                        <Descriptions.Item label="Giá Giảm">{ChangeCurrence(cart.totalDiscount)}</Descriptions.Item>
+                        <Descriptions.Item style={{ color: 'red' }} label="Giá Thanh Toán">
+                            {ChangeCurrence(cart.totalPrice)}
                         </Descriptions.Item>
-                        <Descriptions.Item style={{color:'red'}} label="Giá Thanh Toán">{ChangeCurrence(cart.totalPrice)}</Descriptions.Item>
                     </Descriptions>
                     <Button
                         size="large"
                         block
                         type="primary"
                         style={{ marginTop: 10 }}
-                        disabled={cart.items.length <=0 || cart.items.some(s=> s.stock ==0 || s.stock < s.quantity || currentAddress == undefined)}
+                        disabled={
+                            cart.items.length <= 0 ||
+                            cart.items.some((s) => s.stock == 0 || s.stock < s.quantity || currentAddress == undefined)
+                        }
                         onClick={() => {
                             createOrder();
                         }}
