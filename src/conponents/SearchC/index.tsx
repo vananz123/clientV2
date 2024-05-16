@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDebounce } from '@/hooks';
-import { Divider, Input, Popover, Space } from 'antd';
+import { Input, Popover, Space } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
 import * as productServices from '@/api/productServices';
 import type { InputRef } from 'antd';
