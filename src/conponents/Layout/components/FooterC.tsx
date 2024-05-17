@@ -16,7 +16,7 @@ function FooterC() {
                 <Row gutter={[8,8]} align={'top'} justify={'start'}>
                     <Col xs={24} md={24} lg={6} xl={6}>
                         <div style={{textAlign:'left'}}>
-                            <img style={{width:'200px', marginLeft:'0px', opacity:1}} src="../L.png" alt="logo" />
+                            <img style={{width:'100px', marginLeft:'0px', opacity:1}} src="../logo.png" alt="logo" />
                             <p style={{padding:0, margin:'5px'}}>© 2017 Công Ty Cổ Phần Vàng Bạc Đá Quý Phú Nhuận</p>
                             <div style={{padding:'5px', margin:0}}>
                                 <p style={footerStyle}>170E Phan Đăng Lưu, P.3, Q.Phú Nhuận, TP.Hồ Chí Minh</p>

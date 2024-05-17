@@ -5,14 +5,11 @@ import { Input, Popover, Space } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
 import * as productServices from '@/api/productServices';
 import type { InputRef } from 'antd';
-import React, { SetStateAction, useEffect, useRef } from 'react';
+import React, {  useEffect, useRef } from 'react';
 import { Product } from '@/type';
 import { Link, useNavigate } from 'react-router-dom';
 import { Filter } from '@/pages/ProductListShow/FilterType';
-const SearchC: React.FC<{
-    typeSearch: number;
-    onSetState: SetStateAction<any>;
-}> = ({ onSetState }) => {
+const SearchC: React.FC = () => {
     const { Search } = Input;
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const [searchValue, setSearchValue] = React.useState('');
@@ -26,7 +23,6 @@ const SearchC: React.FC<{
         }
         if (info?.source == 'clear') {
             setData([]);
-            onSetState([]);
         }
     };
     const onChangeInput: SearchProps['onChange'] = (value) => {
@@ -44,7 +40,6 @@ const SearchC: React.FC<{
                 const result = await productServices.getProductPagingByFilter(filter);
                 if (result.statusCode == 200) {
                     setData(result.resultObj.items);
-                    onSetState(result.resultObj.items);
                 }
             }
         };
@@ -86,6 +81,7 @@ const SearchC: React.FC<{
                 trigger={'click'}
             >
                 <Search
+                    className='search'
                     placeholder="Tên sản phẩm"
                     style={{ display: 'block' }}
                     allowClear

@@ -60,6 +60,7 @@ export interface Guaranty {
     sku: string;
     name: string;
     description: string;
+    datePeriod:string;
     period: number;
     dateCreated: string;
     dateModify: string;

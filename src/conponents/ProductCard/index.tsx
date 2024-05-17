@@ -1,42 +1,35 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Card } from 'antd';
+import { Card,Typography } from 'antd';
 import { Product } from '@/type';
 import { Link } from 'react-router-dom';
 import { Badge } from 'antd';
-import * as productServices from "@/api/productServices"
-const styleTitle: React.CSSProperties = {
-    textAlign: 'center',
-    color: '#000000E0',
-    fontSize: 16,
-    fontWeight: 400,
-    marginTop: 10,
-    marginBottom: 10,
-};
+import * as productServices from '@/api/productServices';
+const {  Paragraph } = Typography;
 const ProductCard: React.FC<{ product: Product | undefined }> = ({ product }) => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
-    const viewConut = async ()=>{
-        if(typeof product !== 'undefined'){
-            await productServices.productViewCount(product?.id)
+    const viewConut = async () => {
+        if (typeof product !== 'undefined') {
+            await productServices.productViewCount(product?.id);
         }
-    }
+    };
     return (
-        <Link to={`/product/detail/${product?.id}`} onClick={()=> viewConut()}>
+        <Link to={`/product/detail/${product?.id}`} onClick={() => viewConut()}>
             <Card
+                className="product-card"
                 bordered={false}
                 hoverable
-                style={{
-                    border: 'none',
-                    backgroundColor: '#f5f5f5',
-                    width: '100%',
-                    maxWidth: '300px',
-                    position: 'relative',
-                }}
+                size="small"
                 cover={<img alt={product?.name} src={`${baseUrl + product?.urlThumbnailImage}`} />}
             >
-                <h3 style={styleTitle}>{product?.seoTitle}</h3>
-                <p style={{ color: '#f5222d', fontWeight: 500, textAlign: 'center' }}>
-                    {ChangeCurrence(product?.price)}
-                </p>
+                <Paragraph
+                    ellipsis={{
+                        rows: 2,
+                    }}
+                    className="product-card__title"
+                >
+                    {product?.seoTitle}
+                </Paragraph>
+                <p className="product-card__price">{ChangeCurrence(product?.price)}</p>
                 <span style={{ position: 'absolute', top: '5px', right: '5px' }}>
                     {product?.status == 2 ? (
                         <Badge.Ribbon text="New" style={{ display: '' }} color="red"></Badge.Ribbon>

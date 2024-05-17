@@ -7,6 +7,7 @@ import * as loginServices from '@/api/loginServices';
 import * as userServices from '@/api/userServices';
 import type { Result, Role } from '@/api/ResType';
 import { Link, useNavigate } from 'react-router-dom';
+import Logo from '/logo.png'
 export type LoginType = {
     email?: string;
     password?: string;
@@ -16,8 +17,7 @@ function Login() {
     const Navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [open, setOpen] = React.useState(false);
-    //const [resuft, setResuft] = React.useState<Result>();
-    const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false)
+    const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
     const [messageApi, contextHolder] = message.useMessage();
     const onFinish: FormProps<LoginType>['onFinish'] = (values) => {
         const login = async () => {
@@ -29,12 +29,12 @@ function Login() {
                 const userResuft = await userServices.getUser();
                 if (userResuft.isSuccessed == true) {
                     dispatch(signIn(userResuft.resultObj));
-                    const roleAdmin :Role[] =['admin','sale']
-                    console.log(roleAdmin.indexOf(userResuft.resultObj.roles[0]))
+                    const roleAdmin: Role[] = ['admin', 'sale'];
+                    console.log(roleAdmin.indexOf(userResuft.resultObj.roles[0]));
                     if (roleAdmin.indexOf(userResuft.resultObj.roles[0]) >= 0) {
-                        Navigate('/admin/product');
+                        Navigate('/admin');
                     } else {
-                        Navigate(`/home`);
+                        Navigate(`/`);
                     }
                 } else {
                     setError(userResuft);
@@ -45,26 +45,25 @@ function Login() {
         };
         login();
     };
-    const onFinishForgot: FormProps<LoginType>['onFinish'] =async (values) => {
-        setLoadingSubmit(true)
-        if(values.email != undefined){
-            const res = await userServices.forgotPass(values.email)
-            if(res.isSuccessed ==true){
-               setLoadingSubmit(false)
-               messageApi.open({
-                type:'success',
-                content: res.resultObj,
-              });
-              setOpen(false)
-            }else{
-                setLoadingSubmit(false)
+    const onFinishForgot: FormProps<LoginType>['onFinish'] = async (values) => {
+        setLoadingSubmit(true);
+        if (values.email != undefined) {
+            const res = await userServices.forgotPass(values.email);
+            if (res.isSuccessed == true) {
+                setLoadingSubmit(false);
                 messageApi.open({
-                    type:'error',
+                    type: 'success',
+                    content: res.resultObj,
+                });
+                setOpen(false);
+            } else {
+                setLoadingSubmit(false);
+                messageApi.open({
+                    type: 'error',
                     content: res.message,
-                  });
+                });
             }
         }
-        
     };
     const onFinishFailed: FormProps<LoginType>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -75,7 +74,9 @@ function Login() {
         >
             <div>
                 {error != undefined ? <Alert message="Error" description={error.message} type="error" showIcon /> : ''}
-                <h2 style={{ textAlign: 'center' }}>LOGIN</h2>
+                <h2 style={{ textAlign: 'center' }}>
+                    <img width={100} height={100} src={Logo} alt='la'/>
+                </h2>
                 <Form
                     name="basic"
                     style={{ maxWidth: 600, width: 350, maxHeight: 500, marginTop: '15px' }}
@@ -102,17 +103,13 @@ function Login() {
                         <Button type="primary" htmlType="submit" block>
                             Submit
                         </Button>
-                        <Flex justify='space-between'>
+                        <Flex justify="space-between">
                             <div>
                                 <Link to="/auth/register">
-                                <Button
-                                    type="link"
-                                >
-                                    Register now!
-                                </Button>
+                                    <Button type="link">Register now!</Button>
                                 </Link>
                             </div>
-                           
+
                             <Button
                                 onClick={() => {
                                     setOpen(true);
@@ -136,9 +133,7 @@ function Login() {
                 }}
                 footer=""
             >
-                <div
-                 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                >
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Form
                         name="basic"
                         style={{ maxWidth: 600, width: 350, maxHeight: 500, marginTop: '15px' }}

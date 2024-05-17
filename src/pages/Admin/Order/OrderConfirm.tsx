@@ -1,10 +1,19 @@
 import { Order, OrderDetail, OrderStatus } from '@/api/ResType';
 import React, { useEffect } from 'react';
-import {  useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import * as orderServices from '@/api/orderServices';
-import { Link } from 'react-router-dom';
-import {  Col, Descriptions, Row, Timeline ,notification, Divider, Card, Space, Popconfirm, Button} from 'antd';
+import {
+    Descriptions,
+    Timeline,
+    notification,
+    Space,
+    Popconfirm,
+    Button,
+    Table,
+    TableColumnsType,
+} from 'antd';
 import { DescriptionsProps } from 'antd';
+import dayjs from 'dayjs';
 type NotificationType = 'success' | 'error';
 type TimeLineProps = {
     label?: string;
@@ -12,12 +21,12 @@ type TimeLineProps = {
 };
 function OrderConfirm() {
     const { id } = useParams();
-    const baseUrl =import.meta.env.VITE_BASE_URL
+    const baseUrl = import.meta.env.VITE_BASE_URL;
     const [api, contextHolder] = notification.useNotification();
-    const openNotificationWithIcon = (type: NotificationType,mess:string) => {
+    const openNotificationWithIcon = (type: NotificationType, mess: string) => {
         api[type]({
             message: 'Notification Title',
-            description:mess
+            description: mess,
         });
     };
     const [order, setOrder] = React.useState<Order>();
@@ -77,7 +86,7 @@ function OrderConfirm() {
         //                         <p>{e.quantity}</p>
         //                     </Col>
         //                     <Col span={6}>
-        //                         <p>{e.total}</p>
+        //                         <p>{e.price}</p>
         //                     </Col>
         //                 </Row>
         //             ))}
@@ -112,38 +121,33 @@ function OrderConfirm() {
     const showPopconfirm = () => {
         setOpenConfrim(true);
     };
-    const handleOkCancel = () => {
+    const handleOkCancel = async() => {
         setConfirmLoading(true);
-        setTimeout(async() => {
-            if(typeof order != 'undefined'){
-                const res = await orderServices.canceled(order.id)
-                if(res.isSuccessed === true){
-                    openNotificationWithIcon('success',res.message)
-                    getOrderAdminByOrderId()
-                }else{
-                    openNotificationWithIcon('error',res.message)
-                }
+        if (typeof order != 'undefined') {
+            const res = await orderServices.canceled(order.id);
+            if (res.isSuccessed === true) {
+                openNotificationWithIcon('success', res.message);
+                getOrderAdminByOrderId();
+            } else {
+                openNotificationWithIcon('error', res.message);
             }
-            setOpenConfrim(false);
-            setConfirmLoading(false);
-        }, 300);
+        }
+        setOpenConfrim(false);
+        setConfirmLoading(false);
     };
-    const handleOk = () => {
+    const handleOk = async() => {
         setConfirmLoading(true);
-
-        setTimeout(async() => {
-            if(typeof order != 'undefined'){
-                const res = await orderServices.comfirm(order.id)
-                if(res.isSuccessed === true){
-                    openNotificationWithIcon('success',res.message)
-                    getOrderAdminByOrderId()
-                }else{
-                    openNotificationWithIcon('error',res.message)
-                }
+        if (typeof order != 'undefined') {
+            const res = await orderServices.comfirm(order.id);
+            if (res.isSuccessed === true) {
+                openNotificationWithIcon('success', res.message);
+                getOrderAdminByOrderId();
+            } else {
+                openNotificationWithIcon('error', res.message);
             }
-            setOpenConfrim(false);
-            setConfirmLoading(false);
-        }, 300);
+        }
+        setOpenConfrim(false);
+        setConfirmLoading(false);
     };
     const getOrderAdminByOrderId = async () => {
         if (typeof id != 'undefined') {
@@ -153,8 +157,7 @@ function OrderConfirm() {
                 const arr: TimeLineProps[] = [];
                 res.resultObj.status?.forEach((element: OrderStatus) => {
                     const line: TimeLineProps = {
-                        //label:new Date(element.createAt).toUTCString(),
-                        children: element.name + ': ' + new Date(element.createAt).toUTCString(),
+                        children: `${element.name}` + ' ' + dayjs(element.createAt).format('MM/DD/YYYY, HH:MM'),
                     };
                     arr.push(line);
                 });
@@ -165,14 +168,74 @@ function OrderConfirm() {
     useEffect(() => {
         getOrderAdminByOrderId();
     }, [id]);
+    const columns: TableColumnsType<OrderDetail> = [
+        {
+            title: 'Id',
+            dataIndex: 'id',
+            key: 'id',
+        },{
+            title: 'seoTitle',
+            dataIndex: 'seoTitle',
+            key: 'seoTitle',
+        },{
+            title: 'Image',
+            dataIndex: 'urlThumbnailImage',
+            key: 'urlThumbnailImage',
+            render: (_, record) => (
+                <img style={{width:70}} src={baseUrl+ record.urlThumbnailImage}/>
+            ),
+        },
+        {
+            title: 'Size',
+            dataIndex: 'value',
+            key: 'value',
+            render: (_, record) => (
+                <p>{record.name == undefined ? 'not' : `${record.name}: ${record.value} ${record.sku}`}</p>
+            ),
+        },
+        {
+            title: 'price',
+            dataIndex: 'price',
+            key: 'price',
+            render: (_, record) => (
+                <p>
+                    {ChangeCurrence(record.price)}
+                </p>
+            ),
+        },
+        {
+            title: 'Bảo hành',
+            dataIndex: 'guaranty',
+            key: 'guaranty',
+            render: (_, record) => (
+                <div>
+                    <p>{record.guaranty.name}</p>
+                    <p>{record.guaranty.period + ' '+ record.guaranty.sku}</p>
+                    <p>{dayjs(record.guaranty.datePeriod).format('MM/DD/YYYY')}</p>
+                </div>
+            ),
+        },
+        {
+            title: 'Action',
+            dataIndex: 'review',
+            key: 'review',
+            render: (_, record) => (
+                <Button onClick={()=>{
+                    console.log(record.review)
+                }}>
+                    Đánh giá
+                </Button>
+            ),
+        },
+    ];
     return (
         <div>
             {contextHolder}
             <Descriptions
-                title="Thông Tin Đơn Hàng"
-                column={2}
+                title="Thông Tin Khách Hàng"
+                column={3}
                 size="middle"
-                items={desOrder}
+                items={desUser}
                 bordered
                 extra={
                     <Space>
@@ -182,59 +245,53 @@ function OrderConfirm() {
                             open={openConfrim}
                             onConfirm={handleOk}
                             okButtonProps={{ loading: confirmLoading }}
-                            onCancel={()=>{setOpenConfrim(false);}}
+                            onCancel={() => {
+                                setOpenConfrim(false);
+                            }}
                         >
-                            <Button disabled={order?.status?.some(s => s.name =="Đã tiếp nhận" || s.name ==="Đã hủy")} onClick={()=>{showPopconfirm()}}>Confrim</Button>
+                            <Button
+                                disabled={order?.status?.some((s) => s.name == 'Đã tiếp nhận' || s.name === 'Đã hủy')}
+                                onClick={() => {
+                                    showPopconfirm();
+                                }}
+                            >
+                                Confrim
+                            </Button>
                         </Popconfirm>
                         <Popconfirm
                             title="Xác nhận"
                             description="Thao táo này không thể hoàn tác!"
-                            placement='bottomLeft'
+                            placement="bottomLeft"
                             open={openCancel}
                             onConfirm={handleOkCancel}
                             okButtonProps={{ loading: confirmLoading }}
-                            onCancel={()=>{setOpenCancel(false);}}
+                            onCancel={() => {
+                                setOpenCancel(false);
+                            }}
                         >
-                            <Button danger onClick={()=>{showPopconfirmCancel()}}>Cancel</Button>
+                            <Button
+                                danger
+                                onClick={() => {
+                                    showPopconfirmCancel();
+                                }}
+                            >
+                                Cancel
+                            </Button>
                         </Popconfirm>
                     </Space>
                 }
-            />  
-            <Row gutter={16}>
-                <Col span={8} xs={24} md={24} lg={8} xl={8}>
-                    <Descriptions title="Thông Tin Đơn Hàng" column={1} size="middle" items={desOrder} bordered />
-                </Col>
-                <Col span={16} xs={24} md={24} lg={16} xl={16}>
-                    <Card title="Danh sách sản phẩm" bordered={false}>
-                        <div>
-                            {order?.orderDetail?.map((e: OrderDetail) => (
-                                <>
-                                    <Row align={'top'}>
-                                        <Col span={8} xs={12} md={12} lg={8} xl={8}>
-                                            <p>
-                                                <Link to={`/product/detail/${e.productId}`}>{e.seoTitle}</Link>
-                                            </p>
-                                            <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: 70 }} />
-                                        </Col>
-                                        <Col span={3}>
-                                            <p>Số lượng: {e.quantity}</p>
-                                        </Col>
-                                        <Col span={4} xs={4} md={4} lg={3} xl={3}>
-                                            <p>Giá: {ChangeCurrence(e.price)}</p>
-                                            {e.value != undefined ? <p>Size: {e.value + ' ' + e.sku}</p> : ''}
-                                        </Col>
-                                        <Col span={4} xs={8} md={8} lg={5} xl={5}>
-                                            {/* <p>Total:{ChangeCurrence(e.total)}</p> */}
-                                        </Col>
-                                    </Row>
-                                    <Divider />
-                                </>
-                            ))}
-                        </div>
-                    </Card>
-                </Col>
-            </Row>
-            <Descriptions title="Thông Tin Khách Hàng" column={3} size="middle" items={desUser} bordered />
+            />
+            <Descriptions title="Thông Tin Đơn Hàng" column={2} size="middle" items={desOrder} bordered />
+
+            <Table
+                title={() => (
+                    <p>Order detail</p>
+                )}
+                pagination={{ position: ['none'] }}
+                columns={columns}
+                dataSource={order?.orderDetail}
+                rowKey={(record) => record.id}
+            />
         </div>
     );
 }

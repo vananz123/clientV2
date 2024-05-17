@@ -6,7 +6,7 @@ import { CategoriesList, CategoryEdit, CategoryAdd } from '@/pages/Admin/Categor
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ProductDetail from '@/pages/ProductDetail';
-import { useRoutes, Navigate } from 'react-router-dom';
+import { useRoutes } from 'react-router-dom';
 import DefaultLayout from '@/conponents/Layout/DefaultLayout';
 import AdminLayout from '@/conponents/Layout/AdminLayout';
 import AuthGuard from './AuthGuard';
@@ -64,10 +64,7 @@ const Router: React.FC = () => {
             path: '/',
             element: <DefaultLayout />,
             children: [
-                // {
-                //     index: true,
-                //     element: <Navigate to={'/'} replace />,
-                // },
+              
                 {
                     path: '/',
                     element: <Home />,
@@ -151,11 +148,7 @@ const Router: React.FC = () => {
             element: <AdminLayout />,
             children: [
                 {
-                    index: true,
-                    element: <Navigate to={'/admin'} replace />,
-                },
-                {
-                    path: 'dashboard',
+                    path: '/admin',
                     element: (
                         <AuthGuard>
                             <RoleGuard role={['admin']}>

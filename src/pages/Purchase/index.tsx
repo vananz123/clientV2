@@ -57,7 +57,7 @@ function Purchase() {
     const getPaymentType = async () => {
         if (user != undefined) {
             const res = await paymentServices.getPaymentMethodByUserId(user.id);
-            if (res.isSuccessed == true) {
+            if (res.isSuccessed === true) {
                 setType(res.resultObj[0].id.toString());
                 const op: SelectProps['options'] = [];
                 res.resultObj.map((e: PaymentMethod) => {
@@ -74,7 +74,7 @@ function Purchase() {
     const getAddress = async () => {
         if (user != undefined) {
             const res = await userServices.getAddressByUserId(user.id);
-            if (res.isSuccessed == true) {
+            if (res.isSuccessed === true) {
                 setAddresses(res.resultObj);
                 setCurrentAddress(res.resultObj[0]);
             }
@@ -100,7 +100,7 @@ function Purchase() {
         if (user != undefined && currentAddress != undefined && type != '') {
             const res = await orderServices.create(user.id, currentAddress.id, Number(type));
             console.log(res);
-            if (res.isSuccessed == true) {
+            if (res.isSuccessed === true) {
                 if (res.resultObj?.paymentTypeName === 'Thanh toán VNPAY') {
                     window.location.assign(res.resultObj.returnUrl);
                 } else {

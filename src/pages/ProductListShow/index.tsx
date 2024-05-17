@@ -1,30 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {  useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import * as productServices from '@/api/productServices';
 import React, { useEffect } from 'react';
 import { Product } from '@/type';
 import { useAppSelector } from '@/app/hooks';
 import { selectCate } from '@/feature/category/cateSlice';
-import {
-    Button,
-    Col,
-    Flex,
-    Result,
-    Row,
-    Select,
-    Skeleton,
-    Spin,
-    Switch,
-    Pagination,
-    PaginationProps,
-} from 'antd';
-import {  LoadingOutlined } from '@ant-design/icons';
+import { Button, Col, Flex, Result, Row, Select, Skeleton, Spin, Switch, Pagination, PaginationProps } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import ProductCard from '@/conponents/ProductCard';
 import { optionsPrice, optionsSort, optionsMaterial } from './FilterType';
 import type { Filter } from './FilterType';
 import { Space, Tooltip } from 'antd';
 export type Sort = 'ascending' | 'descending';
-const pageSize: number = 6
+const pageSize: number = 6;
 function ProductListShow() {
     const { id } = useParams();
     const [products, setProducts] = React.useState<Product[]>();
@@ -36,17 +24,9 @@ function ProductListShow() {
     const [optionMaterial, setOptionMaterial] = React.useState<string[]>([]);
     const [isPromotion, setIsPromotion] = React.useState<boolean>(false);
     const [titleContent, setTitleContent] = React.useState<string | undefined>('');
-    const [isLoading,setIsLoading] = React.useState<boolean>(false)
-    // const loadAllProduct = async () => {
-    //     const res = await productServices.getAllProduct();
-    //     // console.log(res);
-    //     if (res.isSuccessed === true) {
-    //         setData(res.resultObj);
-    //     }
-    // };
-
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const getProductPaging = async () => {
-        setIsLoading(true)
+        setIsLoading(true);
         const filter: Filter = {
             categoryId: Number(id),
             page: page,
@@ -59,11 +39,11 @@ function ProductListShow() {
         const res = await productServices.getProductPagingByFilter(filter);
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
-            setIsLoading(false)
+            setIsLoading(false);
         }
     };
     const getProductPromotionPaging = async () => {
-        setIsLoading(true)
+        setIsLoading(true);
         const filter: Filter = {
             page: page,
             sortOder: sortOder,
@@ -73,14 +53,14 @@ function ProductListShow() {
             isPromotion: isPromotion,
         };
         const res = await productServices.getProductPagingByFilter(filter);
-        console.log(res)
+        console.log(res);
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
-            setIsLoading(false)
+            setIsLoading(false);
         }
     };
     const getProductPNPaging = async () => {
-        setIsLoading(true)
+        setIsLoading(true);
         const filter: Filter = {
             page: page,
             sortOder: sortOder,
@@ -93,10 +73,10 @@ function ProductListShow() {
         const res = await productServices.getProductPagingByFilter(filter);
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
-            setIsLoading(false)
+            setIsLoading(false);
         }
     };
-    const getProductStatusPaging = async (status:number) => {
+    const getProductStatusPaging = async (status: number) => {
         const filter: Filter = {
             page: page,
             sortOder: sortOder,
@@ -113,16 +93,17 @@ function ProductListShow() {
     };
     useEffect(() => {
         if (id != undefined) {
-        
             if (id === 'promotion') {
                 setIsPromotion(true);
                 setTitleContent('Khuyến mãi');
                 getProductPromotionPaging();
             } else if (id === 'new') {
+                setTitleContent(id)
                 getProductStatusPaging(2);
             } else if (id === 'hot') {
+                setTitleContent(id)
                 getProductStatusPaging(3);
-            }else {
+            } else {
                 try {
                     const a: number = Number(id);
                     if (!Number.isNaN(a)) {
@@ -137,7 +118,7 @@ function ProductListShow() {
                         getProductPNPaging();
                     }
                 } catch {
-                    console.log("dd")
+                    console.log('dd');
                 }
             }
         }
@@ -157,13 +138,13 @@ function ProductListShow() {
         }
     };
     const onShowSizeChange: PaginationProps['onShowSizeChange'] = (current) => {
-        setPage(current)
-      };
+        setPage(current);
+    };
     return (
         <>
             <div style={{ width: '100%' }}>
                 <h3>{titleContent}</h3>
-                <Flex justify="space-between" style={{ marginBottom: '10px' }}>
+                <Flex justify="space-between" wrap='wrap' gap={16} style={{ marginBottom: '10px' }}>
                     <Space>
                         <Select
                             mode="multiple"
@@ -201,12 +182,7 @@ function ProductListShow() {
                             }}
                         />
                     </Space>
-                    <Select
-                        value={sortOder}
-                        style={{ width: 120 }}
-                        onChange={handleChangeSort}
-                        options={optionsSort}
-                    />
+                    <Select value={sortOder} style={{ width: 120 }} onChange={handleChangeSort} options={optionsSort} />
                 </Flex>
                 <Spin spinning={isLoading} indicator={<LoadingOutlined style={{ fontSize: 24 }} />}>
                     {products != undefined ? (
@@ -243,7 +219,7 @@ function ProductListShow() {
                                 xl={6}
                                 className="gutter-row"
                             >
-                                <Skeleton/>
+                                <Skeleton />
                             </Col>
                             <Col
                                 style={{ display: 'flex', justifyContent: 'center' }}
@@ -281,7 +257,7 @@ function ProductListShow() {
                         </Row>
                     )}
                 </Spin>
-                <div style={{marginTop:24, textAlign:'center'}}>
+                <div style={{ marginTop: 24, textAlign: 'center' }}>
                     <Pagination onShowSizeChange={onShowSizeChange} current={page} total={products?.length} />
                 </div>
             </div>

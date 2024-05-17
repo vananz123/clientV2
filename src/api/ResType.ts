@@ -1,3 +1,5 @@
+import { Guaranty } from "@/type";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type Role = 'admin' | 'customer' | 'sale' | undefined;
 export interface RoleType{
@@ -117,6 +119,7 @@ export type OrderDetail = {
     name?: string;
     value?: string;
     review?: Review;
+    guaranty:Guaranty;
 };
 export type OrderPayment = {
     id:number,

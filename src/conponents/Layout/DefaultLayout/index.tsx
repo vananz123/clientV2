@@ -11,12 +11,12 @@ function DefaultLayout() {
     return (
         <div>
             <Layout>
-                <Layout>
-                    <HeaderC />
+                <Layout >
+                    <HeaderC/>
                     <Content style={{ margin: '24px 16px 0' }}>
                         <div
+                            className='container'
                             style={{
-                                padding: 24,
                                 minHeight: 360,
                                 background: colorBgContainer,
                                 borderRadius: borderRadiusLG,
@@ -26,7 +26,6 @@ function DefaultLayout() {
                            
                         </div>
                     </Content>
-
                     <FooterC/>
                 </Layout>
                 

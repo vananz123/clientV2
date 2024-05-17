@@ -4,7 +4,6 @@ import { selectCate } from "@/feature/category/cateSlice";
 import { Link, useLocation, useNavigate  } from "react-router-dom";
 import { Category } from "@/type";
 import React from "react";
-import Logo from '/L.png'
 type MenuItem = Required<MenuProps>['items'][number];
 function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
     return {
@@ -43,17 +42,12 @@ const NavC:React.FC = ()=>{
     }
     return (
         <>
-            <div className="demo-logo" style={{width:100,height:64}}>
-                <a href="/">
-                    <img style={{width:'100%',height:'100%'}} src={Logo}/>    
-                </a>    
-            </div>
             <Menu
               theme='light'
               mode="horizontal"
               selectedKeys={arr}
               items={item}
-              style={{ flex: 1, minWidth: 0 }}
+              style={{ flex: 1, minWidth: 0 ,marginLeft:0}}
               onClick={handleClick}
             />
         </>
