@@ -1,4 +1,4 @@
-import { Order, OrderDetail, OrderStatus } from '@/api/ResType';
+import { Order, OrderDetail, OrderStatus, Review } from '@/api/ResType';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import * as orderServices from '@/api/orderServices';
@@ -14,6 +14,7 @@ import {
 } from 'antd';
 import { DescriptionsProps } from 'antd';
 import dayjs from 'dayjs';
+import ModalFeedback from '@/view/order/ModalFeedback';
 type NotificationType = 'success' | 'error';
 type TimeLineProps = {
     label?: string;
@@ -23,6 +24,8 @@ function OrderConfirm() {
     const { id } = useParams();
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const [api, contextHolder] = notification.useNotification();
+    const [openModalFb,setOpenModalFb] = React.useState<boolean>(false)
+    const [review,setReview] = React.useState<Review>()
     const openNotificationWithIcon = (type: NotificationType, mess: string) => {
         api[type]({
             message: 'Notification Title',
@@ -220,8 +223,11 @@ function OrderConfirm() {
             dataIndex: 'review',
             key: 'review',
             render: (_, record) => (
-                <Button onClick={()=>{
-                    console.log(record.review)
+                <Button 
+                disabled={record.review == null}
+                 onClick={()=>{
+                    setReview(record.review)
+                    setOpenModalFb(true)
                 }}>
                     Đánh giá
                 </Button>
@@ -292,6 +298,7 @@ function OrderConfirm() {
                 dataSource={order?.orderDetail}
                 rowKey={(record) => record.id}
             />
+            <ModalFeedback openModalFb={openModalFb} review={review} setOpenModalFb={setOpenModalFb}/>
         </div>
     );
 }
