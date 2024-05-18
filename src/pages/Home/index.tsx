@@ -22,6 +22,7 @@ const imgStyles: React.CSSProperties = {
 function Home() {
     const [productsNew, setProductsNew] = React.useState<Product[]>();
     const [productsHot, setProductsHot] = React.useState<Product[]>();
+    const [products,setProducts] = React.useState<Product[]>();
     const getProductPaging = async (status: number) => {
         const filter: Filter = {
             page: 1,
@@ -39,11 +40,25 @@ function Home() {
             }
         }
     };
+    const getProductPagingWatch = async (id:number) =>{
+        const filter: Filter ={
+            page: 1,
+            categoryId: id,
+            pageSize:4,
+            sortOder:'ascending',
+
+        };
+        const res = await productServices.getProductPagingByFilter(filter);
+        if (res.statusCode ==200) {
+            setProducts(res.resultObj.items)
+        }
+
+    }
 
     useEffect(() => {
-
         getProductPaging(2);
         getProductPaging(3);
+        getProductPagingWatch(2);
     }, []);
     const onChange = (currentSlide: number) => {
         console.log(currentSlide);
@@ -167,12 +182,12 @@ function Home() {
                     <Card bordered={false}
                         title="Đồng Hồ"
                         style={{marginTop: -50 }}
-                        extra={<Link to={'/product/hot'}>Xem thêm</Link>
+                        extra={<Link to={'/product/2'}>Xem thêm</Link>
                         }
                     >
-                        {typeof productsHot !== 'undefined' ? (
+                        {typeof products !== 'undefined' ? (
                             <Row gutter={[12, 12]}>
-                                {productsHot.map((e: Product) => (
+                                {products.map((e: Product) => (
                                     <Col
                                         style={{ display: 'flex', justifyContent: 'center'}}
                                         xs={12}

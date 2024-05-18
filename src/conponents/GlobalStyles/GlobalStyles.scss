@@ -118,31 +118,42 @@ body {
         display: block;
         @include Responsive(MD) {
             display: none;
+
         }
     }
     &__logo {
         width: 64px;
         height: 64px;
+        @include Responsive(XS){
+            
+        }
     }
     &__nav {
         display: none;
         @include Responsive(MD) {
-            display: block;
-            width: 370px;
+            display: flex;
+            flex-wrap: wrap;
+            width: 400px;
         }
     }
     &__user {
-        width: auto;
-        display: flex;
-        justify-content: end;
-        @include Responsive(MD) {
-            width: 370px;
+        width: auto;   //sét 2 bên with cố định , để khi flex cho logo ở giữa đi mày
+        display:none;
+        @include Responsive(MD){
+            display: flex;
         }
+    }
+    &__usercart {
+        width: 400px;
+    }
+    &__search {
+        display: flex;
+        align-items: center;   
     }
 }
 .search {
-    width: 100px;
+    width: 200px;
     @include Responsive(MD) {
-        width: 200px;
+        width: 250px;
     }
 }

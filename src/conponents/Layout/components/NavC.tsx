@@ -43,12 +43,12 @@ const NavC:React.FC = ()=>{
     return (
         <>
             <Menu
-              theme='light'
-              mode="horizontal"
-              selectedKeys={arr}
-              items={item}
-              style={{ flex: 1, minWidth: 0 ,marginLeft:0}}
-              onClick={handleClick}
+                theme='light'
+                mode="horizontal"
+                selectedKeys={arr}
+                items={item}
+                style={{ flex: 1, minWidth: 0 ,marginLeft:0}}
+                onClick={handleClick}
             />
         </>
     );

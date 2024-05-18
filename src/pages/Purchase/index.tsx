@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { selectUser } from '@/feature/user/userSlice';
 import AddressForm from '@/conponents/AddressForm';
 import { StatusForm } from '../Admin/Category/Type';
+import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 const { Title } = Typography;
 export type TypeFormAddress = 'ADD' | 'EDIT';
 function Purchase() {
@@ -170,11 +171,11 @@ function Purchase() {
                             typeof currentAddress !== 'undefined' ? (
                                 <Button
                                     type="primary"
+                                    icon={<EditOutlined/>}
                                     onClick={() => {
                                         showDrawerAddress();
                                     }}
                                 >
-                                    Sửa
                                 </Button>
                             ) : (
                                 <Button
@@ -249,13 +250,13 @@ function Purchase() {
                                     <Divider />
                                 </Radio>
                                 <Button
+                                    icon={<EditOutlined/>}
                                     onClick={() => {
                                         setCurrentAddressForm(e);
                                         setTypeFormAddress('EDIT');
                                         setOpen(true);
                                     }}
                                 >
-                                    Sửa
                                 </Button>
                             </Space>
                         ))}
@@ -263,14 +264,15 @@ function Purchase() {
                 </Radio.Group>
                 <Button
                     type="primary"
-                    block
+                    icon={<PlusOutlined/>}
+                    shape="round"
+                    size='large'
                     onClick={() => {
                         setCurrentAddressForm(undefined);
                         setTypeFormAddress('ADD');
                         setOpen(true);
                     }}
                 >
-                    Thêm
                 </Button>
             </Drawer>
         </div>

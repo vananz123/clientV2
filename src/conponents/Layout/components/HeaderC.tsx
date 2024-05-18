@@ -61,17 +61,16 @@ function HeaderC() {
 
     const containerStyle: React.CSSProperties = {
         position: 'relative',
-        height: 200,
-        padding: 48,
+        height: 300,
+        padding: 0,
         overflow: 'hidden',
-        background: token.colorFillAlter,
         border: `1px solid ${token.colorBorderSecondary}`,
         borderRadius: token.borderRadiusLG,
     };
     return (
-        <Header style={{padding:0, backgroundColor: token.colorBgContainer }}>
+        <Header style={{ padding: 0, backgroundColor: token.colorBgContainer }}>
             <div className="header-container">
-                <Flex  wrap="wrap" justify="space-between">
+                <Flex wrap="wrap" justify="space-between">
                     <div className="header-container__bars">
                         <BarsOutlined onClick={() => showDrawer()} />
                     </div>
@@ -83,18 +82,20 @@ function HeaderC() {
                             <img style={{ width: '100%', height: '100%' }} src={Logo2} />
                         </a>
                     </div>
-                    <div className="header-container__user">
+                    <div className="header-container__usercart">
                         <Space align="center">
-                            <SearchC />
+                            <div className="header-container__search">
+                                <SearchC />
+                            </div>
                             {typeof user !== 'undefined' ? (
-                                <div style={{ paddingBottom: 5 }}>
-                                    <Dropdown menu={{ items }} trigger={['click']}>
+                                <Flex justify="end" style={{ paddingBottom: 5 }}>
+                                    <Dropdown className="header-container__user" menu={{ items }} trigger={['click']}>
                                         <strong onClick={(e) => e.preventDefault()} style={{ cursor: 'pointer' }}>
                                             <Space>
                                                 <Avatar size="large" icon={<UserOutlined />} />
                                                 <div>{user?.userName}</div>
-                                           </Space>
-                                                 <DownOutlined />
+                                            </Space>
+                                            <DownOutlined />
                                         </strong>
                                     </Dropdown>
                                     <Link to={`/cart`} style={{ marginLeft: 5, marginBottom: 5 }}>
@@ -102,7 +103,7 @@ function HeaderC() {
                                             <Avatar size="large" icon={<ShoppingCartOutlined />} />
                                         </Badge>
                                     </Link>
-                                </div>
+                                </Flex>
                             ) : (
                                 <Tooltip placement="bottom" title="Đăng nhập">
                                     <div style={{ paddingBottom: 5 }}>
@@ -116,8 +117,24 @@ function HeaderC() {
                     </div>
                 </Flex>
             </div>
-            <Drawer placement="left" style={containerStyle} closable={true} onClose={onClose} open={open} getContainer={false}>
-            <NavC />
+            <Drawer
+                placement="left"
+                style={containerStyle}
+                closable={true}
+                onClose={onClose}
+                open={open}
+                getContainer={false}
+            >
+                <NavC />
+                <Dropdown menu={{ items }} trigger={['click']}>
+                    <strong onClick={(e) => e.preventDefault()} style={{ cursor: 'pointer' }}>
+                        <Space>
+                            <Avatar size="large" icon={<UserOutlined />} />
+                            <div>{user?.userName}</div>
+                        </Space>
+                        <DownOutlined />
+                    </strong>
+                </Dropdown>
             </Drawer>
         </Header>
     );
