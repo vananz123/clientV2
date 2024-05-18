@@ -122,7 +122,6 @@ function ProductListShow() {
                 }
             }
         }
-        //loadAllProduct()
     }, [id, page, optionPrice, optionMaterial, sortOder, isPromotion]);
     const handleChangeSort = (value: Sort) => {
         setSortOder(value);
@@ -142,10 +141,10 @@ function ProductListShow() {
     };
     return (
         <>
-            <div style={{ width: '100%' }}>
+            <div className='container'>
                 <h3>{titleContent}</h3>
-                <Flex justify="space-between" wrap='wrap' gap={16} style={{ marginBottom: '10px' }}>
-                    <Space>
+                <Flex justify="space-between"gap={16} style={{ marginBottom: '10px' }}>
+                    <Space wrap>
                         <Select
                             mode="multiple"
                             style={{ width: 150 }}

@@ -11,32 +11,30 @@ function DefaultLayout() {
     return (
         <div>
             <Layout>
-                <Layout >
-                    <HeaderC/>
-                    <Content style={{ margin: '24px 16px 0' }}>
-                        <div
-                            className='container'
-                            style={{
-                                minHeight: 360,
-                                background: colorBgContainer,
-                                borderRadius: borderRadiusLG,
-                            }}
-                        >
-                           <Outlet/>
-                           
-                        </div>
+                <Layout>
+                    <HeaderC />
+                    <Content
+                        style={{
+                            marginTop:10,
+                            minHeight: 360,
+                            background: colorBgContainer,
+                            borderRadius: borderRadiusLG,
+                        }}
+                    >
+                         <Outlet />
                     </Content>
-                    <FooterC/>
+                    <FooterC />
                 </Layout>
-                
             </Layout>
-            <div style={{
-                position:'fixed',
-                bottom:20,
-                right:20,
-                cursor:'pointer'
-            }}>
-                <Avatar size={45} icon={<PhoneOutlined/>}/>
+            <div
+                style={{
+                    position: 'fixed',
+                    bottom: 20,
+                    right: 20,
+                    cursor: 'pointer',
+                }}
+            >
+                <Avatar size={45} icon={<PhoneOutlined />} />
             </div>
         </div>
     );

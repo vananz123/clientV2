@@ -103,48 +103,63 @@ body {
         }
     }
 }
-.container {
-    padding: 0px;
+.container{
+    padding:16px;
     @include Responsive(SM) {
-        padding: 48px;
+        padding: 0 24px;
     }
 }
 .header-container {
-    padding: 0 26px;
+    padding: 0 16px;
+    display: flex;
+    justify-content:space-between;
     @include Responsive(SM) {
-        padding: 0 48px;
-    }
-    &__bars {
-        display: block;
-        @include Responsive(MD) {
-            display: none;
-
-        }
+        padding: 0 24px;
     }
     &__logo {
-        width: 64px;
         height: 64px;
-        @include Responsive(XS){
-            
+        & div.menu-right{
+            display:flex;
+            justify-content:start;
+            align-items: center;
+            &__bars {
+                display: block;
+                @include Responsive(SM) {
+                    display: none;
+                }
+            }
+            &__logo{
+                height:64px;
+                width: 64px;
+            }
         }
     }
     &__nav {
+        height: 64px;
         display: none;
-        @include Responsive(MD) {
+        @include Responsive(SM) {
             display: flex;
             flex-wrap: wrap;
             width: 400px;
         }
     }
     &__user {
-        width: auto;   //sét 2 bên with cố định , để khi flex cho logo ở giữa đi mày
+        width: auto;  
         display:none;
-        @include Responsive(MD){
+        @include Responsive(SM){
             display: flex;
         }
     }
     &__usercart {
-        width: 400px;
+        width: auto;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        height: 64px;
+        gap: 10px;
+        @include Responsive(SM){
+            width: 400px;
+        }
     }
     &__search {
         display: flex;
@@ -152,8 +167,17 @@ body {
     }
 }
 .search {
-    width: 200px;
+    width: 140px;
+    @include Responsive(XS) {
+        width: 200px;
+    }
+    @include Responsive(SM) {
+        width: 160px;
+    }
     @include Responsive(MD) {
         width: 250px;
     }
+}
+.list-card{
+    padding: 5px;
 }

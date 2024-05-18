@@ -111,7 +111,7 @@ function Purchase() {
         }
     };
     return (
-        <div>
+        <div className='container'>
             <Row gutter={24}>
                 <Col className="gutter-row" xs={24} md={16} lg={16} xl={16}>
                     <Title level={4}>Phương Thức Thanh Toán</Title>

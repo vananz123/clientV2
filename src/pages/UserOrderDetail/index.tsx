@@ -170,7 +170,7 @@ function UserOrderDetail() {
         setConfirmLoading(false);
     };
     return (
-        <div>
+        <div className='container'>
             {contextHolder}
             <Button
                 type="text"

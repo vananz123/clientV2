@@ -18,7 +18,7 @@ function Checkout() {
         }
     });
     return (
-        <div>
+        <div className='container'>
             <Result
                 status={status ? 'success' : 'warning'}
                 title="Thông tin đơn hàng!"

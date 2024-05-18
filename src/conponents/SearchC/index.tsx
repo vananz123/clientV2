@@ -47,51 +47,54 @@ const SearchC: React.FC = () => {
     }, [debounce]);
     return (
         <>
-            <Popover
-                content={
-                    <div style={{ height: 300, width: 300, overflowX: 'hidden' }}>
-                        {data && data.length > 1 ? (
-                            <>
-                                {data.map((e: Product) => (
-                                    <div>
-                                        <Link to={`product/detail/${e.id}`}>
-                                            <Space>
-                                                <div>
-                                                    <img style={{ width: 70 }} src={baseUrl + e.urlThumbnailImage} />
-                                                </div>
-                                                <div style={{ width: 200 }}>
-                                                    <p>{e.seoTitle}</p>
-                                                    <p>{ChangeCurrence(e.price)}</p>
-                                                </div>
-                                            </Space>
-                                        </Link>
-                                        <hr />
+            <div>
+                <Popover
+                    content={
+                        <div style={{ height: 300, width: 300, overflowX: 'hidden' }}>
+                            {data && data.length > 1 ? (
+                                <>
+                                    {data.map((e: Product) => (
+                                        <div>
+                                            <Link to={`product/detail/${e.id}`}>
+                                                <Space>
+                                                    <div>
+                                                        <img style={{ width: 70 }} src={baseUrl + e.urlThumbnailImage} />
+                                                    </div>
+                                                    <div style={{ width: 200 }}>
+                                                        <p>{e.seoTitle}</p>
+                                                        <p>{ChangeCurrence(e.price)}</p>
+                                                    </div>
+                                                </Space>
+                                            </Link>
+                                            <hr />
+                                        </div>
+                                    ))}
+                                    <div style={{ textAlign: 'center' }}>
+                                        <Link to={`/product/${searchValue}`}>Hiển thị tất cả</Link>
                                     </div>
-                                ))}
-                                <div style={{ textAlign: 'center' }}>
-                                    <Link to={`/product/${searchValue}`}>Hiển thị tất cả</Link>
-                                </div>
-                            </>
-                        ) : (
-                            <div style={{ textAlign: 'center' }}>Not found</div>
-                        )}
+                                </>
+                            ) : (
+                                <div style={{ textAlign: 'center' }}>Not found</div>
+                            )}
+                        </div>
+                    }
+                    title={'Tìm kiếm'}
+                    trigger={'click'}
+                >
+                    <div className='search'>
+                        <Search
+                            placeholder="Tên sản phẩm"
+                            style={{ display: 'block' }}
+                            allowClear
+                            //enterButton="Search"
+                            ref={inputRef}
+                            size="middle"
+                            onSearch={onSearch}
+                            onChange={onChangeInput}
+                        />
                     </div>
-                }
-                title={'Tìm kiếm'}
-                trigger={'click'}
-            >
-                <Search
-                    className='search'
-                    placeholder="Tên sản phẩm"
-                    style={{ display: 'block' }}
-                    allowClear
-                    //enterButton="Search"
-                    ref={inputRef}
-                    size="middle"
-                    onSearch={onSearch}
-                    onChange={onChangeInput}
-                />
-            </Popover>
+                </Popover>
+            </div>
         </>
     );
 };

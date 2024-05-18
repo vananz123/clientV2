@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Tooltip, Space, Flex, Drawer } from 'antd';
+import {  Space, Drawer } from 'antd';
 import { Layout, theme, Badge, Avatar, Dropdown } from 'antd';
-import { UserOutlined, DownOutlined, ShoppingCartOutlined, BarsOutlined } from '@ant-design/icons';
+import { UserOutlined, DownOutlined, ShoppingCartOutlined, BarsOutlined, LoginOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '@/app/hooks';
 import { selectUser, signOut } from '@/feature/user/userSlice';
 import { selectCart } from '@/feature/cart/cartSlice';
@@ -70,52 +70,51 @@ function HeaderC() {
     return (
         <Header style={{ padding: 0, backgroundColor: token.colorBgContainer }}>
             <div className="header-container">
-                <Flex wrap="wrap" justify="space-between">
-                    <div className="header-container__bars">
-                        <BarsOutlined onClick={() => showDrawer()} />
-                    </div>
-                    <div className="header-container__nav">
-                        <NavC />
-                    </div>
-                    <div className="header-container__logo">
-                        <a href="/">
+                <div className="header-container__nav">
+                    <NavC />
+                </div>
+                <div className="header-container__logo">
+                    <div className="menu-right">
+                        <div className="menu-right__bars">
+                            <BarsOutlined onClick={() => showDrawer()} />
+                        </div>
+                        <Link className="menu-right__logo"  style={{ width: 64, height: 64 }} to="/">
                             <img style={{ width: '100%', height: '100%' }} src={Logo2} />
-                        </a>
+                            
+                        </Link>
                     </div>
-                    <div className="header-container__usercart">
-                        <Space align="center">
-                            <div className="header-container__search">
-                                <SearchC />
-                            </div>
-                            {typeof user !== 'undefined' ? (
-                                <Flex justify="end" style={{ paddingBottom: 5 }}>
-                                    <Dropdown className="header-container__user" menu={{ items }} trigger={['click']}>
-                                        <strong onClick={(e) => e.preventDefault()} style={{ cursor: 'pointer' }}>
-                                            <Space>
-                                                <Avatar size="large" icon={<UserOutlined />} />
-                                                <div>{user?.userName}</div>
-                                            </Space>
-                                            <DownOutlined />
-                                        </strong>
-                                    </Dropdown>
-                                    <Link to={`/cart`} style={{ marginLeft: 5, marginBottom: 5 }}>
-                                        <Badge count={cart.items.length} showZero>
-                                            <Avatar size="large" icon={<ShoppingCartOutlined />} />
-                                        </Badge>
-                                    </Link>
-                                </Flex>
-                            ) : (
-                                <Tooltip placement="bottom" title="Đăng nhập">
-                                    <div style={{ paddingBottom: 5 }}>
-                                        <Link to={'/auth/login'}>
-                                            <Avatar size="large" icon={<UserOutlined />} />
-                                        </Link>
-                                    </div>
-                                </Tooltip>
-                            )}
-                        </Space>
+                </div>
+                <div className="header-container__usercart">
+                    <div>
+                        <SearchC />
                     </div>
-                </Flex>
+
+                    {typeof user !== 'undefined' ? (
+                        <>
+                            <Space align="center">
+                                <Dropdown className="header-container__user" menu={{ items }} trigger={['click']}>
+                                    <strong onClick={(e) => e.preventDefault()} style={{ cursor: 'pointer' }}>
+                                        <Space>
+                                            <Avatar icon={<UserOutlined />} />
+                                            <div>{user?.userName}</div>
+                                        </Space>
+                                    </strong>
+                                </Dropdown>
+                                <Link to={`/cart`} style={{ marginLeft: 5, marginBottom: 5 }}>
+                                    <Badge count={cart.items.length} showZero>
+                                        <Avatar icon={<ShoppingCartOutlined />} />
+                                    </Badge>
+                                </Link>
+                            </Space>
+                        </>
+                    ) : (
+                        <div>
+                            <Link style={{color:'black'}} to={'/auth/login'}>
+                                <p>Login <LoginOutlined /></p>
+                            </Link>
+                        </div>
+                    )}
+                </div>
             </div>
             <Drawer
                 placement="left"
