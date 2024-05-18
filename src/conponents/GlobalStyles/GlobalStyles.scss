@@ -83,7 +83,7 @@ body {
     width: '100%';
     max-width: '270px';
     &__title {
-        font-size: 10px;
+        font-size: 12px;
         font-weight: 400;
         line-height: 24px;
         letter-spacing: 0em;
@@ -97,7 +97,7 @@ body {
         color: #f5222d;
         font-weight: 500;
         text-align: center;
-        font-size: 10px;
+        font-size: 12px;
         @include Responsive(SM) {
             font-size: 16px;
         }
@@ -167,17 +167,25 @@ body {
     }
 }
 .search {
-    width: 140px;
+    width: 195px;
     @include Responsive(XS) {
         width: 200px;
     }
     @include Responsive(SM) {
-        width: 160px;
+        width: 170px;
     }
     @include Responsive(MD) {
-        width: 250px;
+        width: 290px;
     }
 }
 .list-card{
     padding: 5px;
+}
+.popover-search{
+    height: 350px;
+    width: 240px;
+    overflow-x: hidden;
+    @include Responsive(SM) {
+        width: 275px;
+    }
 }

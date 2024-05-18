@@ -29,10 +29,11 @@ import { MinusOutlined, PlusOutlined, ArrowLeftOutlined, UserOutlined } from '@a
 import { CollapseProps, Badge } from 'antd';
 import { Collapse } from 'antd';
 type NotificationType = 'success' | 'error';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Meta from 'antd/es/card/Meta';
 import { Review } from '@/api/ResType';
 import dayjs from 'dayjs';
+import ProductCard from '@/conponents/ProductCard';
 interface OptionSize {
     label: string;
     value: number;
@@ -50,10 +51,10 @@ function ProductDetail() {
     const [currentProductItem, setCurrentProductItem] = React.useState<ProductItem>();
     const [quantity, setQuantity] = React.useState(1);
     const [api, contextHolder] = notification.useNotification();
-    const openNotificationWithIcon = (type: NotificationType) => {
+    const openNotificationWithIcon = (type: NotificationType, mess: string) => {
         api[type]({
             message: 'Notification Title',
-            description: type == 'success' ? 'Sucsess!' : 'error',
+            description: mess,
         });
     };
     const increase = () => {
@@ -111,11 +112,10 @@ function ProductDetail() {
     };
     const getData = async () => {
         const res = await productServices.getProductDetail(Number(id));
-        console.log(res);
         if (res.isSuccessed == true) {
             const arr: string[] = res.resultObj.urlImage.split('*');
             const t = arr.pop();
-            console.log(t)
+            console.log(t);
             setListImage(arr);
             setData(res.resultObj);
             setCurrentProductItem(res.resultObj.items[0]);
@@ -138,8 +138,7 @@ function ProductDetail() {
     };
     const getReview = async (id: number) => {
         const r = await reviewServices.getReivewByProductId(id, 1);
-        console.log(r);
-        if (r.isSuccessed == true) {
+        if (r.isSuccessed === true) {
             setListReview(r.resultObj.items);
         }
     };
@@ -155,11 +154,12 @@ function ProductDetail() {
     const GoBack = () => {
         Navigate(-1);
     };
-    const onChangeSize = (value: any) => {
+    const onChangeSize = async (value: any) => {
         if (data != undefined) {
             const item = data.items?.find((x) => x.id == value);
             if (item != undefined) {
                 setCurrentProductItem(item);
+                await productServices.productItemViewCount(item.id);
             }
         }
     };
@@ -167,22 +167,21 @@ function ProductDetail() {
         if (typeof user !== 'undefined') {
             if (typeof currentProductItem !== 'undefined') {
                 const res = await cartServices.addCart(user.id, currentProductItem.id, quantity);
-                console.log(res);
                 if (res.isSuccessed == true) {
                     dispatch(addToCart(res.resultObj));
-                    openNotificationWithIcon('success');
+                    openNotificationWithIcon('success', 'Thêm thành công!');
                 } else {
-                    openNotificationWithIcon('error');
+                    openNotificationWithIcon('error', res.message);
                 }
             } else {
-                openNotificationWithIcon('error');
+                openNotificationWithIcon('error', 'error');
             }
         } else {
             Navigate('/auth/login');
         }
     };
     return (
-        <div className='container'>
+        <div className="container">
             {contextHolder}
             <Button
                 type="text"
@@ -198,12 +197,24 @@ function ProductDetail() {
             {typeof data === 'undefined' ? (
                 <Row gutter={[8, 8]}>
                     <Col xs={24} sm={24} md={24} lg={24} xl={14} className="gutter-row">
-                        <div style={{ padding: '24px' }}>
-                            <Skeleton.Image />
-                        </div>
+                        <Flex justify="space-between">
+                            <Skeleton.Image style={{ width: 400, height: 400 }} />
+                            <Space direction="vertical">
+                                <Skeleton.Image />
+                                <Skeleton.Image />
+                            </Space>
+                        </Flex>
                     </Col>
                     <Col xs={24} sm={24} md={24} lg={24} xl={10} className="gutter-row">
-                        <Skeleton />
+                        <Space direction="vertical">
+                            <Skeleton.Input size="large" />
+                            <Skeleton.Input size="large" />
+                            <Skeleton.Input size="large" />
+                        </Space>
+                        <Flex justify="space-between" style={{ marginTop: 10 }}>
+                            <Skeleton.Button size="large" />
+                            <Skeleton.Button size="large" />
+                        </Flex>
                     </Col>
                 </Row>
             ) : (
@@ -244,10 +255,10 @@ function ProductDetail() {
                             </Col>
                             <Col xs={24} sm={24} md={24} lg={10} xl={10} className="gutter-row">
                                 <h2>{data.seoTitle}</h2>
-                                {typeof currentProductItem !== 'undefined' ? (
+                                {typeof currentProductItem !== 'undefined' && (
                                     <>
                                         <div style={{ marginBottom: 15 }}>
-                                            { currentProductItem.type == undefined ? (
+                                            {currentProductItem.type == undefined ? (
                                                 <>
                                                     <span
                                                         style={{
@@ -255,7 +266,7 @@ function ProductDetail() {
                                                             fontSize: 18,
                                                             fontWeight: 500,
                                                             marginRight: 5,
-                                                            display:''
+                                                            display: '',
                                                         }}
                                                     >
                                                         {ChangeCurrence(currentProductItem?.priceBeforeDiscount)}
@@ -278,25 +289,25 @@ function ProductDetail() {
                                                     </span>
                                                 </div>
                                             )}
-                                            {typeof data.items !== 'undefined' ? (
+
+                                            {typeof data.items !== 'undefined' && (
                                                 <>
-                                                    {data.items.length > 1 ? (
-                                                        <>
+                                                    {data.items.length > 1 && (
+                                                        <div>
                                                             <p>Size</p>
                                                             <Segmented
                                                                 options={optionSize}
-                                                                value={currentProductItem?.id}
+                                                                value={currentProductItem.id}
                                                                 onChange={onChangeSize}
-                                                                disabled={currentProductItem?.status == 2}
+                                                                disabled={currentProductItem.status == 2}
                                                             />
-                                                            <p>Số Tồn: {currentProductItem?.stock}</p>
-                                                        </>
-                                                    ) : (
-                                                        <p>Số Tồn: {currentProductItem?.stock}</p>
+                                                        </div>
                                                     )}
+                                                    <Flex justify="space-between">
+                                                        <p>Số Tồn: {currentProductItem.stock}</p>
+                                                        <p>Lượt xem: {currentProductItem.viewCount}</p>
+                                                    </Flex>
                                                 </>
-                                            ) : (
-                                                <Skeleton />
                                             )}
                                         </div>
                                         <Flex justify="space-between">
@@ -308,7 +319,7 @@ function ProductDetail() {
                                                     icon={<MinusOutlined />}
                                                 />
                                                 <InputNumber
-                                                    style={{ width: '50px' }}
+                                                    style={{ width: '70px' }}
                                                     min={1}
                                                     max={currentProductItem?.stock}
                                                     value={quantity}
@@ -335,13 +346,11 @@ function ProductDetail() {
                                         <Divider dashed />
                                         <Collapse items={items} defaultActiveKey={['1']} onChange={handleChangeColl} />
                                     </>
-                                ) : (
-                                    <Skeleton.Input/>
                                 )}
                             </Col>
                         </Row>
                         <Row gutter={16}>
-                            <Col span={14}>
+                            <Col xs={24} md={14}>
                                 {listReview.length > 0 ? (
                                     <>
                                         {listReview.map((e: Review) => (
@@ -361,7 +370,7 @@ function ProductDetail() {
                                                         </>
                                                     }
                                                 />
-                                                {e.feelback != undefined ? (
+                                                {e.feelback !== null && (
                                                     <>
                                                         <Card
                                                             key={e.id}
@@ -369,9 +378,7 @@ function ProductDetail() {
                                                             style={{ width: '100%', marginTop: 16 }}
                                                         >
                                                             <Meta
-                                                                avatar={
-                                                                    <Avatar icon={<UserOutlined/>} />
-                                                                }
+                                                                avatar={<Avatar icon={<UserOutlined />} />}
                                                                 title={'Feedback of admin'}
                                                                 description={
                                                                     <>
@@ -388,55 +395,33 @@ function ProductDetail() {
                                                             />
                                                         </Card>
                                                     </>
-                                                ) : (
-                                                    ''
                                                 )}
                                             </Card>
                                         ))}
                                     </>
                                 ) : (
                                     <Empty
-                                    
                                         image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
                                         imageStyle={{ height: 60 }}
-                                        description={
-                                            <span>
-                                                Chưa có bình luận nào <a onClick={() => {
-                                                    handleAddToCart();
-                                                }}>Bình luận ngay</a>
-                                            </span>
-                                        }
+                                        description={<span>Chưa có bình luận nào</span>}
                                     ></Empty>
                                 )}
                             </Col>
-                            <Col span={10}>
-                                <Card  bordered={false} style={{ width: '100%', marginTop: 16 }} title="Sản phẩm tương tự">
-                                    {data.similarProduct == undefined ? (
-                                        <Skeleton/>
-                                    ) : data.similarProduct.length > 0 ? (
-                                        <>
-                                            {data.similarProduct.map((item: Product) => (
-                                                <Link to={`/product/detail/${item.id}`}>
-                                                    <Card type="inner" key={item.id} style={{marginBottom:10}}>
-                                                        <Space align="start">
-                                                            <Image width={100} src={baseUrl + item.urlThumbnailImage} />
-                                                            <div>
-                                                                <Link to={`/product/detail/${item.id}`}>{item.seoTitle}</Link>
-                                                                <p>{ChangeCurrence(item.price)}</p>
-                                                            </div>
-                                                        </Space>
-                                                    </Card>
-                                                </Link>
-                                            ))}
-                                        </>
-                                    ) : (
-                                        <Card type="inner">
-                                            <Space align="start">
-                                                <Meta description="Không có sản phẩm tương tự" />
-                                            </Space>
-                                        </Card>
-                                    )}
-                                </Card>
+                            <Col xs={24} md={10}>
+                                {data.similarProduct && data.similarProduct.length > 0 ? (
+                                    <>
+                                        <div style={{marginTop:15}}></div>
+                                        {data.similarProduct.map((item: Product) => (
+                                            <ProductCard key={item.id} product={item} type="forList" />
+                                        ))}
+                                    </>
+                                ) : (
+                                    <Card type="inner">
+                                        <Space align="start">
+                                            <Meta description="Không có sản phẩm tương tự" />
+                                        </Space>
+                                    </Card>
+                                )}
                             </Col>
                         </Row>
                     </div>

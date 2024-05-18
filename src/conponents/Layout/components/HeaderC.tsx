@@ -61,7 +61,8 @@ function HeaderC() {
 
     const containerStyle: React.CSSProperties = {
         position: 'relative',
-        height: 300,
+        height: '100vh',
+        width:'90%',
         padding: 0,
         overflow: 'hidden',
         border: `1px solid ${token.colorBorderSecondary}`,
@@ -123,17 +124,19 @@ function HeaderC() {
                 onClose={onClose}
                 open={open}
                 getContainer={false}
-            >
-                <NavC />
-                <Dropdown menu={{ items }} trigger={['click']}>
+                extra={
+                    <Dropdown menu={{ items }} trigger={['click']}>
                     <strong onClick={(e) => e.preventDefault()} style={{ cursor: 'pointer' }}>
                         <Space>
-                            <Avatar size="large" icon={<UserOutlined />} />
+                            <Avatar icon={<UserOutlined />} />
                             <div>{user?.userName}</div>
                         </Space>
                         <DownOutlined />
                     </strong>
                 </Dropdown>
+                }
+            >
+                <NavC type='forMobile' closeDrawer={setOpen}/>
             </Drawer>
         </Header>
     );

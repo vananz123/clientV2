@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Menu, MenuProps } from "antd";
 import { useAppSelector } from "@/app/hooks";
 import { selectCate } from "@/feature/category/cateSlice";
 import { Link, useLocation, useNavigate  } from "react-router-dom";
 import { Category } from "@/type";
-import React from "react";
+import React, { SetStateAction } from "react";
 type MenuItem = Required<MenuProps>['items'][number];
 function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
     return {
@@ -13,8 +14,12 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
         label,
     } as MenuItem;
 }
-
-const NavC:React.FC = ()=>{
+type ResponsiveType = 'forMobile' | 'forDesktop'
+interface Props{
+ type?:ResponsiveType;
+ closeDrawer?:SetStateAction<any>;
+}
+const NavC:React.FC<Props> = ({type ='forDesktop',closeDrawer})=>{
     const cate = useAppSelector(selectCate)
     const loca = useLocation()
     const arr = [loca.pathname]
@@ -39,12 +44,13 @@ const NavC:React.FC = ()=>{
     const item:MenuProps['items'] = [...renderCateItem(),getItem('Khuyến mãi','/product/promotion')]
     const handleClick: MenuProps['onClick'] = (e) =>{
         Navigate(`${e.key}`)
+        closeDrawer(false)
     }
     return (
         <>
             <Menu
                 theme='light'
-                mode="horizontal"
+                mode={type =='forDesktop' ? "horizontal":"inline"}
                 selectedKeys={arr}
                 items={item}
                 style={{ flex: 1, minWidth: 0 ,marginLeft:0}}

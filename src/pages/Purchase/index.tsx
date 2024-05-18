@@ -1,7 +1,21 @@
 import type { Address, PaymentMethod } from '@/api/ResType';
 import { useAppSelector } from '@/app/hooks';
 import { selectCart } from '@/feature/cart/cartSlice';
-import { Button, Divider, Select, Card, Col, Descriptions, Modal, Row, Space, Typography, Drawer, Radio } from 'antd';
+import {
+    Button,
+    Divider,
+    Select,
+    Card,
+    Col,
+    Descriptions,
+    Modal,
+    Row,
+    Space,
+    Typography,
+    Drawer,
+    Radio,
+    Flex,
+} from 'antd';
 import { Link } from 'react-router-dom';
 import React, { useEffect } from 'react';
 import { useState } from 'react';
@@ -15,7 +29,7 @@ import { selectUser } from '@/feature/user/userSlice';
 import AddressForm from '@/conponents/AddressForm';
 import { StatusForm } from '../Admin/Category/Type';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
-const { Title } = Typography;
+const { Title, Paragraph } = Typography;
 export type TypeFormAddress = 'ADD' | 'EDIT';
 function Purchase() {
     const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -111,7 +125,7 @@ function Purchase() {
         }
     };
     return (
-        <div className='container'>
+        <div className="container">
             <Row gutter={24}>
                 <Col className="gutter-row" xs={24} md={16} lg={16} xl={16}>
                     <Title level={4}>Phương Thức Thanh Toán</Title>
@@ -119,46 +133,48 @@ function Purchase() {
                         size={'middle'}
                         value={type}
                         onChange={handleChange}
-                        style={{ width: 300 }}
+                        style={{ width: '100%' ,marginBottom:10}}
                         options={options}
                     />
-                    <Col className="gutter-row" span={24}>
                         {cart.items.map((e) => (
-                            <Card key={e.id} style={{ width: '100%', marginBottom: 10 }}>
-                                <Row gutter={[8, 8]}>
-                                    <Col className="gutter-row" span={4}>
-                                        <h3>Sản Phẩm</h3>
+                            <Card key={e.id} size='small' style={{ width: '100%', marginBottom: 10}}>
+                                <Row gutter={[0, 8]}>
+                                    <Col className="gutter-row" xs={8} lg={6}>
                                         <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: '100%' }} />
                                     </Col>
-                                    <Col className="gutter-row" span={6}>
-                                        <h3>Tên Sản Phẩm</h3>
-                                        <Link to={`/product/detail/${e.productId}`}>{e.seoTitle}</Link>
-                                    </Col>
-                                    <Col className="gutter-row" span={3}>
-                                        <h3>Kích Cỡ</h3>
-                                        <p>
-                                            {e?.name} {e?.value}
-                                        </p>
-                                    </Col>
-                                    <Col className="gutter-row" span={3}>
-                                        <h3>Số Lượng</h3>
-                                        <p>{e.quantity}</p>
-                                    </Col>
-                                    <Col span={8}>
-                                        <h3>Tổng Giá</h3>
-                                        {e.valuePromotion != null ? (
-                                            <p style={{ textDecoration: 'line-through' }}>
-                                                {ChangeCurrence(e?.priceBeforeDiscount)}
+                                    <Col className="gutter-row" xs={16} lg={18}>
+                                        <Flex justify="space-between" align="center">
+                                            <Paragraph
+                                                ellipsis={{
+                                                    rows: 1,
+                                                }}
+                                            >
+                                                <Link to={`/product/detail/${e.productId}`}>{e.seoTitle}</Link>
+                                            </Paragraph>
+                                        </Flex>
+                                        <Flex justify="space-between" align="center" wrap="wrap-reverse">
+                                            <p>
+                                                {e?.name}: {e?.value}
                                             </p>
-                                        ) : (
-                                            ''
-                                        )}
-                                        <p style={{ fontWeight: 500, color: 'red' }}>{ChangeCurrence(e?.total)}</p>
+                                            <div>
+                                                <Space>
+                                                    <>
+                                                        <p style={{ fontWeight: 500, color: 'red' }}>
+                                                            {ChangeCurrence(e?.total)}
+                                                        </p>
+                                                        {e.valuePromotion != null && (
+                                                            <p style={{ textDecoration: 'line-through' }}>
+                                                                {ChangeCurrence(e?.priceBeforeDiscount * e?.quantity)}
+                                                            </p>
+                                                        )}
+                                                    </>
+                                                </Space>
+                                            </div>
+                                        </Flex>
                                     </Col>
                                 </Row>
                             </Card>
                         ))}
-                    </Col>
                 </Col>
                 <Col className="gutter-row" span={8} xs={24} md={8} lg={8} xl={8}>
                     <Descriptions
@@ -171,12 +187,11 @@ function Purchase() {
                             typeof currentAddress !== 'undefined' ? (
                                 <Button
                                     type="primary"
-                                    icon={<EditOutlined/>}
+                                    icon={<EditOutlined />}
                                     onClick={() => {
                                         showDrawerAddress();
                                     }}
-                                >
-                                </Button>
+                                ></Button>
                             ) : (
                                 <Button
                                     type="primary"
@@ -250,30 +265,28 @@ function Purchase() {
                                     <Divider />
                                 </Radio>
                                 <Button
-                                    icon={<EditOutlined/>}
+                                    icon={<EditOutlined />}
                                     onClick={() => {
                                         setCurrentAddressForm(e);
                                         setTypeFormAddress('EDIT');
                                         setOpen(true);
                                     }}
-                                >
-                                </Button>
+                                ></Button>
                             </Space>
                         ))}
                     </Space>
                 </Radio.Group>
                 <Button
                     type="primary"
-                    icon={<PlusOutlined/>}
+                    icon={<PlusOutlined />}
                     shape="round"
-                    size='large'
+                    size="large"
                     onClick={() => {
                         setCurrentAddressForm(undefined);
                         setTypeFormAddress('ADD');
                         setOpen(true);
                     }}
-                >
-                </Button>
+                ></Button>
             </Drawer>
         </div>
     );

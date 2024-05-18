@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDebounce } from '@/hooks';
-import { Input, Popover, Space } from 'antd';
+import { Input, Popover } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
 import * as productServices from '@/api/productServices';
 import type { InputRef } from 'antd';
@@ -9,9 +9,9 @@ import React, {  useEffect, useRef } from 'react';
 import { Product } from '@/type';
 import { Link, useNavigate } from 'react-router-dom';
 import { Filter } from '@/pages/ProductListShow/FilterType';
+import ProductCard from '../ProductCard';
 const SearchC: React.FC = () => {
     const { Search } = Input;
-    const baseUrl = import.meta.env.VITE_BASE_URL;
     const [searchValue, setSearchValue] = React.useState('');
     const navigate = useNavigate();
     const [data, setData] = React.useState<Product[]>();
@@ -38,7 +38,7 @@ const SearchC: React.FC = () => {
                     productName: debounce?.toString(),
                 };
                 const result = await productServices.getProductPagingByFilter(filter);
-                if (result.statusCode == 200) {
+                if (result.isSuccessed === true) {
                     setData(result.resultObj.items);
                 }
             }
@@ -50,24 +50,14 @@ const SearchC: React.FC = () => {
             <div>
                 <Popover
                     content={
-                        <div style={{ height: 300, width: 300, overflowX: 'hidden' }}>
+                        <div className='popover-search'>
                             {data && data.length > 1 ? (
                                 <>
                                     {data.map((e: Product) => (
-                                        <div>
-                                            <Link to={`product/detail/${e.id}`}>
-                                                <Space>
-                                                    <div>
-                                                        <img style={{ width: 70 }} src={baseUrl + e.urlThumbnailImage} />
-                                                    </div>
-                                                    <div style={{ width: 200 }}>
-                                                        <p>{e.seoTitle}</p>
-                                                        <p>{ChangeCurrence(e.price)}</p>
-                                                    </div>
-                                                </Space>
-                                            </Link>
-                                            <hr />
-                                        </div>
+                                       <React.Fragment key={e.id}>
+                                            <ProductCard product={e} type='forList' height={70}/>
+                                            <hr/>
+                                       </React.Fragment>
                                     ))}
                                     <div style={{ textAlign: 'center' }}>
                                         <Link to={`/product/${searchValue}`}>Hiển thị tất cả</Link>
@@ -80,6 +70,7 @@ const SearchC: React.FC = () => {
                     }
                     title={'Tìm kiếm'}
                     trigger={'click'}
+                    placement='bottom'
                 >
                     <div className='search'>
                         <Search
@@ -97,16 +88,5 @@ const SearchC: React.FC = () => {
             </div>
         </>
     );
-};
-const ChangeCurrence = (number: number | undefined) => {
-    if (number) {
-        const formattedNumber = number.toLocaleString('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-            currencyDisplay: 'code',
-        });
-        return formattedNumber;
-    }
-    return 0;
 };
 export default SearchC;
