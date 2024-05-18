@@ -84,7 +84,7 @@ function Cart() {
         }
     };
     return (
-        <div>
+        <div className='container'>
             <Spin spinning={loadingHandleQuantity}>
                 <Row gutter={24}>
                     <Col className="gutter-row" span={16} xs={24} md={16} lg={16} xl={16}>

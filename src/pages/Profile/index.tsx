@@ -232,7 +232,7 @@ function Profile() {
         setOpen(false);
     };
     return (
-        <div>
+        <div className='container'>
             <Button
                 type="text"
                 icon={<ArrowLeftOutlined />}

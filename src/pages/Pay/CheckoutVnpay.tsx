@@ -6,10 +6,10 @@ import { useParams } from 'react-router-dom';
 import { useAppDispatch } from '@/app/hooks';
 import { emptyCart } from '@/feature/cart/cartSlice';
 function CheckoutVnpay() {
-    let {id} = useParams()
+    const {id} = useParams()
     const [content,setContent] = React.useState<string>('')
     const [status,setStatus] = React.useState<boolean>(false)
-    let p = queryString.parse(window.location.search);
+    const p = queryString.parse(window.location.search);
     const dispatch = useAppDispatch()
     const paided = async () => {
         if (p != undefined) {
@@ -49,7 +49,7 @@ function CheckoutVnpay() {
         }
     });
     return (
-        <div>
+        <div className='container'>
             <Result
                 status={status ? 'success' : 'warning'}
                 title="Thông tin đơn hàng!"

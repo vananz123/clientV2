@@ -182,7 +182,7 @@ function ProductDetail() {
         }
     };
     return (
-        <div>
+        <div className='container'>
             {contextHolder}
             <Button
                 type="text"
