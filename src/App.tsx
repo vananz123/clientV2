@@ -16,10 +16,9 @@ function App() {
         messagingSenderId: "669308501551",
         appId: "1:669308501551:web:1ec428fa704ab577c590da",
         measurementId: "G-BGEQBG6XQY"
-      };
-      
+    }; 
       // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
+    const app = initializeApp(firebaseConfig);
         getAnalytics(app);
     const dispatch = useAppDispatch();
     useEffect(() => {

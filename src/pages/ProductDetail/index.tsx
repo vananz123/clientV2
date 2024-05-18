@@ -401,7 +401,9 @@ function ProductDetail() {
                                         imageStyle={{ height: 60 }}
                                         description={
                                             <span>
-                                                Chưa có bình luận nào <a href="#API">Bình luận ngay</a>
+                                                Chưa có bình luận nào <a onClick={() => {
+                                                    handleAddToCart();
+                                                }}>Bình luận ngay</a>
                                             </span>
                                         }
                                     ></Empty>
@@ -419,7 +421,7 @@ function ProductDetail() {
                                                         <Space align="start">
                                                             <Image width={100} src={baseUrl + item.urlThumbnailImage} />
                                                             <div>
-                                                                <p>{item.seoTitle}</p>
+                                                                <Link to={`/product/detail/${item.id}`}>{item.seoTitle}</Link>
                                                                 <p>{ChangeCurrence(item.price)}</p>
                                                             </div>
                                                         </Space>
