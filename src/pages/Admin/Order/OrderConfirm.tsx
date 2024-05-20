@@ -155,7 +155,7 @@ function OrderConfirm() {
     const getOrderAdminByOrderId = async () => {
         if (typeof id != 'undefined') {
             const res = await orderServices.getOrderAdminByOrderId(Number(id));
-            if (res.isSuccessed == true) {
+            if (res.isSuccessed === true) {
                 setOrder(res.resultObj);
                 const arr: TimeLineProps[] = [];
                 res.resultObj.status?.forEach((element: OrderStatus) => {
@@ -193,7 +193,7 @@ function OrderConfirm() {
             dataIndex: 'value',
             key: 'value',
             render: (_, record) => (
-                <p>{record.name == undefined ? 'not' : `${record.name}: ${record.value} ${record.sku}`}</p>
+                <p>{record.value === null ? 'not' : `${record.value} ${record.sku}`}</p>
             ),
         },
         {

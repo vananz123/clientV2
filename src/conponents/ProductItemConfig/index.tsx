@@ -21,7 +21,7 @@ import {
     Table,
     TableColumnsType,
 } from 'antd';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import ModalAssignGuarantiesProductItem from '../ModalAssignGuarantiesProductItem';
 import ModalAssginPromotionsProductItem from '../ModalAssginPromotionsProductItem';
 const formItemLayout = {
@@ -106,20 +106,22 @@ const ProductItemConfig: React.FC<Props> = ({ productItem ,onSetState,product}) 
             render: (_, record) => (
                 <Space size={'small'} direction='vertical'>
                     <Button
+                    icon={<EditOutlined/>}
                         onClick={() => {
                             setCurrentProductItem(record);
                             setOpenModalAssignPI(true);
                         }}
                     >
-                        Edit Guaranties
+                        Guaranties
                     </Button>
                     <Button
+                    icon={<EditOutlined/>}
                         onClick={() => {
                             setCurrentProductItem(record);
                             setOpenModalAssignPromotionPI(true);
                         }}
                     >
-                        Add Promotion
+                        Promotion
                     </Button>
                 </Space>
             ),
@@ -174,7 +176,7 @@ const ProductItemConfig: React.FC<Props> = ({ productItem ,onSetState,product}) 
 
             <Drawer
                 title="Create product item"
-                width={650}
+                width={'auto'}
                 onClose={() => setOpenProductItem(false)}
                 open={openProductItem}
             >
@@ -193,12 +195,11 @@ const ProductItemConfig: React.FC<Props> = ({ productItem ,onSetState,product}) 
                 ) : (
                     <Skeleton />
                 )}
-
                 <Form
                     {...formItemLayout}
                     name="dynamic_form_nest_item"
                     onFinish={onFinishProductItem}
-                    style={{ maxWidth: 800, marginTop: 10 }}
+                    style={{ maxWidth: 600, marginTop: 10 }}
                     autoComplete="off"
                 >
                     {isSize === true ? (

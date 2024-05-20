@@ -4,6 +4,8 @@ import * as request from '../utils/request'
 import {  PagingResult, Promotion, Result } from './ResType'
 import {  Product } from '@/type'
 import { Filter } from '@/pages/ProductListShow/FilterType'
+import { UploadFile } from 'antd'
+import { AnyAsyncThunk } from 'node_modules/@reduxjs/toolkit/dist/matchers'
 export const getAllProduct = async()=>{
     try{
         const res = await request.get(`/product`)
@@ -171,13 +173,57 @@ export const uploadThumbnailImage = async(id:number,data:any)=>{
         return resError
     }
 }
-export const uploadImage = async(id:number,data:any)=>{
+interface ImageType {
+    name?:any;
+    imageFile?:any;
+}
+export const uploadImage = async(id:number,data:UploadFile[])=>{
     try{
         const formData = new FormData()
+        formData.append('Id',id.toString())
         data.forEach((element:any) => {
             formData.append('ImageFile',element.originFileObj);
         });
-        const res= await request.put(`/product/${encodeURIComponent(id)}/images`,formData)
+        const res= await request.post(`/product/images`,formData)
+        const resultObj   = res.resultObj
+        const resp: Result ={
+            error :'',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
+            statusCode:200,
+            resultObj : resultObj
+        }
+        return resp
+    }catch(error:any){
+        console.log(error.response.data)
+        const resError: Result =error.response.data
+        return resError
+    }
+}
+export const updateImage = async(id:number,data:any)=>{
+    try{
+        const formData = new FormData()
+        formData.append('Id',id.toString())
+        formData.append('ImageFile',data.originFileObj);
+        const res= await request.put(`/product/images`,formData)
+        const resultObj   = res.resultObj
+        const resp: Result ={
+            error :'',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
+            statusCode:200,
+            resultObj : resultObj
+        }
+        return resp
+    }catch(error:any){
+        console.log(error.response.data)
+        const resError: Result =error.response.data
+        return resError
+    }
+}
+export const deleteImage = async(id:number,name:string)=>{
+    try{
+        const res= await request.del(`/product/${encodeURIComponent(id)}/images?name=${encodeURIComponent(name)}`)
         const resultObj   = res.resultObj
         const resp: Result ={
             error :'',

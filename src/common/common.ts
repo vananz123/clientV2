@@ -36,3 +36,30 @@ export const OPTIONS_STATUS: SelectProps['options'] = [
         label: 'UnActive'
     }
 ];
+export const OPTIONS_PRODUCT_STATUS: SelectProps['options'] = [
+    {
+        value: 0,
+        label: 'InActive',
+    },
+    {
+        value: 1,
+        label: 'Active',
+    },
+    {
+        value: 2,
+        label: 'New',
+    },
+    {
+        value: 3,
+        label: 'Hot',
+    },
+    {
+        value: 4,
+        label: 'Sale',
+        disabled: true,
+    },
+    {
+        value: 5,
+        label: 'UnActive',
+    },
+];

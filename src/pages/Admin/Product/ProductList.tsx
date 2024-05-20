@@ -6,7 +6,7 @@ import {  Drawer,} from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
 import * as productServices from '@/api/productServices';
 import React, { useEffect } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { Product } from '@/type';
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
@@ -134,11 +134,13 @@ function ProductList() {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Link to={`/admin/product-edit/${record.id}`}>Edit</Link>
-                    <a onClick={() => showModalDel(record.id, record.name)}>Delete</a>
-                    <a onClick={() => showDrawer(record.id)} key={`a-${record.id}`}>
-                        View Profile
-                    </a>
+                    <Button icon={<DeleteOutlined/>} onClick={() => showModalDel(record.id, record.name)}></Button>
+                    <Link to={`/admin/product-edit/${record.id}`}>
+                        <Button icon={<EditOutlined/>}></Button>
+                    </Link>
+                    <Button icon={<InfoCircleOutlined/>} onClick={() => showDrawer(record.id)} key={`a-${record.id}`}>
+                       
+                    </Button>
                 </Space>
             ),
         },

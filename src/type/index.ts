@@ -44,7 +44,7 @@ export interface Product {
     priceBeforeDiscount: number;
     seoTitle: string;
     file: any;
-    urlThumbnailImage: string;
+    urlThumbnailImage: string;urlImage: string;
     viewCount: number;
     PromotionName?:string,
     status: number;

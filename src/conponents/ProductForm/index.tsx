@@ -21,50 +21,16 @@ import * as productServices from '@/api/productServices';
 import type { SelectProps } from 'antd';
 import type { StatusForm } from '@/pages/Admin/Category/Type';
 import * as categoryServices from "@/api/categoryServices"
-//import type { GetProp, UploadProps } from 'antd';
 import ProductItemConfig from '../ProductItemConfig';
-//type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
-import { FORM_ITEM_LAYOUT,TAIL_FORM_ITEM_LAYOUT } from '@/common/common';
-// const getBase64 = (file: FileType): Promise<string> =>
-//     new Promise((resolve, reject) => {
-//         const reader = new FileReader();
-//         reader.readAsDataURL(file);
-//         reader.onload = () => resolve(reader.result as string);
-//         reader.onerror = (error) => reject(error);
-//     });
+import { FORM_ITEM_LAYOUT,TAIL_FORM_ITEM_LAYOUT ,OPTIONS_PRODUCT_STATUS} from '@/common/common';
+import UploadImages from '@/view/product/UploadImages';
+
 const normFile = (e: any) => {
     if (Array.isArray(e)) {
         return e;
     }
     return e?.fileList;
 };
-const optionsProductStatus: SelectProps['options'] = [
-    {
-        value: 0,
-        label: 'InActive',
-    },
-    {
-        value: 1,
-        label: 'Active',
-    },
-    {
-        value: 2,
-        label: 'New',
-    },
-    {
-        value: 3,
-        label: 'Hot',
-    },
-    {
-        value: 4,
-        label: 'Sale',
-        disabled: true,
-    },
-    {
-        value: 5,
-        label: 'UnActive',
-    },
-];
 const ProductForm: React.FC<{
     product: Product | undefined;
     onSetState: SetStateAction<any>;
@@ -75,7 +41,7 @@ const ProductForm: React.FC<{
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [options, setOptions] = React.useState<SelectProps['options']>([]);
     const [openVariaton, setOpenVariaton] = React.useState(false);
-    const [openUploadImages, setOpenUploadImages] = React.useState(false);
+    const [openUploadImage, setUploadImage] = React.useState(false);
     const [api, contextHolder] = notification.useNotification();
     const openNotificationWithIcon = (type: NotificationType, mess: string) => {
         api[type]({
@@ -85,9 +51,6 @@ const ProductForm: React.FC<{
     };
     const showDrawerVariation = () => {
         setOpenVariaton(true);
-    };
-    const showDrawUploadImages = () => {
-        setOpenUploadImages(true);
     };
     const getAllCate  =async ()=>{
         const res  =await categoryServices.getAllCate()
@@ -154,21 +117,6 @@ const ProductForm: React.FC<{
     };
     const onFinishFailed: FormProps<Product>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);
-    };
-
-    const onFinishUploadImages = (values: any) => {
-        console.log(values);
-        if (product != undefined) {
-            if (values.file != undefined) {
-                setTimeout(async () => {
-                    const res = await productServices.uploadImage(product.id, values.file);
-                    if (res.isSuccessed == true) {
-                        setOpenUploadImages(false);
-                        openNotificationWithIcon('success', 'Add Image success');
-                    }
-                }, 300);
-            }
-        }
     };
     return (
         <div>
@@ -237,7 +185,7 @@ const ProductForm: React.FC<{
                             size={'middle'}
                             //onChange={handleChange}
                             style={{ width: 200 }}
-                            options={optionsProductStatus}
+                            options={OPTIONS_PRODUCT_STATUS}
                         />
                     </Form.Item>
                 
@@ -253,47 +201,18 @@ const ProductForm: React.FC<{
                 </Col>
             </Row>
             
-            {product != undefined ? (
+            {product != undefined && (
                 <>
                     <Space>
-                        <Button type="primary" onClick={showDrawUploadImages} icon={<PlusOutlined />}>
-                            Upload images
+                    <Button type="primary" onClick={()=>{setUploadImage(true)}} icon={<PlusOutlined />}>
+                            Upload image
                         </Button>
                         <Button type="primary" onClick={showDrawerVariation} icon={<PlusOutlined />}>
                             Config Variation
                         </Button>
                     </Space>
                 </>
-            ) : (
-                ''
             )}
-            <Drawer
-                title="Upload images"
-                width={600}
-                onClose={() => setOpenUploadImages(false)}
-                open={openUploadImages}
-            >
-                <Form
-                    name="dynamic_form_nest_item"
-                    onFinish={onFinishUploadImages}
-                    style={{ maxWidth: 600 }}
-                    autoComplete="off"
-                >
-                    <Form.Item name="file" label="Upload" valuePropName="fileList" getValueFromEvent={normFile}>
-                        <Upload listType="picture-card">
-                            <button style={{ border: 0, background: 'none' }} type="button">
-                                <PlusOutlined />
-                                <div style={{ marginTop: 8 }}>Upload</div>
-                            </button>
-                        </Upload>
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                            Submit
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Drawer>
             <Drawer title="Create variation" width={600} onClose={() => setOpenVariaton(false)} open={openVariaton}>
                 <Form
                     {...FORM_ITEM_LAYOUT}
@@ -339,6 +258,9 @@ const ProductForm: React.FC<{
                     </Form.Item>
                 </Form>
             </Drawer>
+            {product != undefined && (
+                <UploadImages open={openUploadImage} setOpen={setUploadImage} product={product}/>
+            )}
             {contextHolder}
         </div>
     );

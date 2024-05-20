@@ -69,7 +69,7 @@ function ProductDetail() {
             label: 'Thông số và mô tả',
             children: (
                 <Space direction="vertical">
-                    {data?.variation != undefined ? (
+                    {data?.variation !== undefined  && (
                         <>
                             {data?.variation.map((e: Variation) => (
                                 <p>
@@ -77,10 +77,6 @@ function ProductDetail() {
                                 </p>
                             ))}
                             <p>{data.seoDescription}</p>
-                        </>
-                    ) : (
-                        <>
-                            <Skeleton />
                         </>
                     )}
                 </Space>
@@ -94,7 +90,7 @@ function ProductDetail() {
                     <Space direction="vertical">
                         <div key={currentProductItem?.guaranty.id}>
                             <p>Loại bảo hành: {currentProductItem?.guaranty.name}</p>
-                            <p>Thời gian: {currentProductItem?.guaranty.period + ' ' + currentProductItem?.sku}</p>
+                            <p>Thời gian: {currentProductItem?.guaranty.period + ' ' + currentProductItem?.guaranty.sku}</p>
                             <p>Mô tả{currentProductItem?.guaranty.description}</p>
                         </div>
                     </Space>

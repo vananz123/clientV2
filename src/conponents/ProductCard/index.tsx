@@ -15,7 +15,8 @@ const ProductCard: React.FC<Props> = ({ product, type = 'forCard', height = 100 
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const viewConut = async () => {
         if (typeof product !== 'undefined') {
-             await productServices.productViewCount(product?.id);
+            await productServices.productViewCount(product?.id);
+          
         }
     };
     return (

@@ -1,10 +1,11 @@
 import { Order } from '@/api/ResType';
-import { Table, Space, Badge, Tabs, Spin } from 'antd';
+import { Table, Space, Badge, Tabs, Spin, Button } from 'antd';
 import type { TableProps } from 'antd';
 import React, { useEffect } from 'react';
 import * as orderServices from '@/api/orderServices';
 import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
 function OrderList() {
     // const baseUrl =import.meta.env.VITE_BASE_URL
     const [data, setData] = React.useState<Order[]>();
@@ -43,9 +44,9 @@ function OrderList() {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <a>Xóa</a>
+                    <Button icon={<DeleteOutlined/>}></Button>
                     <Link key={`a-${record.id}`} to={`/admin/order/detail/${record.id}`}>
-                        Xem Đơn Hàng
+                        <Button icon={<InfoCircleOutlined/>}></Button>
                     </Link>
                 </Space>
             ),
