@@ -5,7 +5,6 @@ import {  PagingResult, Promotion, Result } from './ResType'
 import {  Product } from '@/type'
 import { Filter } from '@/pages/ProductListShow/FilterType'
 import { UploadFile } from 'antd'
-import { AnyAsyncThunk } from 'node_modules/@reduxjs/toolkit/dist/matchers'
 export const getAllProduct = async()=>{
     try{
         const res = await request.get(`/product`)
@@ -172,10 +171,6 @@ export const uploadThumbnailImage = async(id:number,data:any)=>{
         const resError: Result =error.response.data
         return resError
     }
-}
-interface ImageType {
-    name?:any;
-    imageFile?:any;
 }
 export const uploadImage = async(id:number,data:UploadFile[])=>{
     try{
