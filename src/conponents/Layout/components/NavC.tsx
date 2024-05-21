@@ -53,7 +53,7 @@ const NavC:React.FC<Props> = ({type ='forDesktop',closeDrawer})=>{
         <>
             <Menu
                 theme='light'
-                mode={type =='forDesktop' ? "horizontal":"inline"}
+                mode={type ==='forDesktop' ? "horizontal":"inline"}
                 selectedKeys={arr}
                 items={item}
                 style={{ flex: 1, minWidth: 0 ,marginLeft:0}}

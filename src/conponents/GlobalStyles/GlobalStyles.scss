@@ -124,7 +124,7 @@ body {
             align-items: center;
             &__bars {
                 display: block;
-                @include Responsive(SM) {
+                @include Responsive(MD) {
                     display: none;
                 }
             }
@@ -137,7 +137,7 @@ body {
     &__nav {
         height: 64px;
         display: none;
-        @include Responsive(SM) {
+        @include Responsive(MD) {
             display: flex;
             flex-wrap: wrap;
             width: 400px;

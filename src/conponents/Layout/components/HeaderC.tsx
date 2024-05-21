@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {  Space, Drawer } from 'antd';
+import { Space, Drawer, Button } from 'antd';
 import { Layout, theme, Badge, Avatar, Dropdown } from 'antd';
-import { UserOutlined, DownOutlined, ShoppingCartOutlined, BarsOutlined, LoginOutlined } from '@ant-design/icons';
+import {
+    UserOutlined,
+    ShoppingCartOutlined,
+    BarsOutlined,
+    LoginOutlined,
+    LogoutOutlined,
+} from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '@/app/hooks';
 import { selectUser, signOut } from '@/feature/user/userSlice';
 import { selectCart } from '@/feature/cart/cartSlice';
@@ -22,7 +28,16 @@ function HeaderC() {
     const { token } = theme.useToken();
     const items: MenuProps['items'] = [
         {
-            label: <Link onClick={()=>{onClose()}} to={'/profile'}>Profile</Link>,
+            label: (
+                <Link
+                    onClick={() => {
+                        onClose();
+                    }}
+                    to={'/profile'}
+                >
+                    Profile
+                </Link>
+            ),
             key: '0',
         },
         {
@@ -60,85 +75,103 @@ function HeaderC() {
     };
 
     const containerStyle: React.CSSProperties = {
-        position: 'relative',
+        position: 'fixed',
         height: '100vh',
-        width:'90%',
+        width: '90%',
         padding: 0,
         overflow: 'hidden',
+
         border: `1px solid ${token.colorBorderSecondary}`,
         borderRadius: token.borderRadiusLG,
     };
     return (
-        <Header style={{ padding: 0, backgroundColor: token.colorBgContainer }}>
-            <div className="header-container">
-                <div className="header-container__nav">
-                    <NavC />
-                </div>
-                <div className="header-container__logo">
-                    <div className="menu-right">
-                        <div className="menu-right__bars">
-                            <BarsOutlined onClick={() => showDrawer()} />
-                        </div>
-                        <Link className="menu-right__logo"  style={{ width: 64, height: 64 }} to="/">
-                            <img style={{ width: '100%', height: '100%' }} src={Logo2} />
-                            
-                        </Link>
+        <>
+            <Header style={{ padding: 0, backgroundColor: token.colorBgContainer }}>
+                <div className="header-container">
+                    <div className="header-container__nav">
+                        <NavC />
                     </div>
-                </div>
-                <div className="header-container__usercart">
-                    <div>
-                        <SearchC />
-                    </div>
-
-                    {typeof user !== 'undefined' ? (
-                        <>
-                            <Space align="center">
-                                <Dropdown className="header-container__user" menu={{ items }} trigger={['click']}>
-                                    <strong onClick={(e) => e.preventDefault()} style={{ cursor: 'pointer' }}>
-                                        <Space>
-                                            <Avatar icon={<UserOutlined />} />
-                                            <div>{user?.userName}</div>
-                                        </Space>
-                                    </strong>
-                                </Dropdown>
-                                <Link to={`/cart`} style={{ marginLeft: 5, marginBottom: 5 }}>
-                                    <Badge count={cart.items.length} showZero>
-                                        <Avatar icon={<ShoppingCartOutlined />} />
-                                    </Badge>
-                                </Link>
-                            </Space>
-                        </>
-                    ) : (
-                        <div>
-                            <Link style={{color:'black'}} to={'/auth/login'}>
-                                <p>Login <LoginOutlined /></p>
+                    <div className="header-container__logo">
+                        <div className="menu-right">
+                            <div className="menu-right__bars">
+                                <BarsOutlined onClick={() => showDrawer()} />
+                            </div>
+                            <Link className="menu-right__logo" style={{ width: 64, height: 64 }} to="/">
+                                <img style={{ width: '100%', height: '100%' }} src={Logo2} />
                             </Link>
                         </div>
-                    )}
+                    </div>
+                    <div className="header-container__usercart">
+                        <div>
+                            <SearchC />
+                        </div>
+
+                        {typeof user !== 'undefined' ? (
+                            <>
+                                <Space align="center">
+                                    <Dropdown className="header-container__user" menu={{ items }} trigger={['click']}>
+                                        <strong onClick={(e) => e.preventDefault()} style={{ cursor: 'pointer' }}>
+                                            <Space>
+                                                <Avatar icon={<UserOutlined />} />
+                                                <div>{user?.userName}</div>
+                                            </Space>
+                                        </strong>
+                                    </Dropdown>
+                                    <Link to={`/cart`} style={{ marginLeft: 5, marginBottom: 5 }}>
+                                        <Badge count={cart.items.length} showZero>
+                                            <Avatar icon={<ShoppingCartOutlined />} />
+                                        </Badge>
+                                    </Link>
+                                </Space>
+                            </>
+                        ) : (
+                            <div>
+                                <Link style={{ color: 'black' }} to={'/auth/login'}>
+                                    <p>
+                                        Login <LoginOutlined />
+                                    </p>
+                                </Link>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
+            </Header>
             <Drawer
                 placement="left"
-                style={containerStyle}
+                style={{ ...containerStyle }}
                 closable={true}
                 onClose={onClose}
                 open={open}
                 getContainer={false}
                 extra={
-                    <Dropdown menu={{ items }} trigger={['click']}>
-                    <strong onClick={(e) => e.preventDefault()} style={{ cursor: 'pointer' }}>
-                        <Space>
-                            <Avatar icon={<UserOutlined />} />
-                            <div>{user?.userName}</div>
-                        </Space>
-                        <DownOutlined />
-                    </strong>
-                </Dropdown>
+                    <>
+                        {user && (
+                            <Link to={'/profile'} style={{ color:'black', cursor: 'pointer' }}>
+                                <Space>
+                                    <Avatar icon={<UserOutlined />} />
+                                    <div>{user?.userName}</div>
+                                </Space>
+                            </Link>
+                        )}
+                    </>
                 }
             >
-                <NavC type='forMobile' closeDrawer={setOpen}/>
+                <NavC type="forMobile" closeDrawer={setOpen} />
+                <div
+                    style={{
+                        position: 'absolute',
+                        bottom: 10,
+                        right: 10,
+                    }}
+                >
+                    {user && (
+                        <Button icon={<LogoutOutlined />} style={{ color: 'black' }}>
+                            Logout
+                        </Button>
+                    )}
+                </div>
             </Drawer>
-        </Header>
+        </>
     );
 }
 

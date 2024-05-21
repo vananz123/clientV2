@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useParams } from 'react-router-dom';
 import * as productServices from '@/api/productServices';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Product } from '@/type';
 import { useAppSelector } from '@/app/hooks';
 import { selectCate } from '@/feature/category/cateSlice';
@@ -25,7 +25,7 @@ function ProductListShow() {
     const [isPromotion, setIsPromotion] = React.useState<boolean>(false);
     const [titleContent, setTitleContent] = React.useState<string | undefined>('');
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const getProductPaging = async () => {
+    const getProductPaging = useCallback(async () => {
         setIsLoading(true);
         const filter: Filter = {
             categoryId: Number(id),
@@ -41,8 +41,8 @@ function ProductListShow() {
             setProducts(res.resultObj.items);
             setIsLoading(false);
         }
-    };
-    const getProductPromotionPaging = async () => {
+    },[id,page, optionPrice, optionMaterial, sortOder, isPromotion]);
+    const getProductPromotionPaging = useCallback(async () => {
         setIsLoading(true);
         const filter: Filter = {
             page: page,
@@ -58,8 +58,8 @@ function ProductListShow() {
             setProducts(res.resultObj.items);
             setIsLoading(false);
         }
-    };
-    const getProductPNPaging = async () => {
+    },[page, optionPrice, optionMaterial, sortOder, isPromotion]);
+    const getProductPNPaging = useCallback(async () => {
         setIsLoading(true);
         const filter: Filter = {
             page: page,
@@ -75,22 +75,25 @@ function ProductListShow() {
             setProducts(res.resultObj.items);
             setIsLoading(false);
         }
-    };
-    const getProductStatusPaging = async (status: number) => {
-        const filter: Filter = {
-            page: page,
-            sortOder: sortOder,
-            pageSize: pageSize,
-            optionPrice: optionPrice,
-            optionMaterial: optionMaterial,
-            isPromotion: isPromotion,
-            productStatus: status,
-        };
-        const res = await productServices.getProductPagingByFilter(filter);
-        if (res.statusCode == 200) {
-            setProducts(res.resultObj.items);
-        }
-    };
+    },[id, page, optionPrice, optionMaterial, sortOder, isPromotion]);
+    const getProductStatusPaging = useCallback(
+        async (status: number) => {
+            const filter: Filter = {
+                page: page,
+                sortOder: sortOder,
+                pageSize: pageSize,
+                optionPrice: optionPrice,
+                optionMaterial: optionMaterial,
+                isPromotion: isPromotion,
+                productStatus: status,
+            };
+            const res = await productServices.getProductPagingByFilter(filter);
+            if (res.statusCode == 200) {
+                setProducts(res.resultObj.items);
+            }
+        },
+        [page, optionPrice, optionMaterial, sortOder, isPromotion],
+    );
     useEffect(() => {
         if (id != undefined) {
             if (id === 'promotion') {
@@ -98,10 +101,10 @@ function ProductListShow() {
                 setTitleContent('Khuyến mãi');
                 getProductPromotionPaging();
             } else if (id === 'new') {
-                setTitleContent(id)
+                setTitleContent(id);
                 getProductStatusPaging(2);
             } else if (id === 'hot') {
-                setTitleContent(id)
+                setTitleContent(id);
                 getProductStatusPaging(3);
             } else {
                 try {
@@ -122,7 +125,19 @@ function ProductListShow() {
                 }
             }
         }
-    }, [id, page, optionPrice, optionMaterial, sortOder, isPromotion]);
+    }, [
+        id,
+        page,
+        optionPrice,
+        optionMaterial,
+        sortOder,
+        isPromotion,
+        cate,
+        getProductPNPaging,
+        getProductPromotionPaging,
+        getProductPaging,
+        getProductStatusPaging,
+    ]);
     const handleChangeSort = (value: Sort) => {
         setSortOder(value);
     };
@@ -141,9 +156,9 @@ function ProductListShow() {
     };
     return (
         <>
-            <div className='container'>
+            <div className="container">
                 <h3>{titleContent}</h3>
-                <Flex justify="space-between"gap={16} style={{ marginBottom: '10px' }}>
+                <Flex justify="space-between" gap={16} style={{ marginBottom: '10px' }}>
                     <Space wrap>
                         <Select
                             mode="multiple"
@@ -192,8 +207,8 @@ function ProductListShow() {
                                         <Col
                                             style={{ display: 'flex', justifyContent: 'center' }}
                                             xs={12}
-                                            sm={12}
-                                            md={12}
+                                            sm={8}
+                                            md={8}
                                             lg={8}
                                             xl={6}
                                             className="gutter-row"
@@ -212,10 +227,10 @@ function ProductListShow() {
                             <Col
                                 style={{ display: 'flex', justifyContent: 'center' }}
                                 xs={12}
-                                sm={12}
-                                md={12}
-                                lg={8}
-                                xl={6}
+                                            sm={8}
+                                            md={8}
+                                            lg={8}
+                                            xl={6}
                                 className="gutter-row"
                             >
                                 <Skeleton />

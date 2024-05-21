@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from 'react-router';
 import { Product, ProductItem, Variation } from '@/type';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import * as productServices from '@/api/productServices';
 import * as reviewServices from '@/api/reviewServices';
 import * as cartServices from '@/api/cartServices';
@@ -73,7 +73,7 @@ function ProductDetail() {
                         <>
                             {data?.variation.map((e: Variation) => (
                                 <p>
-                                    {e.name}: {e.value}
+                                    {e.name} {e.value}
                                 </p>
                             ))}
                             <p>{data.seoDescription}</p>
@@ -106,7 +106,7 @@ function ProductDetail() {
         }
         setQuantity(newCount);
     };
-    const getData = async () => {
+    const getData = useCallback(async () => {
         const res = await productServices.getProductDetail(Number(id));
         if (res.isSuccessed == true) {
             const arr: string[] = res.resultObj.urlImage.split('*');
@@ -131,7 +131,7 @@ function ProductDetail() {
                 setOptionSize(sizeOption);
             }
         }
-    };
+    },[id]);
     const getReview = async (id: number) => {
         const r = await reviewServices.getReivewByProductId(id, 1);
         if (r.isSuccessed === true) {
@@ -143,7 +143,7 @@ function ProductDetail() {
         if (id != undefined) {
             getData();
         }
-    }, [id]);
+    }, [id,getData]);
     const handleChangeColl = (key: string | string[]) => {
         console.log(key);
     };
@@ -346,7 +346,7 @@ function ProductDetail() {
                             </Col>
                         </Row>
                         <Row gutter={16}>
-                            <Col xs={24} md={14}>
+                            <Col xs={24} lg={14}>
                                 {listReview.length > 0 ? (
                                     <>
                                         {listReview.map((e: Review) => (
@@ -403,7 +403,7 @@ function ProductDetail() {
                                     ></Empty>
                                 )}
                             </Col>
-                            <Col xs={24} md={10}>
+                            <Col xs={24} lg={10}>
                                 {data.similarProduct && data.similarProduct.length > 0 ? (
                                     <>
                                         <div style={{marginTop:15}}></div>

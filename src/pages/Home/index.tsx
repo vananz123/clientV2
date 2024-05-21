@@ -102,14 +102,14 @@ function Home() {
                         title="Xu Hướng"
                         style={{marginTop: 20,borderRadius:'50%' }}
                     >
-                        {typeof productsNew !== 'undefined' ? (
+                        {typeof productsNew !== 'undefined' && (
                             <Row gutter={[12, 12]}>
                                 {productsNew.map((e: Product) => (
                                     <Col
                                         style={{ display: 'flex', justifyContent: 'center'}}
                                         xs={12}
-                                        sm={12}
-                                        md={12}
+                                        sm={8}
+                                        md={8}
                                         lg={8}
                                         xl={6}
                                         className="gutter-row"
@@ -119,8 +119,6 @@ function Home() {
                                     </Col>
                                 ))}
                             </Row>
-                        ) : (
-                            ''
                         )}
                     </Card>
                 </div>
@@ -131,14 +129,14 @@ function Home() {
                         extra={<Link to={'/product/hot'}>Xem thêm</Link>
                         }
                     >
-                        {typeof productsHot !== 'undefined' ? (
+                        {typeof productsHot !== 'undefined' && (
                             <Row gutter={[12, 12]}>
                                 {productsHot.map((e: Product) => (
                                     <Col
                                         style={{ display: 'flex', justifyContent: 'center'}}
                                         xs={12}
-                                        sm={12}
-                                        md={12}
+                                        sm={8}
+                                        md={8}
                                         lg={8}
                                         xl={6}
                                         className="gutter-row"
@@ -148,19 +146,17 @@ function Home() {
                                     </Col>
                                 ))}
                             </Row>
-                        ) : (
-                            ''
                         )}
                     </Card>
                     <Card bordered={false} title="Sản phẩm mới" style={{ marginTop: 24 }} extra={<Link to={'/product/new'}>Xem thêm</Link>}>
-                        {typeof productsNew !== 'undefined' ? (
+                        {typeof productsNew !== 'undefined' && (
                             <Row gutter={[12, 12]}>
                                 {productsNew.map((e: Product) => (
                                     <Col
                                         style={{ display: 'flex', justifyContent: 'center' }}
                                         xs={12}
-                                        sm={12}
-                                        md={12}
+                                        sm={8}
+                                        md={8}
                                         lg={8}
                                         xl={6}
                                         className="gutter-row"
@@ -170,8 +166,6 @@ function Home() {
                                     </Col>
                                 ))}
                             </Row>
-                        ) : (
-                            ''
                         )}
                     </Card>
                 </div>
@@ -185,14 +179,14 @@ function Home() {
                         extra={<Link to={'/product/2'}>Xem thêm</Link>
                         }
                     >
-                        {typeof products !== 'undefined' ? (
+                        {typeof products !== 'undefined' && (
                             <Row gutter={[12, 12]}>
                                 {products.map((e: Product) => (
                                     <Col
                                         style={{ display: 'flex', justifyContent: 'center'}}
                                         xs={12}
-                                        sm={12}
-                                        md={12}
+                                        sm={8}
+                                        md={8}
                                         lg={8}
                                         xl={6}
                                         className="gutter-row"
@@ -202,8 +196,6 @@ function Home() {
                                     </Col>
                                 ))}
                             </Row>
-                        ) : (
-                            ''
                         )}
                     </Card>
                 </div>
@@ -214,14 +206,14 @@ function Home() {
                         extra={<Link to={'/product/hot'}>Xem thêm</Link>
                         }
                     >
-                        {typeof productsHot !== 'undefined' ? (
+                        {typeof productsHot !== 'undefined' && (
                             <Row gutter={[12, 12]}>
                                 {productsHot.map((e: Product) => (
                                     <Col
                                         style={{ display: 'flex', justifyContent: 'center'}}
                                         xs={12}
-                                        sm={12}
-                                        md={12}
+                                        sm={8}
+                                        md={8}
                                         lg={8}
                                         xl={6}
                                         className="gutter-row"
@@ -231,8 +223,6 @@ function Home() {
                                     </Col>
                                 ))}
                             </Row>
-                        ) : (
-                            ''
                         )}
                     </Card>
                 </div>
