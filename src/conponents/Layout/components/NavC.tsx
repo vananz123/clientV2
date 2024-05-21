@@ -32,10 +32,13 @@ const NavC:React.FC<Props> = ({type ='forDesktop',closeDrawer})=>{
         });
         return arr
     }
+    const handleCloseDrawer = ()=>{
+        closeDrawer(false)
+    }
     function renderCateItem () {
         const arr:MenuItem[] =[]
         cate.forEach((element:Category) => {
-            const item = getItem(<><Link style={{color:'black'}} to={`/product/${element.id}`}>{element.name}</Link></>,`/product/${element.id}`,'',renderSubCateItem(element.subCategory))
+            const item = getItem(<><Link onClick={()=>{handleCloseDrawer()}} style={{color:'black'}} to={`/product/${element.id}`}>{element.name}</Link></>,`/product/${element.id}`,'',renderSubCateItem(element.subCategory))
             arr.push(item)
         });
         return arr
@@ -44,7 +47,7 @@ const NavC:React.FC<Props> = ({type ='forDesktop',closeDrawer})=>{
     const item:MenuProps['items'] = [...renderCateItem(),getItem('Khuyến mãi','/product/promotion')]
     const handleClick: MenuProps['onClick'] = (e) =>{
         Navigate(`${e.key}`)
-        closeDrawer(false)
+        handleCloseDrawer()
     }
     return (
         <>

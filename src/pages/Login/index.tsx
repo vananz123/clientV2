@@ -75,7 +75,7 @@ function Login() {
             <div>
                 {error != undefined ? <Alert message="Error" description={error.message} type="error" showIcon /> : ''}
                 <h2 style={{ textAlign: 'center' }}>
-                    <img width={100} height={100} src={Logo} alt='la'/>
+                   <Link to='/'> <img width={100} height={100} src={Logo} alt='la'/></Link>
                 </h2>
                 <Form
                     name="basic"

@@ -1,5 +1,5 @@
 import { Order, OrderDetail, OrderStatus, Review } from '@/api/ResType';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import * as orderServices from '@/api/orderServices';
 import {
@@ -129,7 +129,7 @@ function UserOrderDetail() {
     const onClose = () => {
         setOpen(false);
     };
-    const getOrderByOrderId = async () => {
+    const getOrderByOrderId = useCallback(async () => {
         if (typeof id != 'undefined') {
             const res = await orderServices.getOrderDetailByOrderId(Number(id));
             if (res.isSuccessed == true) {
@@ -145,11 +145,11 @@ function UserOrderDetail() {
                 setStatusTimeLine(arr);
             }
         }
-    };
+    },[id]);
 
     useEffect(() => {
         getOrderByOrderId();
-    }, [id]);
+    }, [id,getOrderByOrderId]);
     const handleOk = async () => {
         setConfirmLoading(true);
         if (typeof order != 'undefined') {

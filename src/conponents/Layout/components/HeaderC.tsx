@@ -22,7 +22,7 @@ function HeaderC() {
     const { token } = theme.useToken();
     const items: MenuProps['items'] = [
         {
-            label: <Link to={'/profile'}>Profile</Link>,
+            label: <Link onClick={()=>{onClose()}} to={'/profile'}>Profile</Link>,
             key: '0',
         },
         {

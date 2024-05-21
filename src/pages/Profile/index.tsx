@@ -11,17 +11,16 @@ import {
     Result,
     Row,
     Space,
+    Tabs
 } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import * as orderServices from '@/api/orderServices';
 import * as userServices from '@/api/userServices';
 import { useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/feature/user/userSlice';
 import { Address, Order } from '@/api/ResType';
-import { Tabs } from 'antd';
 import type { DescriptionsProps, TabsProps } from 'antd';
-
 import { TypeFormAddress } from '../Purchase';
 import AddressForm from '@/conponents/AddressForm';
 import { StatusForm } from '../Admin/Category/Type';
@@ -40,7 +39,7 @@ function Profile() {
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [status, setStatus] = React.useState<StatusForm>('loading');
     const [typeFormAddress, setTypeFormAddress] = React.useState<TypeFormAddress>('EDIT');
-    const getAllPurchase = async () => {
+    const getAllPurchase = useCallback(async () => {
         if (user != undefined) {
             const res = await orderServices.getOrderByUserId(user?.id);
             console.log(res);
@@ -48,22 +47,22 @@ function Profile() {
                 setData(res.resultObj.items);
             }
         }
-    };
-    const getAddress = async () => {
+    },[user]);
+    const getAddress = useCallback(async () => {
         if (user != undefined) {
             const res = await userServices.getAddressByUserId(user.id);
             if (res.isSuccessed == true) {
                 setAddresses(res.resultObj);
             }
         }
-    };
+    },[user]);
     useEffect(() => {
         getAllPurchase();
         getAddress();
         if (status != 'loading') {
             setOpen(false);
         }
-    }, [status]);
+    }, [status,data,getAddress,getAllPurchase]);
     const GoBack = () => {
         Navigate(-1);
     };
@@ -128,7 +127,7 @@ function Profile() {
                                     type="primary"
                                     key="console"
                                     onClick={() => {
-                                        Navigate('/product/all');
+                                        Navigate('/product/1');
                                     }}
                                 >
                                     Go Purchase
