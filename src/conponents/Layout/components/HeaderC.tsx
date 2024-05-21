@@ -73,104 +73,95 @@ function HeaderC() {
     const onClose = () => {
         setOpen(false);
     };
-
-    const containerStyle: React.CSSProperties = {
-        position: 'fixed',
-        height: '100vh',
-        width: '90%',
-        padding: 0,
-        overflow: 'hidden',
-
-        border: `1px solid ${token.colorBorderSecondary}`,
-        borderRadius: token.borderRadiusLG,
-    };
     return (
         <>
-            <Header style={{ padding: 0, backgroundColor: token.colorBgContainer }}>
-                <div className="header-container">
-                    <div className="header-container__nav">
-                        <NavC />
-                    </div>
-                    <div className="header-container__logo">
-                        <div className="menu-right">
-                            <div className="menu-right__bars">
-                                <BarsOutlined onClick={() => showDrawer()} />
-                            </div>
-                            <Link className="menu-right__logo" style={{ width: 64, height: 64 }} to="/">
-                                <img style={{ width: '100%', height: '100%' }} src={Logo2} />
-                            </Link>
+            <div>
+                <Header style={{ padding: 0, backgroundColor: token.colorBgContainer }}>
+                    <div className="header-container">
+                        <div className="header-container__nav">
+                            <NavC />
                         </div>
-                    </div>
-                    <div className="header-container__usercart">
-                        <div>
-                            <SearchC />
-                        </div>
-
-                        {typeof user !== 'undefined' ? (
-                            <>
-                                <Space align="center">
-                                    <Dropdown className="header-container__user" menu={{ items }} trigger={['click']}>
-                                        <strong onClick={(e) => e.preventDefault()} style={{ cursor: 'pointer' }}>
-                                            <Space>
-                                                <Avatar icon={<UserOutlined />} />
-                                                <div>{user?.userName}</div>
-                                            </Space>
-                                        </strong>
-                                    </Dropdown>
-                                    <Link to={`/cart`} style={{ marginLeft: 5, marginBottom: 5 }}>
-                                        <Badge count={cart.items.length} showZero>
-                                            <Avatar icon={<ShoppingCartOutlined />} />
-                                        </Badge>
-                                    </Link>
-                                </Space>
-                            </>
-                        ) : (
-                            <div>
-                                <Link style={{ color: 'black' }} to={'/auth/login'}>
-                                    <p>
-                                        Login <LoginOutlined />
-                                    </p>
+                        <div className="header-container__logo">
+                            <div className="menu-right">
+                                <div className="menu-right__bars">
+                                    <BarsOutlined onClick={() => showDrawer()} />
+                                </div>
+                                <Link className="menu-right__logo" style={{ width: 64, height: 64 }} to="/">
+                                    <img style={{ width: '100%', height: '100%' }} src={Logo2} />
                                 </Link>
                             </div>
-                        )}
+                        </div>
+                        <div className="header-container__usercart">
+                            <div>
+                                <SearchC />
+                            </div>
+    
+                            {typeof user !== 'undefined' ? (
+                                <>
+                                    <Space align="center">
+                                        <Dropdown className="header-container__user" menu={{ items }} trigger={['click']}>
+                                            <strong onClick={(e) => e.preventDefault()} style={{ cursor: 'pointer' }}>
+                                                <Space>
+                                                    <Avatar icon={<UserOutlined />} />
+                                                    <div>{user?.userName}</div>
+                                                </Space>
+                                            </strong>
+                                        </Dropdown>
+                                        <Link to={`/cart`} style={{ marginLeft: 5, marginBottom: 5 }}>
+                                            <Badge count={cart.items.length} showZero>
+                                                <Avatar icon={<ShoppingCartOutlined />} />
+                                            </Badge>
+                                        </Link>
+                                    </Space>
+                                </>
+                            ) : (
+                                <div>
+                                    <Link style={{ color: 'black' }} to={'/auth/login'}>
+                                        <p>
+                                            Login <LoginOutlined />
+                                        </p>
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
-            </Header>
-            <Drawer
-                placement="left"
-                style={{ ...containerStyle }}
-                closable={true}
-                onClose={onClose}
-                open={open}
-                getContainer={false}
-                extra={
-                    <>
-                        {user && (
-                            <Link to={'/profile'} style={{ color:'black', cursor: 'pointer' }}>
-                                <Space>
-                                    <Avatar icon={<UserOutlined />} />
-                                    <div>{user?.userName}</div>
-                                </Space>
-                            </Link>
-                        )}
-                    </>
-                }
-            >
-                <NavC type="forMobile" closeDrawer={setOpen} />
-                <div
-                    style={{
-                        position: 'absolute',
-                        bottom: 10,
-                        right: 10,
-                    }}
+                </Header>
+                <Drawer
+                    placement="left"
+                    closable={true}
+                    onClose={onClose}
+                    open={open}
+                    extra={
+                        <>
+                            {user && (
+                                <Link to={'/profile'} onClick={()=>{onClose}} style={{ color:'black', cursor: 'pointer' }}>
+                                    <Space>
+                                        <Avatar icon={<UserOutlined />} />
+                                        <div>{user?.userName}</div>
+                                    </Space>
+                                </Link>
+                            )}
+                        </>
+                    }
                 >
-                    {user && (
-                        <Button icon={<LogoutOutlined />} style={{ color: 'black' }}>
-                            Logout
-                        </Button>
-                    )}
-                </div>
-            </Drawer>
+                    <div>
+                        <NavC type="forMobile" closeDrawer={setOpen} />
+                        <div
+                            style={{
+                                position: 'absolute',
+                                bottom: 10,
+                                right: 10,
+                            }}
+                        >
+                            {user && (
+                                <Button icon={<LogoutOutlined />} style={{ color: 'black' }}>
+                                    Logout
+                                </Button>
+                            )}
+                        </div>
+                    </div>
+                </Drawer>
+            </div>
         </>
     );
 }

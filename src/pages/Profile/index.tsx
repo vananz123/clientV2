@@ -1,18 +1,5 @@
-import {ArrowLeftOutlined, DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
-import {
-    Badge,
-    Button,
-    Card,
-    Col,
-    Descriptions,
-    Divider,
-    Flex,
-    Modal,
-    Result,
-    Row,
-    Space,
-    Tabs
-} from 'antd';
+import { ArrowLeftOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { Badge, Button, Card, Col, Descriptions, Divider, Flex, Modal, Result, Row, Skeleton, Space, Tabs } from 'antd';
 import React, { useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import * as orderServices from '@/api/orderServices';
@@ -47,7 +34,7 @@ function Profile() {
                 setData(res.resultObj.items);
             }
         }
-    },[user]);
+    }, [user]);
     const getAddress = useCallback(async () => {
         if (user != undefined) {
             const res = await userServices.getAddressByUserId(user.id);
@@ -55,14 +42,14 @@ function Profile() {
                 setAddresses(res.resultObj);
             }
         }
-    },[user]);
+    }, [user]);
     useEffect(() => {
         getAllPurchase();
         getAddress();
         if (status != 'loading') {
             setOpen(false);
         }
-    }, [status,data,getAddress,getAllPurchase]);
+    }, [status, data, getAddress, getAllPurchase]);
     const GoBack = () => {
         Navigate(-1);
     };
@@ -97,14 +84,14 @@ function Profile() {
                     {typeof data !== 'undefined' ? (
                         data.map((e: Order) => (
                             <>
-                                <Row key={e.id} align={'middle'} style={{ padding: 10}}>
-                                    <Col style={{fontSize:17}} xs={24} md={10} lg={10}>
+                                <Row key={e.id} align={'middle'} style={{ padding: 10 }}>
+                                    <Col style={{ fontSize: 17 }} xs={24} md={10} lg={10}>
                                         <Space wrap>
                                             <p>Thành tiền: {ChangeCurrence(e.orderTotal)}</p>
                                             <em>{dayjs(e.orderDate).format('MM/DD/YYYY, HH:MM')}</em>
                                         </Space>
                                     </Col>
-                                    <Col style={{fontSize:18}} xs={24} md={10} lg={10}>
+                                    <Col style={{ fontSize: 18 }} xs={24} md={10} lg={10}>
                                         <Space>
                                             <p>Tình trạng: </p>
                                             <Badge status="processing" text={e.status?.pop()?.name} />
@@ -112,7 +99,7 @@ function Profile() {
                                     </Col>
                                     <Col xs={24} md={10} lg={4}>
                                         <Link to={`/profile/order-detail/${e.id}`}>
-                                            <Button style={{fontSize:17, backgroundColor:'#ff4d4f'}} >Xem</Button>
+                                            <Button style={{ fontSize: 17, backgroundColor: '#ff4d4f' }}>Xem</Button>
                                         </Link>
                                     </Col>
                                 </Row>
@@ -143,16 +130,16 @@ function Profile() {
             label: 'Thông Tin Khách Hàng',
             children: (
                 <>
-                    <Row gutter={[24,8]}>
+                    <Row gutter={[24, 8]}>
                         <Col xs={24} lg={14}>
                             <Descriptions title="Thông tin tài khoản" size="middle" items={desUser} bordered />
                         </Col>
-                        <Col  xs={24} lg={10}>
+                        <Col xs={24} lg={10}>
                             <Card title="Thông tin địa chỉ">
                                 <div>
                                     {addresses.map((e: Address) => (
                                         <>
-                                            <Flex align='center' justify='space-between'>
+                                            <Flex align="center" justify="space-between">
                                                 <Space>
                                                     <div>
                                                         <p>{e?.phoneNumber}</p>
@@ -169,23 +156,20 @@ function Profile() {
                                                 </Space>
                                                 <Space direction="vertical">
                                                     <Button
-                                                    icon={<EditOutlined/>}
+                                                        icon={<EditOutlined />}
                                                         onClick={() => {
                                                             setCurrentAddressForm(e);
                                                             setTypeFormAddress('EDIT');
                                                             setOpen(true);
                                                         }}
-                                                    >
-                                                    </Button>
+                                                    ></Button>
                                                     <Button
-                                                    icon={<DeleteOutlined/>}
+                                                        icon={<DeleteOutlined />}
                                                         onClick={() => {
                                                             setCurrentAddress(e);
                                                             setOpenDel(true);
-                                                            
                                                         }}
-                                                    >
-                                                    </Button>
+                                                    ></Button>
                                                 </Space>
                                             </Flex>
                                         </>
@@ -193,17 +177,15 @@ function Profile() {
                                 </div>
                                 <Button
                                     type="primary"
-                                    icon={<PlusOutlined/>}
+                                    icon={<PlusOutlined />}
                                     shape="round"
-                                    size='large'
+                                    size="large"
                                     onClick={() => {
                                         setCurrentAddressForm(undefined);
                                         setTypeFormAddress('ADD');
                                         setOpen(true);
                                     }}
-                                >
-                                    
-                                </Button>
+                                ></Button>
                             </Card>
                         </Col>
                     </Row>
@@ -213,25 +195,24 @@ function Profile() {
     ];
     const handleDelOk = () => {
         setConfirmLoading(true);
-        setTimeout(async() => {
-            if(typeof currentAddress !== 'undefined'){
-                const res = await userServices.deleteAddress(currentAddress?.id)
-                if(res.isSuccessed ===true){
-                    getAddress()
-                    setConfirmLoading(false)
-                    setOpenDel(false)
+        setTimeout(async () => {
+            if (typeof currentAddress !== 'undefined') {
+                const res = await userServices.deleteAddress(currentAddress?.id);
+                if (res.isSuccessed === true) {
+                    getAddress();
+                    setConfirmLoading(false);
+                    setOpenDel(false);
                 }
             }
-            setConfirmLoading(false)
-            setOpenDel(false)
-            
+            setConfirmLoading(false);
+            setOpenDel(false);
         }, 200);
     };
     const handleCancel = () => {
         setOpen(false);
     };
     return (
-        <div className='container'>
+        <div className="container">
             <Button
                 type="text"
                 icon={<ArrowLeftOutlined />}
@@ -243,7 +224,19 @@ function Profile() {
             >
                 Go back
             </Button>
-            <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+            {!data ? (
+                <>
+                    <div style={{width:'100%'}}>
+                        {Array.from({ length: 4 }).map((_, index) => (
+                            <div key={index} style={{ width: '100%', height: 150, marginBottom: 10 }}>
+                                <Skeleton style={{ width: '100%', height: '100%' }} />
+                            </div>
+                        ))}
+                    </div>
+                </>
+            ) : (
+                <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+            )}
             <Modal
                 title="Notification"
                 open={open}
@@ -264,7 +257,9 @@ function Profile() {
                 open={openDel}
                 onOk={handleDelOk}
                 confirmLoading={confirmLoading}
-                onCancel={()=>{setOpenDel(false)}}
+                onCancel={() => {
+                    setOpenDel(false);
+                }}
             >
                 Do you want to detele!
             </Modal>

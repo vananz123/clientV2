@@ -17,7 +17,7 @@ import {
     Flex,
 } from 'antd';
 import { Link } from 'react-router-dom';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useState } from 'react';
 import type { RadioChangeEvent, SelectProps } from 'antd';
 import type { DescriptionsProps } from 'antd';
@@ -69,7 +69,7 @@ function Purchase() {
     const handleChange = (value: string) => {
         setType(value);
     };
-    const getPaymentType = async () => {
+    const getPaymentType = useCallback(async () => {
         if (user != undefined) {
             const res = await paymentServices.getPaymentMethodByUserId(user.id);
             if (res.isSuccessed === true) {
@@ -84,9 +84,9 @@ function Purchase() {
                 setOptions(op);
             }
         }
-    };
+    }, [user]);
 
-    const getAddress = async () => {
+    const getAddress = useCallback(async () => {
         if (user != undefined) {
             const res = await userServices.getAddressByUserId(user.id);
             if (res.isSuccessed === true) {
@@ -94,14 +94,14 @@ function Purchase() {
                 setCurrentAddress(res.resultObj[0]);
             }
         }
-    };
+    }, [user]);
     useEffect(() => {
         getPaymentType();
         getAddress();
         if (status != 'loading') {
             handleCancel();
         }
-    }, [status]);
+    }, [status, getAddress, getPaymentType]);
     const handleCancel = () => {
         setOpen(false);
     };
@@ -126,57 +126,57 @@ function Purchase() {
     };
     return (
         <div className="container">
-            <Row gutter={24}>
-                <Col className="gutter-row" xs={24} md={16} lg={16} xl={16}>
+            <Row gutter={[24, 24]}>
+                <Col className="gutter-row" xs={24} lg={16} xl={16}>
                     <Title level={4}>Phương Thức Thanh Toán</Title>
                     <Select
                         size={'middle'}
                         value={type}
                         onChange={handleChange}
-                        style={{ width: '100%' ,marginBottom:10}}
+                        style={{ width: '100%', marginBottom: 10 }}
                         options={options}
                     />
-                        {cart.items.map((e) => (
-                            <Card key={e.id} size='small' style={{ width: '100%', marginBottom: 10}}>
-                                <Row gutter={[0, 8]}>
-                                    <Col className="gutter-row" xs={8} lg={6}>
-                                        <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: '100%' }} />
-                                    </Col>
-                                    <Col className="gutter-row" xs={16} lg={18}>
-                                        <Flex justify="space-between" align="center">
-                                            <Paragraph
-                                                ellipsis={{
-                                                    rows: 1,
-                                                }}
-                                            >
-                                                <Link to={`/product/detail/${e.productId}`}>{e.seoTitle}</Link>
-                                            </Paragraph>
-                                        </Flex>
-                                        <Flex justify="space-between" align="center" wrap="wrap-reverse">
-                                            <p>
-                                                {e?.name}: {e?.value}
-                                            </p>
-                                            <div>
-                                                <Space>
-                                                    <>
-                                                        <p style={{ fontWeight: 500, color: 'red' }}>
-                                                            {ChangeCurrence(e?.total)}
+                    {cart.items.map((e) => (
+                        <Card key={e.id} size="small" style={{ width: '100%', marginBottom: 10 }}>
+                            <Row gutter={[0, 8]}>
+                                <Col className="gutter-row" span={6}>
+                                    <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: '100%' }} />
+                                </Col>
+                                <Col className="gutter-row" span={18}>
+                                    <Flex justify="space-between" align="center">
+                                        <Paragraph
+                                            ellipsis={{
+                                                rows: 1,
+                                            }}
+                                        >
+                                            <Link to={`/product/detail/${e.productId}`}>{e.seoTitle}</Link>
+                                        </Paragraph>
+                                    </Flex>
+                                    <Flex justify="space-between" align="center" wrap="wrap-reverse">
+                                        <p>
+                                            {e?.name}: {e?.value}
+                                        </p>
+                                        <div>
+                                            <Space>
+                                                <>
+                                                    <p style={{ fontWeight: 500, color: 'red' }}>
+                                                        {ChangeCurrence(e?.total)}
+                                                    </p>
+                                                    {e.valuePromotion != null && (
+                                                        <p style={{ textDecoration: 'line-through' }}>
+                                                            {ChangeCurrence(e?.priceBeforeDiscount * e?.quantity)}
                                                         </p>
-                                                        {e.valuePromotion != null && (
-                                                            <p style={{ textDecoration: 'line-through' }}>
-                                                                {ChangeCurrence(e?.priceBeforeDiscount * e?.quantity)}
-                                                            </p>
-                                                        )}
-                                                    </>
-                                                </Space>
-                                            </div>
-                                        </Flex>
-                                    </Col>
-                                </Row>
-                            </Card>
-                        ))}
+                                                    )}
+                                                </>
+                                            </Space>
+                                        </div>
+                                    </Flex>
+                                </Col>
+                            </Row>
+                        </Card>
+                    ))}
                 </Col>
-                <Col className="gutter-row" span={8} xs={24} md={8} lg={8} xl={8}>
+                <Col className="gutter-row" span={8} xs={24} lg={8} xl={8}>
                     <Descriptions
                         title="Thông Tin Địa Chỉ"
                         column={1}
