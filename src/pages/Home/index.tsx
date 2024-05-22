@@ -4,7 +4,7 @@ import { Product } from '@/type';
 import ProductCard from '@/conponents/ProductCard';
 import React, { useEffect } from 'react';
 import * as productServices from '@/api/productServices';
-import { Filter } from '../ProductListShow/FilterType';
+import { Filter } from '@/type';
 import { Link } from 'react-router-dom';
 import './style.css';
 const contentStyle: React.CSSProperties = {
