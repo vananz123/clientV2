@@ -30,7 +30,7 @@ function Profile() {
         if (user != undefined) {
             const res = await orderServices.getOrderByUserId(user?.id);
             console.log(res);
-            if (res.statusCode == 200) {
+            if (res.isSuccessed === true) {
                 setData(res.resultObj.items);
             }
         }
@@ -38,7 +38,7 @@ function Profile() {
     const getAddress = useCallback(async () => {
         if (user != undefined) {
             const res = await userServices.getAddressByUserId(user.id);
-            if (res.isSuccessed == true) {
+            if (res.isSuccessed === true) {
                 setAddresses(res.resultObj);
             }
         }
@@ -49,7 +49,7 @@ function Profile() {
         if (status != 'loading') {
             setOpen(false);
         }
-    }, [status, data, getAddress, getAllPurchase]);
+    }, [user,status, getAddress, getAllPurchase]);
     const GoBack = () => {
         Navigate(-1);
     };

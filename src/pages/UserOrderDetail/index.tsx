@@ -256,6 +256,7 @@ function UserOrderDetail() {
                                                         <Button
                                                             type="primary"
                                                             size="small"
+                                                            disabled={order?.status?.some(s => s.name !=='Đã hoàn thành')}
                                                             onClick={() => {
                                                                 showDrawer(e);
                                                             }}
@@ -264,13 +265,11 @@ function UserOrderDetail() {
                                                         </Button>
                                                     }
                                                 >
-                                                    {e.review != undefined ? (
+                                                    {e.review != undefined && (
                                                         <div style={{ marginBottom: 10 }}>
                                                             <p>{e.review?.comment || ''}</p>
                                                             <Rate value={e.review?.rate} />
                                                         </div>
-                                                    ) : (
-                                                        "Don't hava comment"
                                                     )}
                                                 </Card>
                                             </Col>

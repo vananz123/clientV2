@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type StatusForm = 'success' | 'error' | 'loading'
+export type Sort = 'ascending' | 'descending';
 export type Category = {
     id: number;
     name: string;
@@ -66,4 +67,29 @@ export interface Guaranty {
     dateModify: string;
     status: number;
     arrDate: any[];
+}
+
+export interface OptionPrice{
+    label: string;
+    value: number;
+}
+export interface OptionBase {
+    label: string;
+    value: string;
+}
+
+export interface Filter{
+    categoryId?:number,
+    productName?:string,
+    optionPrice?:number[],
+    page:number,
+    pageSize:number,
+    optionMaterial?:string[],
+    sortOder:string,
+    isPromotion?:boolean,
+    productStatus?:number
+}
+export interface OptionSort{
+    label: string;
+    value: Sort;
 }

@@ -2,8 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as request from '../utils/request'
 import {  PagingResult, Promotion, Result } from './ResType'
-import {  Product } from '@/type'
-import { Filter } from '@/pages/ProductListShow/FilterType'
+import {  Product ,Filter} from '@/type'
 import { UploadFile } from 'antd'
 export const getAllProduct = async()=>{
     try{

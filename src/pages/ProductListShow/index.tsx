@@ -8,17 +8,15 @@ import { selectCate } from '@/feature/category/cateSlice';
 import { Button, Col, Flex, Result, Row, Select, Skeleton, Spin, Switch, Pagination, PaginationProps } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import ProductCard from '@/conponents/ProductCard';
-import { optionsPrice, optionsSort, optionsMaterial } from './FilterType';
-import type { Filter } from './FilterType';
+import { OPTIONS_PRICE,OPTIONS_MATERIAL,OPTIONS_SORT } from '@/common/common';
+import { Filter,Sort } from '@/type';
 import { Space, Tooltip } from 'antd';
-export type Sort = 'ascending' | 'descending';
 const pageSize: number = 6;
 function ProductListShow() {
     const { id } = useParams();
     const [products, setProducts] = React.useState<Product[]>();
     const cate = useAppSelector(selectCate);
     const [page, setPage] = React.useState<number>(1);
-    //const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [sortOder, setSortOder] = React.useState<Sort>('ascending');
     const [optionPrice, setOptionPrice] = React.useState<number[]>([]);
     const [optionMaterial, setOptionMaterial] = React.useState<string[]>([]);
@@ -163,7 +161,7 @@ function ProductListShow() {
                         <Select
                             mode="multiple"
                             style={{ width: 150 }}
-                            options={optionsPrice}
+                            options={OPTIONS_PRICE}
                             onChange={onChangeOpPrice}
                             placeholder="Price"
                             maxTagCount="responsive"
@@ -176,7 +174,7 @@ function ProductListShow() {
                         <Select
                             mode="multiple"
                             style={{ width: 150 }}
-                            options={optionsMaterial}
+                            options={OPTIONS_MATERIAL}
                             onChange={onChangeOpSize}
                             placeholder="Brand"
                             maxTagCount="responsive"
@@ -196,7 +194,7 @@ function ProductListShow() {
                             }}
                         />
                     </Space>
-                    <Select value={sortOder} style={{ width: 120 }} onChange={handleChangeSort} options={optionsSort} />
+                    <Select value={sortOder} style={{ width: 120 }} onChange={handleChangeSort} options={OPTIONS_SORT} />
                 </Flex>
                 <Spin spinning={isLoading} indicator={<LoadingOutlined style={{ fontSize: 24 }} />}>
                     {products != undefined ? (
@@ -223,51 +221,20 @@ function ProductListShow() {
                             )}
                         </>
                     ) : (
-                        <Row gutter={[12, 12]}>
-                            <Col
+                        <Row gutter={[24, 24]}>
+                            {Array.from({length:8}).map((_,index)=>(
+                                <Col key={index}
                                 style={{ display: 'flex', justifyContent: 'center' }}
-                                xs={12}
+                                            xs={12}
                                             sm={8}
                                             md={8}
                                             lg={8}
                                             xl={6}
                                 className="gutter-row"
                             >
-                                <Skeleton />
+                                <Skeleton/>
                             </Col>
-                            <Col
-                                style={{ display: 'flex', justifyContent: 'center' }}
-                                xs={12}
-                                sm={12}
-                                md={12}
-                                lg={8}
-                                xl={6}
-                                className="gutter-row"
-                            >
-                                <Skeleton />
-                            </Col>
-                            <Col
-                                style={{ display: 'flex', justifyContent: 'center' }}
-                                xs={12}
-                                sm={12}
-                                md={12}
-                                lg={8}
-                                xl={6}
-                                className="gutter-row"
-                            >
-                                <Skeleton />
-                            </Col>
-                            <Col
-                                style={{ display: 'flex', justifyContent: 'center' }}
-                                xs={12}
-                                sm={12}
-                                md={12}
-                                lg={8}
-                                xl={6}
-                                className="gutter-row"
-                            >
-                                <Skeleton />
-                            </Col>
+                            ))}
                         </Row>
                     )}
                 </Spin>

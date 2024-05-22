@@ -92,10 +92,9 @@ function Cart() {
                         {cart.items.length == 0 ? (
                             <>
                                 <Empty
-                                    image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
                                     imageStyle={{ height: 60 }}
                                 >
-                                    <Link to={'/product/1'}>
+                                    <Link to={'/'}>
                                         <Button type="primary">Mua Hàng Ngay!</Button>
                                     </Link>
                                 </Empty>

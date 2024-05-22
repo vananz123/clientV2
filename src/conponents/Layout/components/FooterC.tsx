@@ -36,7 +36,7 @@ function FooterC() {
                     </Col>
                     <Col xs={12} md={8} lg={6}  xl={6}>
                         <Space direction="vertical" align='start'>
-                            <p>Về LA</p>
+                            <p>Về AL</p>
                             <p>Câu chuyện</p>
                             <p>Tuyển dụng</p>
                             <p>Xuất khẩu</p>
