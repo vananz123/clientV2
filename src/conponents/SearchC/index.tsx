@@ -8,7 +8,7 @@ import type { InputRef } from 'antd';
 import React, {  useEffect, useRef } from 'react';
 import { Product } from '@/type';
 import { Link, useNavigate } from 'react-router-dom';
-import { Filter } from '@/pages/ProductListShow/FilterType';
+import { Filter } from '@/type';
 import ProductCard from '../ProductCard';
 const SearchC: React.FC = () => {
     const { Search } = Input;
