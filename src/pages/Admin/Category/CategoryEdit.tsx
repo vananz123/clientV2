@@ -7,7 +7,7 @@ type NotificationType = 'success' | 'error';
 import { useParams } from 'react-router-dom';
 import {  useAppDispatch } from '@/app/hooks';
 import {  updateCate } from '@/feature/category/cateSlice';
-import type { StatusForm } from './Type';
+import { StatusForm } from '@/type';
 function CategoryEdit() {
     const { id } = useParams();
     const dispatch = useAppDispatch();

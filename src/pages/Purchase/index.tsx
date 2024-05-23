@@ -27,7 +27,7 @@ import * as paymentServices from '@/api/paymentServices';
 import { useNavigate } from 'react-router-dom';
 import { selectUser } from '@/feature/user/userSlice';
 import AddressForm from '@/conponents/AddressForm';
-import { StatusForm } from '../Admin/Category/Type';
+import { StatusForm } from '@/type';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 const { Title, Paragraph } = Typography;
 export type TypeFormAddress = 'ADD' | 'EDIT';

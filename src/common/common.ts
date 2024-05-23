@@ -3,11 +3,11 @@ import { SelectProps } from "antd";
 export const FORM_ITEM_LAYOUT = {
     labelCol: {
         xs: { span: 24 },
-        sm: { span: 8 },
+        sm: { span: 6 },
     },
     wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 16 },
+        sm: { span: 18 },
     },
 };
 
@@ -18,8 +18,8 @@ export const TAIL_FORM_ITEM_LAYOUT = {
             offset: 0,
         },
         sm: {
-            span: 16,
-            offset: 8,
+            span: 18,
+            offset: 6,
         },
     },
 };
@@ -87,3 +87,77 @@ export const OPTIONS_SORT : OptionSort[]=[
         label: 'Decrease',
     }
 ]
+
+
+import { Autoformat } from '@ckeditor/ckeditor5-autoformat';
+import { BlockQuote } from '@ckeditor/ckeditor5-block-quote';
+import { CloudServices } from '@ckeditor/ckeditor5-cloud-services';
+import { Heading } from '@ckeditor/ckeditor5-heading';
+import { Image, ImageCaption, ImageStyle } from '@ckeditor/ckeditor5-image';
+import { Indent } from '@ckeditor/ckeditor5-indent';
+import { Link } from '@ckeditor/ckeditor5-link';
+import { List } from '@ckeditor/ckeditor5-list';
+import { PasteFromOffice } from '@ckeditor/ckeditor5-paste-from-office';
+import { Table, TableToolbar } from '@ckeditor/ckeditor5-table';
+import { TextTransformation } from '@ckeditor/ckeditor5-typing';
+import { Undo } from '@ckeditor/ckeditor5-undo';
+import { Essentials } from '@ckeditor/ckeditor5-essentials';
+import { Bold, Italic } from '@ckeditor/ckeditor5-basic-styles';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+export const editorConfiguration = {
+    plugins: [
+        Autoformat,
+        BlockQuote,
+        Bold,
+        CloudServices,
+        Essentials,
+        Heading,
+        Image,
+        ImageCaption,
+        ImageStyle,
+        Indent,
+        Italic,
+        Link,
+        List,
+        Paragraph,
+        PasteFromOffice,
+        Table,
+        TableToolbar,
+        TextTransformation,
+        Undo,
+    ],
+    toolbar: {
+        items: [
+            'heading',
+            '|',
+            'bold',
+            'italic',
+            'link',
+            'bulletedList',
+            'numberedList',
+            '|',
+            'outdent',
+            'indent',
+            '|',
+            'blockQuote',
+            'insertTable',
+            'undo',
+            'redo',
+        ],
+    },
+    language: 'en',
+    table: {
+        contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'],
+    },
+};
+export const OPTIONS_SKU: SelectProps['options'] = [
+    {
+        value: 'cm',
+        label: 'CM',
+    },
+    {
+        value: 'size',
+        label: 'Size',
+    },
+];
+export const OPTIONS_PROMOTION_TYPE = [{ label: 'percentage', value: 'percentage' },{ label: 'fixed', value: 'fixed' }];

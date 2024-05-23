@@ -95,7 +95,14 @@ function Login() {
 
                     <Form.Item<LoginType>
                         name="password"
-                        rules={[{ required: true, message: 'Please input your password!' }]}
+                        rules={[{ required: true, message: 'Please input your password!' },() => ({
+                            validator(_, value) {
+                                if (value.length >= 6) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('The password must have length better 6!'));
+                            },
+                        }),]}
                     >
                         <Input.Password prefix={<LockOutlined />} />
                     </Form.Item>

@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 type NotificationType = 'success' | 'error';
 import { useParams } from 'react-router-dom';
-import { StatusForm } from '../Category/Type';
+import { StatusForm } from '@/type';
 import { Promotion } from '@/api/ResType';
 import PromotionForm from '@/conponents/PromotionForm';
 function PromotionEdit() {

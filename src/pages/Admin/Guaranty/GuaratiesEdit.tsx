@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import {  notification } from 'antd';
 type NotificationType = 'success' | 'error';
 import { useParams } from 'react-router-dom';
-import { StatusForm } from '../Category/Type';
+import { StatusForm } from '@/type';
 import { Guaranty } from '@/type';
 import GuarantyForm from '@/conponents/GuarantyForm';
 import * as guarantyServices from '@/api/guarantyServices'

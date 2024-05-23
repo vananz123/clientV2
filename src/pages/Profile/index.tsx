@@ -10,7 +10,7 @@ import { Address, Order } from '@/api/ResType';
 import type { DescriptionsProps, TabsProps } from 'antd';
 import { TypeFormAddress } from '../Purchase';
 import AddressForm from '@/conponents/AddressForm';
-import { StatusForm } from '../Admin/Category/Type';
+import { StatusForm } from '@/type';
 import dayjs from 'dayjs';
 function Profile() {
     const Navigate = useNavigate();

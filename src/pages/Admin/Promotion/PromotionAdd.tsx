@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import {  notification } from 'antd';
 type NotificationType = 'success' | 'error';
-import type { StatusForm } from '../Category/Type';
+import { StatusForm } from '@/type';
 import { useNavigate } from 'react-router-dom';
 import PromotionForm from '@/conponents/PromotionForm';
 import { Promotion } from '@/api/ResType';

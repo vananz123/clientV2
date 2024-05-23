@@ -29,7 +29,7 @@ function App() {
             }
         };
         loadAllCate();
-    }, []);
+    }, [dispatch]);
     return <Router />;
 }
 

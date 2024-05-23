@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
-export type BaseUrl = 'https://localhost:7005'
 const baseUrl =import.meta.env.VITE_BASE_URL
 const request = axios.create({
     baseURL:`${baseUrl}/api`

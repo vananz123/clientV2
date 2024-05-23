@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { SetStateAction, useEffect } from 'react';
+import React, { SetStateAction, useCallback, useEffect } from 'react';
 import * as promotionServices from '@/api/promotionServices';
 import * as productServices from '@/api/productServices';
 import { ProductItem } from '@/type';
@@ -57,7 +57,7 @@ const ModalAssginPromotionsProductItem: React.FC<Props> = ({
             }
         }
     };
-    const GenaratorListSelectRowKeys = async()=>{
+    const GenaratorListSelectRowKeys = useCallback(async()=>{
         if (typeof productItemProps !== 'undefined') {
             const res = await promotionServices.getAllPromotionByPI(productItemProps.id)
             const arrKey: number[] = [];
@@ -66,11 +66,11 @@ const ModalAssginPromotionsProductItem: React.FC<Props> = ({
             });
             setListSelectRowKeys(arrKey);
         }
-    }
+    },[productItemProps])
     useEffect(() => {
         getAllPromotions();
         GenaratorListSelectRowKeys()
-    }, [openModalAssignPI]);
+    }, [openModalAssignPI,GenaratorListSelectRowKeys]);
 
     const columns: TableColumnsType<Promotion> = [
         {

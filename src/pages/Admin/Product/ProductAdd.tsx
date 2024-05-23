@@ -4,7 +4,7 @@ import { notification } from 'antd';
 type NotificationType = 'success' | 'error';
 import { Product } from '@/type'
 import { useNavigate } from 'react-router-dom';
-import type { StatusForm } from '../Category/Type';
+import { StatusForm } from '@/type';
 function ProductAdd() {
     const [product, setProduct] = React.useState<Product>();
     const [status,setStatus] = React.useState<StatusForm>('loading')

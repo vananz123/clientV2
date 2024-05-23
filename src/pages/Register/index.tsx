@@ -110,7 +110,17 @@ function Register() {
                     </Form.Item>
                     <Form.Item<RegisterUser>
                         name="password"
-                        rules={[{ required: true, message: 'Please input your password!' }]}
+                        rules={[
+                            { required: true, message: 'Please input your password!' },
+                            () => ({
+                                validator(_, value) {
+                                    if (value.length >= 6) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(new Error('The password must have length better 6!'));
+                                },
+                            }),
+                        ]}
                     >
                         <Input.Password placeholder="Password" prefix={<LockOutlined />} />
                     </Form.Item>

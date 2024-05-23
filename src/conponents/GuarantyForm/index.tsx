@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { SetStateAction } from 'react';
+import React, { SetStateAction, useEffect } from 'react';
 import { Button, type FormProps, Form, Input, Select, InputNumber } from 'antd';
-import { Guaranty ,StatusForm} from '@/type';
+import { Guaranty, StatusForm } from '@/type';
 import * as guarantyServieces from '@/api/guarantyServices';
-import { FORM_ITEM_LAYOUT, TAIL_FORM_ITEM_LAYOUT } from '@/common/common';
-import { OPTIONS_STATUS } from '@/common/common';
+import { FORM_ITEM_LAYOUT, TAIL_FORM_ITEM_LAYOUT, OPTIONS_STATUS, editorConfiguration } from '@/common/common';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import { ClassicEditor } from '@ckeditor/ckeditor5-editor-classic';
 interface Props {
     guaranty: Guaranty | undefined;
     onSetState: SetStateAction<any> | undefined;
@@ -12,8 +13,11 @@ interface Props {
 }
 const GuarantyForm: React.FC<Props> = ({ guaranty, onSetState, onSetStatus }) => {
     const [form] = Form.useForm();
-    form.setFieldsValue(guaranty);
-    console.log(guaranty);
+    const [value, setValue] = React.useState<string>('<p></p>');
+    useEffect(() => {
+        if (typeof guaranty !== 'undefined') setValue(guaranty?.description);
+        form.setFieldsValue(guaranty);
+    }, [form, guaranty]);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [context, setContext] = React.useState<string>('Save');
     const onFinish: FormProps<Guaranty>['onFinish'] = async (values) => {
@@ -22,6 +26,7 @@ const GuarantyForm: React.FC<Props> = ({ guaranty, onSetState, onSetStatus }) =>
         if (guaranty != undefined) {
             if (guaranty?.id != undefined) {
                 values.id = guaranty.id;
+                values.description = value;
                 const res = await guarantyServieces.updateGuaranty(values);
                 if (res.isSuccessed === true) {
                     onSetState(res.resultObj);
@@ -35,6 +40,7 @@ const GuarantyForm: React.FC<Props> = ({ guaranty, onSetState, onSetStatus }) =>
             setIsLoading(false);
             setContext('Save');
         } else {
+            values.description = value;
             const res = await guarantyServieces.createGuaranty(values);
             if (res.isSuccessed === true) {
                 onSetState(res.resultObj);
@@ -60,7 +66,7 @@ const GuarantyForm: React.FC<Props> = ({ guaranty, onSetState, onSetStatus }) =>
                 name="guarantyForm"
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
-                style={{ maxWidth: 600 }}
+                style={{ maxWidth: 1000 }}
                 scrollToFirstError
             >
                 <Form.Item<Guaranty>
@@ -93,15 +99,25 @@ const GuarantyForm: React.FC<Props> = ({ guaranty, onSetState, onSetStatus }) =>
                 >
                     <InputNumber max={36} min={0} type="number" />
                 </Form.Item>
-                <Form.Item<Guaranty>
-                    name="description"
-                    label="Description"
-                    tooltip="What do you want others to call you?"
-                    //valuePropName='name'
-                    //initialValue={promotion?.seoDescription}
-                    rules={[{ required: true, message: 'Please input guaranty description!' }]}
-                >
-                    <Input />
+                <Form.Item label="Description" tooltip="What do you want others to call you?">
+                    <CKEditor
+                        editor={ClassicEditor}
+                        config={editorConfiguration}
+                        data={value || '<p></p>'}
+                        // onReady={(editor) => {
+                        //     // You can store the "editor" and use when it is needed.
+                        //     console.log('Editor is ready to use!', editor);
+                        // }}
+                        onChange={(_, editor) => {
+                            setValue(editor.getData());
+                        }}
+                        // onBlur={(event, editor) => {
+                        //     console.log('Blur.', editor);
+                        // }}
+                        // onFocus={(event, editor) => {
+                        //     console.log('Focus.', editor);
+                        // }}
+                    />
                 </Form.Item>
                 <Form.Item<Guaranty>
                     name="status"

@@ -3,7 +3,7 @@ import React, { SetStateAction, useEffect } from 'react';
 import { Button, type FormProps, Form, Input, Select, SelectProps } from 'antd';
 import * as categoryServices from '@/api/categoryServices';
 import { Category } from '@/type';
-import type { StatusForm } from '@/pages/Admin/Category/Type';
+import { StatusForm } from '@/type';
 import { useAppSelector } from '@/app/hooks';
 import { selectCate } from '@/feature/category/cateSlice';
 import { OPTIONS_STATUS, FORM_ITEM_LAYOUT, TAIL_FORM_ITEM_LAYOUT } from '@/common/common';
@@ -14,11 +14,11 @@ interface Props {
 }
 const CategoryForm: React.FC<Props> = ({ category, onSetState, onSetStatus }) => {
     const [form] = Form.useForm();
-    form.setFieldsValue(category)
     const cate = useAppSelector(selectCate)
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [optionParent, setOptionParent] = React.useState<SelectProps['options']>([]);
     useEffect(() => {
+        form.setFieldsValue(category)
         const item: SelectProps['options'] = [];
         cate.forEach((e: Category) => {
             item.push({
@@ -27,7 +27,7 @@ const CategoryForm: React.FC<Props> = ({ category, onSetState, onSetStatus }) =>
             });
         });
         setOptionParent(item);
-    }, [category]);
+    }, [cate,category,form]);
     const [context, setContext] = React.useState<string>('Save');
     const onFinish: FormProps<Category>['onFinish'] = async (values) => {
         setIsLoading(true);

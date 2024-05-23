@@ -22,8 +22,8 @@ import React from 'react';
 const { Paragraph } = Typography;
 import * as cartServices from '@/api/cartServices';
 import { Link } from 'react-router-dom';
+const baseUrl = import.meta.env.VITE_BASE_URL;
 function Cart() {
-    const baseUrl = import.meta.env.VITE_BASE_URL;
     const dispatch = useAppDispatch();
     const cart = useAppSelector(selectCart);
     const [currentCart, setCurrentCart] = React.useState<Cart>();
@@ -46,7 +46,7 @@ function Cart() {
                 }
             }
             setConfirmLoading(false);
-        }, 200);
+        }, 100);
     };
 
     const handleCancel = () => {

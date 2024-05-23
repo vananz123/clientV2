@@ -6,7 +6,7 @@ type NotificationType = 'success' | 'error';
 import { Product } from '@/type'
 import { useParams } from 'react-router-dom';
 import { Skeleton } from 'antd';
-import type { StatusForm } from '../Category/Type';
+import { StatusForm } from '@/type';
 function ProductEdit() {
     const { id } = useParams();
     const [product, setProduct] = React.useState<Product>();

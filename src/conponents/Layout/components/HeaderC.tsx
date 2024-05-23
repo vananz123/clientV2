@@ -87,7 +87,7 @@ function HeaderC() {
                                     <BarsOutlined onClick={() => showDrawer()} />
                                 </div>
                                 <Link className="menu-right__logo" style={{ width: 64, height: 64 }} to="/">
-                                    <img style={{ width: '100%', height: '100%' }} src={Logo2} />
+                                    <img style={{ width: '100%', height: '100%' }} alt='al store' src={Logo2} />
                                 </Link>
                             </div>
                         </div>
@@ -134,12 +134,15 @@ function HeaderC() {
                     extra={
                         <>
                             {user && (
-                                <Link to={'/profile'} onClick={()=>{onClose}} style={{ color:'black', cursor: 'pointer' }}>
+                                <div onClick={()=>{
+                                    Navigate('/profile')
+                                    onClose
+                                }} style={{ color:'black', cursor: 'pointer' }}>
                                     <Space>
                                         <Avatar icon={<UserOutlined />} />
                                         <div>{user?.userName}</div>
                                     </Space>
-                                </Link>
+                                </div>
                             )}
                         </>
                     }
@@ -154,7 +157,7 @@ function HeaderC() {
                             }}
                         >
                             {user && (
-                                <Button icon={<LogoutOutlined />} style={{ color: 'black' }}>
+                                <Button icon={<LogoutOutlined />} style={{ color: 'black' }} onClick={()=>{Logout}}>
                                     Logout
                                 </Button>
                             )}

@@ -33,7 +33,6 @@ const AddressForm: React.FC<Props> = ({ typeForm, address, onSetState, onSetStat
             if (typeof address === 'undefined') {
                 if (typeForm == 'ADD') {
                     values.userId = user.id;
-                    console.log(values);
                     const res = await userServices.addAddress(values);
                     if (res.statusCode === 200) {
                         onSetState(res.resultObj);
@@ -51,7 +50,6 @@ const AddressForm: React.FC<Props> = ({ typeForm, address, onSetState, onSetStat
                     values.province = address.province;
                     values.userId = user.id;
                     values.id = address.id;
-                    console.log(values);
                     const res = await userServices.updateAddress(values);
                     if (res.statusCode === 201) {
                         onSetState(res.resultObj);
@@ -81,7 +79,6 @@ const AddressForm: React.FC<Props> = ({ typeForm, address, onSetState, onSetStat
             }
         };
         getAllDistrict();
-        //form.setFieldValue('urbanDistrict', optionsDistrict);
     };
     const handleChangeDistrict = (value: string) => {
         const dis = district?.find((s) => s.name == value);
@@ -135,7 +132,7 @@ const AddressForm: React.FC<Props> = ({ typeForm, address, onSetState, onSetStat
             }
         };
         getAllProvince();
-    }, [address]);
+    }, [form,typeForm, address]);
     return (
         <Spin spinning={isLoading}>
             <Form

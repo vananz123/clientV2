@@ -76,7 +76,7 @@ function ProductDetail() {
                                     {e.name} {e.value}
                                 </p>
                             ))}
-                            <p>{data.seoDescription}</p>
+                            <p dangerouslySetInnerHTML={{__html:data.seoDescription}}></p>
                         </>
                     )}
                 </Space>
@@ -91,7 +91,7 @@ function ProductDetail() {
                         <div key={currentProductItem?.guaranty.id}>
                             <p>Loại bảo hành: {currentProductItem?.guaranty.name}</p>
                             <p>Thời gian: {currentProductItem?.guaranty.period + ' ' + currentProductItem?.guaranty.sku}</p>
-                            <p>Mô tả{currentProductItem?.guaranty.description}</p>
+                            <p dangerouslySetInnerHTML={{__html:currentProductItem?.guaranty.description || '<p></p>'}}></p>
                         </div>
                     </Space>
                 </>

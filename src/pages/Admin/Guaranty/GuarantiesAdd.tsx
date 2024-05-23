@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { notification } from 'antd';
 type NotificationType = 'success' | 'error';
-import { StatusForm } from '../Category/Type';
+import { StatusForm } from '@/type';
 import { useNavigate } from 'react-router-dom';
 import { Guaranty } from '@/type';
 import GuarantyForm from '@/conponents/GuarantyForm';

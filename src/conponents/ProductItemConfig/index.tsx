@@ -24,26 +24,7 @@ import {
 import { EditOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import ModalAssignGuarantiesProductItem from '../ModalAssignGuarantiesProductItem';
 import ModalAssginPromotionsProductItem from '../ModalAssginPromotionsProductItem';
-const formItemLayout = {
-    labelCol: {
-        xs: { span: 24 },
-        sm: { span: 8 },
-    },
-    wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 },
-    },
-};
-const optionsSku: SelectProps['options'] = [
-    {
-        value: 'cm',
-        label: 'CM',
-    },
-    {
-        value: 'size',
-        label: 'Size',
-    },
-];
+import { OPTIONS_SKU,FORM_ITEM_LAYOUT } from '@/common/common';
 interface Props {
     productItem: ProductItem[] | undefined;
     product:Product | undefined;
@@ -73,7 +54,7 @@ const ProductItemConfig: React.FC<Props> = ({ productItem ,onSetState,product}) 
                 setIsSize(true);
             }
         }
-    }, []);
+    }, [options,productItem]);
     const columns: TableColumnsType<ProductItem> = [
         {
             title: 'Id',
@@ -128,7 +109,6 @@ const ProductItemConfig: React.FC<Props> = ({ productItem ,onSetState,product}) 
         },
     ];
     const onFinishProductItem = async (values: any) => {
-        console.log(values);
         if (productItem != undefined && product != undefined) {
             if (isSize === true) {
                 const res = await productServices.addProductSize(product.id, values.items);
@@ -196,7 +176,7 @@ const ProductItemConfig: React.FC<Props> = ({ productItem ,onSetState,product}) 
                     <Skeleton />
                 )}
                 <Form
-                    {...formItemLayout}
+                    {...FORM_ITEM_LAYOUT}
                     name="dynamic_form_nest_item"
                     onFinish={onFinishProductItem}
                     style={{ maxWidth: 600, marginTop: 10 }}
@@ -248,7 +228,7 @@ const ProductItemConfig: React.FC<Props> = ({ productItem ,onSetState,product}) 
                                                     size={'middle'}
                                                     //onChange={handleChange}
                                                     style={{ width: 70 }}
-                                                    options={optionsSku}
+                                                    options={OPTIONS_SKU}
                                                 />
                                             </Form.Item>
                                             <MinusCircleOutlined onClick={() => remove(name)} />

@@ -5,17 +5,3 @@
 .footer{
     background-color: $bg-gray;
 }
-
-@media (max-width: 480px) {     
-    .header-container__user{
-        display: none;
-    }
-} 
-  
-// @media (min-width: 768px) and (max-width: 1024px) {       
-//     @content;   
-// } 
-  
-// @media (min-width: 1024px) {     
-//     @content;  
-// } 

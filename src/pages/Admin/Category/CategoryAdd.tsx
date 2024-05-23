@@ -6,7 +6,7 @@ import * as categoryServices from '@/api/categoryServices';
 import { Category } from '@/type';
 import {useAppDispatch } from '@/app/hooks';
 import {  addCateAsync } from '@/feature/category/cateSlice';
-import type { StatusForm } from './Type';
+import { StatusForm } from '@/type';
 import { useNavigate } from 'react-router-dom';
 function CategoryAdd() {
     const dispatch = useAppDispatch();
