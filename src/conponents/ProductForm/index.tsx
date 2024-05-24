@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { SetStateAction, useEffect } from 'react';
+import React, { SetStateAction, useCallback, useEffect } from 'react';
 import { Button, type FormProps, Form, Input, Upload, Select, Space, Drawer, Col, Row } from 'antd';
 import { notification } from 'antd';
 type NotificationType = 'success' | 'error';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import {  ArrowLeftOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Product, Category } from '@/type';
 import * as productServices from '@/api/productServices';
 import type { SelectProps } from 'antd';
@@ -15,6 +15,7 @@ import { FORM_ITEM_LAYOUT, TAIL_FORM_ITEM_LAYOUT, OPTIONS_PRODUCT_STATUS, editor
 import UploadImages from '@/view/product/UploadImages';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import { ClassicEditor } from '@ckeditor/ckeditor5-editor-classic';
+import {  useNavigate } from 'react-router-dom';
 const normFile = (e: any) => {
     if (Array.isArray(e)) {
         return e;
@@ -26,6 +27,7 @@ const ProductForm: React.FC<{
     onSetState: SetStateAction<any>;
     onSetStatus: SetStateAction<any>;
 }> = ({ product, onSetState, onSetStatus }) => {
+    const navigate = useNavigate()
     const [form] = Form.useForm();
     useEffect(() => {
         if(product) setValue(product.seoDescription)
@@ -46,20 +48,36 @@ const ProductForm: React.FC<{
     const showDrawerVariation = () => {
         setOpenVariaton(true);
     };
-    const getAllCate = async () => {
-        const res = await categoryServices.getAllCate();
+    const ConcatList = (listCate: Category[]) => {
+        const list: Category[] = [];
+        if (listCate && listCate.length > 0) {
+            listCate.forEach((element) => {
+            if (element.subCategory && element.subCategory.length > 0) {
+              element.subCategory.forEach((item) => {
+                if (item) {
+                  list.push(item);
+                }
+              });
+            }
+          });
+        }
+        return list;
+      };
+    const getAllCate = useCallback(async () => {
+        const res = await categoryServices.getAllAdminCate()
+        const list = ConcatList(res.resultObj)
         const options: SelectProps['options'] = [];
-        res.resultObj.forEach((e: Category) => {
+        list.forEach((e: Category) => {
             options.push({
                 value: e.id,
                 label: e.name,
             });
         });
         setOptions(options);
-    };
+    },[]);
     useEffect(() => {
         getAllCate();
-    }, []);
+    }, [getAllCate]);
     const onFinish: FormProps<Product>['onFinish'] = async (values) => {
         setIsLoading(true);
         if (product != undefined) {
@@ -111,6 +129,17 @@ const ProductForm: React.FC<{
     };
     return (
         <div>
+             <Button
+                type="text"
+                icon={<ArrowLeftOutlined />}
+                size="small"
+                style={{ marginBottom: '10px' }}
+                onClick={() => {
+                    navigate(-1);
+                }}
+            >
+                Go back
+            </Button>
             <Row gutter={16}>
                 <Col xs={24} xl={12}>
                     <Form
@@ -140,7 +169,7 @@ const ProductForm: React.FC<{
                         >
                             <Input.TextArea showCount maxLength={100} />
                         </Form.Item>
-                        <Form.Item
+                        <Form.Item<Product>
                             label="Mô Tả"
                         >
                             <CKEditor

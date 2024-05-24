@@ -11,7 +11,7 @@ import ProductCard from '@/conponents/ProductCard';
 import { OPTIONS_PRICE,OPTIONS_MATERIAL,OPTIONS_SORT } from '@/common/common';
 import { Filter,Sort } from '@/type';
 import { Space, Tooltip } from 'antd';
-const pageSize: number = 6;
+const pageSize: number = 8;
 function ProductListShow() {
     const { id } = useParams();
     const [products, setProducts] = React.useState<Product[]>();
@@ -20,6 +20,7 @@ function ProductListShow() {
     const [sortOder, setSortOder] = React.useState<Sort>('ascending');
     const [optionPrice, setOptionPrice] = React.useState<number[]>([]);
     const [optionMaterial, setOptionMaterial] = React.useState<string[]>([]);
+    const [totalRecord,setTotalRecord] = React.useState<number>(0)
     const [isPromotion, setIsPromotion] = React.useState<boolean>(false);
     const [titleContent, setTitleContent] = React.useState<string | undefined>('');
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -36,8 +37,10 @@ function ProductListShow() {
         };
         const res = await productServices.getProductPagingByFilter(filter);
         if (res.statusCode == 200) {
+            console.log(res)
             setProducts(res.resultObj.items);
             setIsLoading(false);
+            setTotalRecord(res.resultObj.totalRecords)
         }
     },[id,page, optionPrice, optionMaterial, sortOder, isPromotion]);
     const getProductPromotionPaging = useCallback(async () => {
@@ -149,9 +152,9 @@ function ProductListShow() {
             setOptionMaterial(value);
         }
     };
-    const onShowSizeChange: PaginationProps['onShowSizeChange'] = (current) => {
-        setPage(current);
-    };
+    const onChange: PaginationProps['onChange'] = (pageNumber) => {
+        setPage(pageNumber)
+      };
     return (
         <>
             <div className="container">
@@ -239,7 +242,7 @@ function ProductListShow() {
                     )}
                 </Spin>
                 <div style={{ marginTop: 24, textAlign: 'center' }}>
-                    <Pagination onShowSizeChange={onShowSizeChange} current={page} total={products?.length} />
+                    <Pagination onChange={onChange} current={page} pageSize={pageSize} total={totalRecord} />
                 </div>
             </div>
         </>

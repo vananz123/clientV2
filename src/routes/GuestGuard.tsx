@@ -1,5 +1,5 @@
-import React from "react"
-import Loading from "@/pages/Loading";
+import React,{ lazy } from "react"
+const Loading = lazy(()=> import('@/pages/Loading'))
 import { Navigate } from "react-router-dom"
 import { useAppSelector } from "@/app/hooks"
 

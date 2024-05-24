@@ -66,7 +66,7 @@ function Home() {
         <div>
             <div>
                 <div className='carouselHome'>
-                    <Carousel  autoplay  afterChange={onChange}>
+                    <Carousel afterChange={onChange}>
                         <div>
                             <h3 style={contentStyle}>
                                 <img

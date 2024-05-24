@@ -25,7 +25,7 @@ function AuthProvider ({children}:any){
             }
         }
         loadData()
-    },[])
+    },[dispatch])
     return <>{children}</>
 }
 export default AuthProvider

@@ -1,3 +1,4 @@
+import { lazy } from 'react';
 import Dashboard from '@/pages/Admin/Dashboard';
 import Home from '@/pages/Home';
 import ProductListShow from '@/pages/ProductListShow';
@@ -20,10 +21,10 @@ import CheckoutVnpay from '@/pages/Pay/CheckoutVnpay';
 import { OrderConfirm, OrderList } from '@/pages/Admin/Order';
 import UserOrderDetail from '@/pages/UserOrderDetail';
 import { PromotionAdd, PromotionEdit, PromotionList } from '@/pages/Admin/Promotion';
-import ForgotPassword from '@/pages/ForgotPassword';
+const ForgotPassword = lazy(()=> import('@/pages/ForgotPassword'))
 import UserList from '@/pages/Admin/User/UserList';
 import { GuarantiesAdd, GuarantiesList, GuarantiesEdit } from '@/pages/Admin/Guaranty';
-import Page404 from '@/pages/Page404/Page404';
+const Page404 = lazy(()=> import('@/pages/Page404/Page404'))
 const Router: React.FC = () => {
     return useRoutes([
         {
