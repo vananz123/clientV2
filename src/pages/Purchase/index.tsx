@@ -114,7 +114,6 @@ function Purchase() {
     const createOrder = async () => {
         if (user != undefined && currentAddress != undefined && type != '') {
             const res = await orderServices.create(user.id, currentAddress.id, Number(type));
-            console.log(res);
             if (res.isSuccessed === true) {
                 if (res.resultObj?.paymentTypeName === 'Thanh toán VNPAY') {
                     window.location.assign(res.resultObj.returnUrl);
@@ -126,7 +125,7 @@ function Purchase() {
     };
     return (
         <div className="container">
-            <Row gutter={[24, 24]}>
+            <Row gutter={[24, 24]} style={{marginBottom:24}}>
                 <Col className="gutter-row" xs={24} lg={16} xl={16}>
                     <Title level={4}>Phương Thức Thanh Toán</Title>
                     <Select

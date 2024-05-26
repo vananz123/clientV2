@@ -9,8 +9,8 @@ import React, { useEffect } from 'react';
 import { DeleteOutlined, EditOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { Product } from '@/type';
+import { FILTERS_PRODUCT_STATUS } from '@/common/common';
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
-
 const getBase64 = (file: FileType): Promise<string> =>
     new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -55,7 +55,6 @@ function ProductList() {
     useEffect(() => {
         loadAllProduct();
     }, []);
-
     const handlePreview = async (file: UploadFile) => {
         if (!file.url && !file.preview) {
             file.preview = await getBase64(file.originFileObj as FileType);
@@ -83,7 +82,7 @@ function ProductList() {
         }
         return 0;
     };
-    const columns: TableColumnsType<Product> = [
+    const columns :TableColumnsType = [
         {
             title: 'Id',
             dataIndex: 'id',
@@ -102,14 +101,18 @@ function ProductList() {
             title: 'Giá',
             dataIndex: 'price',
             key: 'price',
-            render: (_, record) => (
+            sorter: {
+                compare: (a :Product, b:Product) => a.price - b.price,
+                multiple: 2,
+              },
+            render: (_ :any, record :Product) => (
                 <p>{ChangeCurrence(record.price)}</p>
             ),
         },
         {
             title: 'Ảnh',
             key: 'picture',
-            render: (_, record) => (
+            render: (_ :any, record : Product) => (
                 <img
                     src={`${baseUrl + record.urlThumbnailImage}`}
                     style={{ width: '100px', height: 'auto', cursor: 'pointer' }}
@@ -121,16 +124,21 @@ function ProductList() {
             title: 'Trạng Thái',
             dataIndex: 'status',
             key: 'status',
+            filters:FILTERS_PRODUCT_STATUS,
+            onFilter: (value :any, record:Product) => record.status ===  value,
         },
         {
             title: 'Lượt Xem',
             dataIndex: 'viewCount',
-            key: 'viewCount',
+            key: 'viewCount',sorter: {
+                compare: (a :Product, b:Product) => a.viewCount - b.viewCount,
+                multiple: 2,
+              },
         },
         {
             title: 'Action',
             key: 'action',
-            render: (_, record) => (
+            render: (_ :any, record : Product) => (
                 <Space size="middle">
                     <Button icon={<DeleteOutlined/>} onClick={() => showModalDel(record.id, record.name)}></Button>
                     <Link to={`/admin/product-edit/${record.id}`}>

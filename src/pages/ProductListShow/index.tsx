@@ -56,7 +56,7 @@ function ProductListShow() {
         console.log(res);
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
-            setIsLoading(false);
+            setIsLoading(false);setTotalRecord(res.resultObj.totalRecords)
         }
     },[page, optionPrice, optionMaterial, sortOder, isPromotion]);
     const getProductPNPaging = useCallback(async () => {
@@ -74,6 +74,7 @@ function ProductListShow() {
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
             setIsLoading(false);
+            setTotalRecord(res.resultObj.totalRecords)
         }
     },[id, page, optionPrice, optionMaterial, sortOder, isPromotion]);
     const getProductStatusPaging = useCallback(
@@ -89,7 +90,7 @@ function ProductListShow() {
             };
             const res = await productServices.getProductPagingByFilter(filter);
             if (res.statusCode == 200) {
-                setProducts(res.resultObj.items);
+                setProducts(res.resultObj.items);setTotalRecord(res.resultObj.totalRecords)
             }
         },
         [page, optionPrice, optionMaterial, sortOder, isPromotion],
@@ -240,7 +241,7 @@ function ProductListShow() {
                         </Row>
                     )}
                 </Spin>
-                <div style={{ marginTop: 24, textAlign: 'center' }}>
+                <div style={{ marginTop: 24, marginBottom:24,textAlign: 'center' }}>
                     <Pagination onChange={onChange} current={page} pageSize={pageSize} total={totalRecord} />
                 </div>
             </div>

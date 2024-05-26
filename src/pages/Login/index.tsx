@@ -29,7 +29,7 @@ function Login() {
                    dispatch(loadUser());
                     const roleAdmin: Role[] = ['admin', 'sale'];
                     if (roleAdmin.indexOf(userResuft.resultObj.roles[0]) >= 0) {
-                        Navigate('/admin');
+                        Navigate('/admin/product');
                     } else {
                         Navigate(-1);
                     }

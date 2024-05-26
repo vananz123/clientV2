@@ -1,22 +1,26 @@
 import { ArrowLeftOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { Badge, Button, Card, Col, Descriptions, Divider, Flex, Modal, Result, Row, Skeleton, Space, Tabs } from 'antd';
+import { Badge, Button, Card, Col, Descriptions, Divider, Flex, Modal, Result, Row, Space, Tabs } from 'antd';
 import React, { useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import * as orderServices from '@/api/orderServices';
 import * as userServices from '@/api/userServices';
 import { useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
-import { Address, Order } from '@/api/ResType';
+import { Address, Order, OrderStatus } from '@/api/ResType';
 import type { DescriptionsProps, TabsProps } from 'antd';
 import { TypeFormAddress } from '../Purchase';
 import AddressForm from '@/conponents/AddressForm';
 import { StatusForm } from '@/type';
 import dayjs from 'dayjs';
+import { useQuery } from '@tanstack/react-query';
+import ProfileLoading from './ProfileLoading';
 function Profile() {
     const Navigate = useNavigate();
     const user = useAppSelector(selectUser).data;
-    //const [form] = Form.useForm();
-    const [data, setData] = React.useState<Order[]>();
+    const { data, isLoading } = useQuery({
+        queryKey: ['order-list-user'],
+        queryFn: () => orderServices.getOrderByUserId(user?.id || ''),
+    });
     //const [currentData, setCurrentData] = React.useState<Order>();
     const [addresses, setAddresses] = React.useState<Address[]>([]);
     const [currentAddress, setCurrentAddress] = React.useState<Address>();
@@ -26,15 +30,6 @@ function Profile() {
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [status, setStatus] = React.useState<StatusForm>('loading');
     const [typeFormAddress, setTypeFormAddress] = React.useState<TypeFormAddress>('EDIT');
-    const getAllPurchase = useCallback(async () => {
-        if (user != undefined) {
-            const res = await orderServices.getOrderByUserId(user?.id);
-            console.log(res);
-            if (res.isSuccessed === true) {
-                setData(res.resultObj.items);
-            }
-        }
-    }, [user]);
     const getAddress = useCallback(async () => {
         if (user != undefined) {
             const res = await userServices.getAddressByUserId(user.id);
@@ -44,16 +39,14 @@ function Profile() {
         }
     }, [user]);
     useEffect(() => {
-        getAllPurchase();
         getAddress();
         if (status != 'loading') {
             setOpen(false);
         }
-    }, [user,status, getAddress, getAllPurchase]);
+    }, [user, status, getAddress]);
     const GoBack = () => {
         Navigate(-1);
     };
-
     const onChange = (key: string) => {
         console.log(key);
     };
@@ -81,7 +74,7 @@ function Profile() {
             label: 'Danh Sách Đơn Hàng',
             children: (
                 <>
-                    {typeof data !== 'undefined' ? (
+                    {data && data.length > 0 ? (
                         data.map((e: Order) => (
                             <>
                                 <Row key={e.id} align={'middle'} style={{ padding: 10 }}>
@@ -94,12 +87,12 @@ function Profile() {
                                     <Col style={{ fontSize: 18 }} xs={24} md={10} lg={10}>
                                         <Space>
                                             <p>Tình trạng: </p>
-                                            <Badge status="processing" text={e.status?.pop()?.name} />
+                                            <Badge status="processing" text={getLateArray(e.status)} />
                                         </Space>
                                     </Col>
                                     <Col xs={24} md={10} lg={4}>
                                         <Link to={`/profile/order-detail/${e.id}`}>
-                                            <Button style={{ fontSize: 17, backgroundColor: '#ff4d4f' }}>Xem</Button>
+                                            <Button>Xem</Button>
                                         </Link>
                                     </Col>
                                 </Row>
@@ -224,48 +217,50 @@ function Profile() {
             >
                 Go back
             </Button>
-            {!data ? (
-                <>
-                    <div style={{width:'100%'}}>
-                        {Array.from({ length: 4 }).map((_, index) => (
-                            <div key={index} style={{ width: '100%', height: 150, marginBottom: 10 }}>
-                                <Skeleton style={{ width: '100%', height: '100%' }} />
-                            </div>
-                        ))}
-                    </div>
-                </>
+            {isLoading ? (
+                <ProfileLoading />
             ) : (
-                <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+                data && (
+                    <>
+                        <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+                        <Modal
+                            title="Notification"
+                            open={open}
+                            //onOk={handleOk}
+                            confirmLoading={confirmLoading}
+                            onCancel={handleCancel}
+                            footer={''}
+                        >
+                            <AddressForm
+                                typeForm={typeFormAddress}
+                                address={currentAddressForm}
+                                onSetState={setCurrentAddress}
+                                onSetStatus={setStatus}
+                            />
+                        </Modal>
+                        <Modal
+                            title="Notification"
+                            open={openDel}
+                            onOk={handleDelOk}
+                            confirmLoading={confirmLoading}
+                            onCancel={() => {
+                                setOpenDel(false);
+                            }}
+                        >
+                            Do you want to detele!
+                        </Modal>
+                    </>
+                )
             )}
-            <Modal
-                title="Notification"
-                open={open}
-                //onOk={handleOk}
-                confirmLoading={confirmLoading}
-                onCancel={handleCancel}
-                footer={''}
-            >
-                <AddressForm
-                    typeForm={typeFormAddress}
-                    address={currentAddressForm}
-                    onSetState={setCurrentAddress}
-                    onSetStatus={setStatus}
-                />
-            </Modal>
-            <Modal
-                title="Notification"
-                open={openDel}
-                onOk={handleDelOk}
-                confirmLoading={confirmLoading}
-                onCancel={() => {
-                    setOpenDel(false);
-                }}
-            >
-                Do you want to detele!
-            </Modal>
         </div>
     );
 }
+const getLateArray = (os: OrderStatus[] | undefined) => {
+    if (os && os.length > 0) {
+        return os[os.length - 1].name;
+    }
+    return 'error';
+};
 const ChangeCurrence = (number: number | undefined) => {
     if (number) {
         const formattedNumber = number.toLocaleString('vi-VN', {

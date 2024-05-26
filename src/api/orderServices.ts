@@ -151,25 +151,24 @@ export const getOrderByUserId = async(id:string)=>{
     try{
         const res = await request.get(`/order/user/${encodeURIComponent(id)}?PageIndex=1&PageSize=100`)
         const resultObj :Order[] = res.resultObj.items
-        const paging: PagingResult = {
-            items: resultObj,
-            pageIndex : res.resultObj.pageIndex,
-            pageCount:res.resultObj.pageCount,
-            pageSize:res.resultObj.pageSize,
-            totalRecords:res.resultObj.totalRecords
-        }
-        const resp: Result ={
-            error :'',
-            isSuccessed:res.isSuccessed,
-            message:res.message,
-            statusCode:200,
-            resultObj : paging,
-        }
-        return resp
+        // const paging: PagingResult = {
+        //     items: resultObj,
+        //     pageIndex : res.resultObj.pageIndex,
+        //     pageCount:res.resultObj.pageCount,
+        //     pageSize:res.resultObj.pageSize,
+        //     totalRecords:res.resultObj.totalRecords
+        // }
+        // const resp: Result ={
+        //     error :'',
+        //     isSuccessed:res.isSuccessed,
+        //     message:res.message,
+        //     statusCode:200,
+        //     resultObj : paging,
+        // }
+        return resultObj
     }catch(error:any){
-        console.log(error.response.data)
-        const resError: Result =error.response.data
-        return resError
+        //const resError: Result =error.response.data
+        return undefined
     }
 }
 export const getOrderDetailByOrderId = async(id:number)=>{

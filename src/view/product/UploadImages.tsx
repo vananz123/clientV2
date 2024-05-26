@@ -106,7 +106,7 @@ const UploadImages: React.FC<Props> = ({ product,open,setOpen }) => {
                     >
                         <Upload
                             listType="picture-card"
-                            accept=".png"
+                            accept=".png,.webp"
                             maxCount={5}
                             customRequest={({ onSuccess }) => {
                                 if (onSuccess) {
@@ -143,5 +143,4 @@ const UploadImages: React.FC<Props> = ({ product,open,setOpen }) => {
         </div>
     );
 };
-
 export default UploadImages;
