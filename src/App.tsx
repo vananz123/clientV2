@@ -1,7 +1,3 @@
-import * as categoryServices from '@/api/categoryServices';
-import { useEffect } from 'react';
-import { useAppDispatch } from '@/app/hooks';
-import { addCateAsync } from '@/feature/category/cateSlice';
 import './App.css';
 import Router from './routes/Router';
 import { initializeApp } from "firebase/app";
@@ -20,16 +16,7 @@ function App() {
       // Initialize Firebase
     const app = initializeApp(firebaseConfig);
         getAnalytics(app);
-    const dispatch = useAppDispatch();
-    useEffect(() => {
-        const loadAllCate = async () => {
-            const res = await categoryServices.getAllCate();
-            if (res.isSuccessed == true) {
-                dispatch(addCateAsync(res.resultObj));
-            }
-        };
-        loadAllCate();
-    }, [dispatch]);
+   
     return <Router />;
 }
 

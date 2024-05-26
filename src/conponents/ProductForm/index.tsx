@@ -65,6 +65,7 @@ const ProductForm: React.FC<{
       };
     const getAllCate = useCallback(async () => {
         const res = await categoryServices.getAllAdminCate()
+        console.log(res)
         const list = ConcatList(res.resultObj)
         const options: SelectProps['options'] = [];
         list.forEach((e: Category) => {

@@ -14,13 +14,13 @@ function FooterC() {
         <div style={{borderTop:'1px solid #858585', paddingTop:'20px'}}>
             <Footer style={{ textAlign: 'center' }}>
                 <Row gutter={[8,8]} align={'top'} justify={'start'}>
-                    <Col xs={24} md={24} lg={6} xl={6}>
+                    <Col xs={24} md={24} lg={8} xl={8}>
                         <div style={{textAlign:'left'}}>
                             <img style={{width:'100px', marginLeft:'0px', opacity:1}} src="../logo.png" alt="logo" />
                             <p style={{padding:0, margin:'5px'}}>© 2017 Công Ty Cổ Phần Vàng Bạc Đá Quý Phú Nhuận</p>
                             <div style={{padding:'5px', margin:0}}>
                                 <p style={footerStyle}>170E Phan Đăng Lưu, P.3, Q.Phú Nhuận, TP.Hồ Chí Minh</p>
-                                ĐT: <a href="tel:02839951703" style={{color: 'blue'}}>028 39951703</a> - Fax: <a href="fax:02839951702" style={{color: 'blue'}}>028 3995 1702</a> 
+                                ĐT: <a href="tel:02839951703" style={{color: 'blue'}}>039 3946693</a> - Fax: <a href="fax:02839951702" style={{color: 'blue'}}>028 3995 1702</a> 
                                 <p style={footerStyle}>
                                     <a style={{color: 'blue'}} href="https://cdn.pnj.io/images/quan-he-co-dong/2024/8c-20240131-PNJ-GCNDKDN-lan-36-CBTT.pdf" rel="nofollow noopener">Giấy chứng nhận đăng ký doanh nghiệp: 0300521758</a> do Sở Kế hoạch &amp; Đầu tư TP.HCM cấp lần đầu ngày 02/01/2004. <a href="https://cdn.pnj.io/images/quan-he-co-dong/2022/1d-Nganh-nghe-kinh-doanh-tai-ngay-06012022-CBTT.pdf" rel="nofollow noopener" style={{color:'blue'}}>Ngành, nghề kinh doanh</a> 
                                 </p>
@@ -34,23 +34,23 @@ function FooterC() {
                             </div>
                         </div>
                     </Col>
-                    <Col xs={12} md={8} lg={6}  xl={6}>
-                        <Space direction="vertical" align='start'>
-                            <p>Về AL</p>
-                            <p>Câu chuyện</p>
-                            <p>Tuyển dụng</p>
-                            <p>Xuất khẩu</p>
-                        </Space>
+                    <Col xs={24} md={24} lg={8}  xl={8}>
+                        <div style={{display:'flex',justifyContent:'space-between', alignItems:'center'}}>
+                            <Space direction="vertical" align='start'>
+                                <p>Về LA</p>
+                                <p>Câu chuyện</p>
+                                <p>Tuyển dụng</p>
+                                <p>Xuất khẩu</p>
+                            </Space>
+                            <Space direction="vertical" align='start'>
+                                <p>Dịch vụ khách hàng</p>
+                                <p>Câu chuyện</p>
+                                <p>Tuyển dụng</p>
+                                <p>Xuất khẩu</p>
+                            </Space>
+                        </div>
                     </Col>
-                    <Col xs={12} md={8} lg={6}  xl={6}>
-                        <Space direction="vertical" align='start'>
-                            <p>Dịch vụ khách hàng</p>
-                            <p>Câu chuyện</p>
-                            <p>Tuyển dụng</p>
-                            <p>Xuất khẩu</p>
-                        </Space>
-                    </Col>
-                    <Col xs={24} md={8} lg={6}  xl={6}>
+                    <Col xs={24} md={24} lg={8}  xl={8}>
                         <h3 style={{textAlign:'left'}}>KẾT NỐI VỚI CHÚNG TÔI</h3>
                         <Flex gap="4px 0" wrap="wrap">
                             <Tag icon={<TwitterOutlined />} color="#55acee">

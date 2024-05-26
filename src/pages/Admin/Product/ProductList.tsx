@@ -36,9 +36,7 @@ function ProductList() {
     const showDrawer = (id: number) => {
         const loadProductDetail = async () => {
             const res = await productServices.getProductDetail(id);
-            if (res.isSuccessed === true) {
-                setCurrentProductItem(res.resultObj);
-            }
+            setCurrentProductItem(res);
         };
         loadProductDetail();
         setOpenDrawer(true);

@@ -6,7 +6,7 @@ import * as addressGHTKServices from '@/api/addressGHTKServices';
 import type { SelectProps } from 'antd';
 import { StatusForm } from '@/type';
 import { useAppSelector } from '@/app/hooks';
-import { selectUser } from '@/feature/user/userSlice';
+import { selectUser } from '@/app/feature/user/reducer';
 import { Address, addressGHTK } from '@/api/ResType';
 import type { TypeFormAddress } from '@/pages/Purchase';
 import { FORM_ITEM_LAYOUT, TAIL_FORM_ITEM_LAYOUT } from '@/common/common';
@@ -23,7 +23,7 @@ const AddressForm: React.FC<Props> = ({ typeForm, address, onSetState, onSetStat
     const [optionsProvince, setOptionsProvince] = React.useState<SelectProps['options']>();
     const [optionsDistrict, setOptionsDistrict] = React.useState<SelectProps['options']>();
     const [optionsWard, setOptionsWard] = React.useState<SelectProps['options']>();
-    const user = useAppSelector(selectUser);
+    const user = useAppSelector(selectUser).data;
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [context, setContext] = React.useState<string>('Save');
     const onFinish: FormProps<Address>['onFinish'] = async (values) => {

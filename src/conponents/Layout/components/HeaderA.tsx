@@ -3,14 +3,15 @@ import {  Space } from 'antd';
 import {  Layout,  theme, Avatar, Dropdown } from 'antd';
 import { UserOutlined, DownOutlined } from '@ant-design/icons';
 import { useAppSelector ,useAppDispatch} from '@/app/hooks';
-import { selectUser ,signOut} from '@/feature/user/userSlice';
+import { selectUser } from '@/app/feature/user/reducer';
 import type { MenuProps } from 'antd';
 const { Header } = Layout;
 import { useNavigate } from 'react-router-dom';
 import './style.scss';
+import { loadUser } from '@/app/feature/user/action';
 function HeaderA() {
     const Navigate = useNavigate();
-    const user = useAppSelector(selectUser);
+    const user = useAppSelector(selectUser).data;
     const dispatch = useAppDispatch()
     const {
         token: { colorBgContainer },
@@ -40,9 +41,8 @@ function HeaderA() {
         const accessToken = localStorage.getItem('accessToken');
         if (accessToken != null) {
             localStorage.removeItem('accessToken');
-                //localStorage.removeItem('refreshToken');
-                dispatch(signOut())
-                Navigate('/auth/login');
+            dispatch(loadUser())
+            Navigate('/auth/login');
         }
     };
     return (

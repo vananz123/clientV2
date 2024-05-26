@@ -1,24 +1,18 @@
-import React,{ lazy } from "react"
-const Loading = lazy(()=> import('@/pages/Loading'))
-import { Navigate } from "react-router-dom"
+import React from "react"
 import { useAppSelector } from "@/app/hooks"
-
-import { selectUser ,selectIsAuthenticated,selectIsInitialized} from "@/feature/user/userSlice"
+import { selectUser } from "@/app/feature/user/reducer"
+import { Navigate } from "react-router-dom"
 const GuestGuard: React.FC<{children:JSX.Element}> = ({children})=>{
-    const isAuthenticated = useAppSelector(selectIsAuthenticated)
-    const isInitialized = useAppSelector(selectIsInitialized)
-    const user = useAppSelector(selectUser)
-    if (isInitialized == false) return <Loading/>
-    if(isAuthenticated == true && user != undefined){
-        if(user.roles != undefined){
-            if(user.roles[0] == 'admin'){
+    const {isAuthenticated ,data} = useAppSelector(selectUser)
+    if(isAuthenticated == true && data != undefined){
+        if(data?.roles != undefined){
+            if(data?.roles[0] == 'admin' || data?.roles[0] == 'sale'){
                 return <Navigate to={'/admin/product'}/>
             }
-            if(user.roles[0] == 'customer'){
-                return <Navigate to={'/home'}/>
+            if(data.roles[0] == 'customer'){
+                return <Navigate to={'/'}/>
             }
         }
-        
     }
     return <>{children}</>
 }

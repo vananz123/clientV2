@@ -9,6 +9,20 @@ export type Category = {
     urlImage: string;
     status: number;
 };
+export interface ProductItemStatisc {
+    seoTitle: string,
+    urlThumbnailImage:string,
+    quantity: number,
+    productId: number,
+    productItemId: number,
+    price: number,
+    stock:number,
+    viewCount: number,
+    sku: string,
+    id: number,
+    name: string,
+    value: string
+}
 export type ProductItem = {
     id: number;
     productId?: number;

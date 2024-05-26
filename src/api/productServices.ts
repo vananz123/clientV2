@@ -25,20 +25,18 @@ export const getAllProduct = async()=>{
 export const getProductDetail = async(id:number)=>{
     try{
         const res = await request.get(`/product/${encodeURIComponent(id)}`)
-
         const resultObj : Product  = res.resultObj
-        const resp: Result ={
-            error :'',
-            isSuccessed:res.isSuccessed,
-            message:res.message,
-            statusCode:200,
-            resultObj : resultObj
-        }
-        return resp
-    }catch(error:any){
-        console.log(error.response.data)
-        const resError: Result =error.response.data
-        return resError
+        return resultObj
+        // const resp: Result ={
+        //     error :'',
+        //     isSuccessed:res.isSuccessed,
+        //     message:res.message,
+        //     statusCode:200,
+        //     resultObj : resultObj
+        // }
+        // return resp
+    }catch(error){
+        return undefined
     }
 }
 export const getProductPagingByFilter = async(filter:Filter)=>{

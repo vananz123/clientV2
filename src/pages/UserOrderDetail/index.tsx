@@ -22,7 +22,7 @@ import { DescriptionsProps } from 'antd';
 import * as reviewServices from '@/api/reviewServices';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useAppSelector } from '@/app/hooks';
-import { selectUser } from '@/feature/user/userSlice';
+import { selectUser } from '@/app/feature/user/reducer';
 import dayjs from 'dayjs';
 type NotificationType = 'success' | 'error';
 type TimeLineProps = {
@@ -34,7 +34,8 @@ function UserOrderDetail() {
     const { id } = useParams();
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const [form] = Form.useForm();
-    const user = useAppSelector(selectUser);
+    const {data}= useAppSelector(selectUser)
+    const user =data;
     const [api, contextHolder] = notification.useNotification();
     const navigate = useNavigate();
     const openNotificationWithIcon = (type: NotificationType, mess: string) => {

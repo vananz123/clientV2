@@ -1,6 +1,5 @@
 import type { Address, PaymentMethod } from '@/api/ResType';
 import { useAppSelector } from '@/app/hooks';
-import { selectCart } from '@/feature/cart/cartSlice';
 import {
     Button,
     Divider,
@@ -25,17 +24,18 @@ import * as userServices from '@/api/userServices';
 import * as orderServices from '@/api/orderServices';
 import * as paymentServices from '@/api/paymentServices';
 import { useNavigate } from 'react-router-dom';
-import { selectUser } from '@/feature/user/userSlice';
 import AddressForm from '@/conponents/AddressForm';
 import { StatusForm } from '@/type';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { selectCartDetail } from '@/app/feature/cart/reducer';
+import { selectUser } from '@/app/feature/user/reducer';
 const { Title, Paragraph } = Typography;
 export type TypeFormAddress = 'ADD' | 'EDIT';
 function Purchase() {
     const baseUrl = import.meta.env.VITE_BASE_URL;
-    const user = useAppSelector(selectUser);
+    const user= useAppSelector(selectUser).data
     const navigate = useNavigate();
-    const cart = useAppSelector(selectCart);
+    const cart= useAppSelector(selectCartDetail).data
     const [status, setStatus] = React.useState<StatusForm>('loading');
     const [options, setOptions] = React.useState<SelectProps['options']>([]);
     const [addresses, setAddresses] = React.useState<Address[]>([]);

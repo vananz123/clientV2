@@ -1,16 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Space, Drawer, Button } from 'antd';
 import { Layout, theme, Badge, Avatar, Dropdown } from 'antd';
-import {
-    UserOutlined,
-    ShoppingCartOutlined,
-    BarsOutlined,
-    LoginOutlined,
-    LogoutOutlined,
-} from '@ant-design/icons';
+import { UserOutlined, ShoppingCartOutlined, BarsOutlined, LoginOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '@/app/hooks';
-import { selectUser, signOut } from '@/feature/user/userSlice';
-import { selectCart } from '@/feature/cart/cartSlice';
+import { selectUser } from '@/app/feature/user/reducer';
 import { Link } from 'react-router-dom';
 import type { MenuProps } from 'antd';
 const { Header } = Layout;
@@ -19,12 +12,19 @@ import { useNavigate } from 'react-router-dom';
 import './style.scss';
 import SearchC from '@/conponents/SearchC';
 import Logo2 from '/logo.png';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { selectCartDetail } from '@/app/feature/cart/reducer';
+import { loadCartDetail } from '@/app/feature/cart/action';
+import { loadUser } from '@/app/feature/user/action';
 function HeaderC() {
     const Navigate = useNavigate();
-    const user = useAppSelector(selectUser);
-    const cart = useAppSelector(selectCart);
+    const { data } = useAppSelector(selectUser);
+    const user = data;
+    const cart = useAppSelector(selectCartDetail).data;
     const dispatch = useAppDispatch();
+    useEffect(() => {
+        if (user) dispatch(loadCartDetail({ userId: user?.id as string }));
+    }, [dispatch, user]);
     const { token } = theme.useToken();
     const items: MenuProps['items'] = [
         {
@@ -60,7 +60,7 @@ function HeaderC() {
         const accessToken = localStorage.getItem('accessToken');
         if (accessToken != null) {
             localStorage.removeItem('accessToken');
-            dispatch(signOut());
+            dispatch(loadUser());
             Navigate('/auth/login');
         }
     };
@@ -87,7 +87,7 @@ function HeaderC() {
                                     <BarsOutlined onClick={() => showDrawer()} />
                                 </div>
                                 <Link className="menu-right__logo" style={{ width: 64, height: 64 }} to="/">
-                                    <img style={{ width: '100%', height: '100%' }} alt='al store' src={Logo2} />
+                                    <img style={{ width: '100%', height: '100%' }} alt="al store" src={Logo2} />
                                 </Link>
                             </div>
                         </div>
@@ -95,11 +95,15 @@ function HeaderC() {
                             <div>
                                 <SearchC />
                             </div>
-    
+
                             {typeof user !== 'undefined' ? (
                                 <>
                                     <Space align="center">
-                                        <Dropdown className="header-container__user" menu={{ items }} trigger={['click']}>
+                                        <Dropdown
+                                            className="header-container__user"
+                                            menu={{ items }}
+                                            trigger={['click']}
+                                        >
                                             <strong onClick={(e) => e.preventDefault()} style={{ cursor: 'pointer' }}>
                                                 <Space>
                                                     <Avatar icon={<UserOutlined />} />
@@ -134,10 +138,13 @@ function HeaderC() {
                     extra={
                         <>
                             {user && (
-                                <div onClick={()=>{
-                                    Navigate('/profile')
-                                    onClose
-                                }} style={{ color:'black', cursor: 'pointer' }}>
+                                <div
+                                    onClick={() => {
+                                        Navigate('/profile');
+                                        onClose();
+                                    }}
+                                    style={{ color: 'black', cursor: 'pointer' }}
+                                >
                                     <Space>
                                         <Avatar icon={<UserOutlined />} />
                                         <div>{user?.userName}</div>
@@ -157,7 +164,13 @@ function HeaderC() {
                             }}
                         >
                             {user && (
-                                <Button icon={<LogoutOutlined />} style={{ color: 'black' }} onClick={()=>{Logout}}>
+                                <Button
+                                    icon={<LogoutOutlined />}
+                                    style={{ color: 'black' }}
+                                    onClick={() => {
+                                        Logout;
+                                    }}
+                                >
                                     Logout
                                 </Button>
                             )}

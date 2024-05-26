@@ -2,14 +2,10 @@ import CategoryForm from '@/conponents/CategoryForm';
 import React, { useEffect } from 'react';
 import {  notification } from 'antd';
 type NotificationType = 'success' | 'error';
-import * as categoryServices from '@/api/categoryServices';
 import { Category } from '@/type';
-import {useAppDispatch } from '@/app/hooks';
-import {  addCateAsync } from '@/feature/category/cateSlice';
 import { StatusForm } from '@/type';
 import { useNavigate } from 'react-router-dom';
 function CategoryAdd() {
-    const dispatch = useAppDispatch();
     const [category, setCategory] = React.useState<Category>();
     const [status, setStatus] = React.useState<StatusForm>('loading');
     const [api, contextHolder] = notification.useNotification();
@@ -23,13 +19,7 @@ const Navigate =useNavigate()
     useEffect(() => {
         if (status == 'success') {
             if (category != undefined) {
-                const getAllCate = async () => {
-                    const ref = await categoryServices.getAllCate();
-                    if (ref.statusCode === 200) {
-                        dispatch(addCateAsync(ref.resultObj));
-                    }
-                };
-                getAllCate()
+                //dispatch(loadCategories());
                 openNotificationWithIcon('success');
                 Navigate('/admin/categories')
             }

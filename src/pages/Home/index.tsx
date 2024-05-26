@@ -16,7 +16,7 @@ const contentStyle: React.CSSProperties = {
 const imgStyles: React.CSSProperties = {
     margin: 0,
     width: '100%',
-    height: '500px',
+    height: '100%',
 };
 function Home() {
     const [productsNew, setProductsNew] = React.useState<Product[]>();

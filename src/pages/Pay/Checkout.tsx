@@ -2,21 +2,23 @@
 import React, { useEffect } from 'react';
 import { Button, Result } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAppDispatch } from '@/app/hooks';
-import { emptyCart } from '@/feature/cart/cartSlice';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { loadCartDetail } from '@/app/feature/cart/action';
+import { selectUser } from '@/app/feature/user/reducer';
 function Checkout() {
     const {id} = useParams()
     const [content,setContent] = React.useState<string>('')
+    const user = useAppSelector(selectUser).data
     const [status,setStatus] = React.useState<boolean>(false)
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
     useEffect(() => {
-        if(id != undefined){
-            dispatch(emptyCart())
+        if(id != undefined && user){
+           dispatch(loadCartDetail({userId:user.id}))
             setStatus(true)
             setContent("Bạn đã đặt hàng thành công, vui lòng kiểm trả hàng trước khi thanh toán!")
         }
-    });
+    },[dispatch,id]);
     return (
         <div className='container'>
             <Result

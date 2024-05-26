@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import * as orderServices from '@/api/orderServices';
 import * as userServices from '@/api/userServices';
 import { useAppSelector } from '@/app/hooks';
-import { selectUser } from '@/feature/user/userSlice';
+import { selectUser } from '@/app/feature/user/reducer';
 import { Address, Order } from '@/api/ResType';
 import type { DescriptionsProps, TabsProps } from 'antd';
 import { TypeFormAddress } from '../Purchase';
@@ -14,7 +14,7 @@ import { StatusForm } from '@/type';
 import dayjs from 'dayjs';
 function Profile() {
     const Navigate = useNavigate();
-    const user = useAppSelector(selectUser);
+    const user = useAppSelector(selectUser).data;
     //const [form] = Form.useForm();
     const [data, setData] = React.useState<Order[]>();
     //const [currentData, setCurrentData] = React.useState<Order>();

@@ -3,10 +3,12 @@ import React, { useEffect } from 'react';
 import * as orderServices from '@/api/orderServices';
 import { Button, Result } from 'antd';
 import { useParams } from 'react-router-dom';
-import { useAppDispatch } from '@/app/hooks';
-import { emptyCart } from '@/feature/cart/cartSlice';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { loadCartDetail } from '@/app/feature/cart/action';
+import { selectUser } from '@/app/feature/user/reducer';
 function CheckoutVnpay() {
     const {id} = useParams()
+    const user = useAppSelector(selectUser).data
     const [content,setContent] = React.useState<string>('')
     const [status,setStatus] = React.useState<boolean>(false)
     const p = queryString.parse(window.location.search);
@@ -31,9 +33,11 @@ function CheckoutVnpay() {
             }
         }
     };
+    useEffect(()=>{
+        if(user) dispatch(loadCartDetail({userId:user.id}))
+    },[dispatch,user])
     useEffect(() => {
         if (p != undefined) {
-            dispatch(emptyCart())
             if (p.vnp_TransactionStatus == '00') {
                 paided();
                 setStatus(true)
@@ -47,7 +51,7 @@ function CheckoutVnpay() {
             setStatus(true)
             setContent("Bạn đã đặt hàng thành công, vui lòng kiểm trả hàng trước khi thanh toán!")
         }
-    });
+    },[id,p]);
     return (
         <div className='container'>
             <Result

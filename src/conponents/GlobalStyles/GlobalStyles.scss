@@ -77,7 +77,6 @@ body {
     color: $color-gray;
 }
 // media queries
-
 .product-card {
     background-color: #fafafa;
     width: '100%';
@@ -103,8 +102,8 @@ body {
         }
     }
 }
-.container{
-    padding:16px;
+.container {
+    padding: 16px;
     @include Responsive(SM) {
         padding: 0 24px;
     }
@@ -112,15 +111,15 @@ body {
 .header-container {
     padding: 0 16px;
     display: flex;
-    justify-content:space-between;
+    justify-content: space-between;
     @include Responsive(SM) {
         padding: 0 24px;
     }
     &__logo {
         height: 64px;
-        & div.menu-right{
-            display:flex;
-            justify-content:start;
+        & div.menu-right {
+            display: flex;
+            justify-content: start;
             align-items: center;
             &__bars {
                 display: block;
@@ -128,8 +127,8 @@ body {
                     display: none;
                 }
             }
-            &__logo{
-                height:64px;
+            &__logo {
+                height: 64px;
                 width: 64px;
             }
         }
@@ -144,9 +143,9 @@ body {
         }
     }
     &__user {
-        width: auto;  
-        display:none;
-        @include Responsive(SM){
+        width: auto;
+        display: none;
+        @include Responsive(SM) {
             display: flex;
         }
     }
@@ -157,13 +156,13 @@ body {
         justify-content: flex-end;
         height: 64px;
         gap: 10px;
-        @include Responsive(SM){
+        @include Responsive(SM) {
             width: 400px;
         }
     }
     &__search {
         display: flex;
-        align-items: center;   
+        align-items: center;
     }
 }
 .search {
@@ -178,14 +177,24 @@ body {
         width: 290px;
     }
 }
-.list-card{
+.list-card {
     padding: 5px;
 }
-.popover-search{
+.popover-search {
     height: 350px;
     width: 240px;
     overflow-x: hidden;
     @include Responsive(SM) {
         width: 275px;
     }
+}
+.skeleton {
+    background-color: #eee;
+    background-image: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+    border-radius: 5px;
+    background-size: 200% 100%;
+    animation: 1.5s shine linear infinite;
+}
+.carouselHome{
+    height: auto;
 }

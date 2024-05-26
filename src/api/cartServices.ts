@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as request from '../utils/request'
 import { Result,CartResult } from './ResType'
-export const getCart = async(id:number)=>{
+export const getCart = async(id:string)=>{
     try{
         const res = await request.get(`/cart/user/${encodeURIComponent(id)}`)
         const resultObj : CartResult = res.resultObj
@@ -14,7 +14,6 @@ export const getCart = async(id:number)=>{
         }
         return resp
     }catch(error:any){
-        console.log(error.response.data)
         const resError: Result =error.response.data
         return resError
     }

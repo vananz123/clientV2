@@ -2,20 +2,19 @@
 import { useParams } from 'react-router-dom';
 import * as productServices from '@/api/productServices';
 import React, { useCallback, useEffect } from 'react';
-import { Product } from '@/type';
+import { Product,Filter,Sort } from '@/type';
 import { useAppSelector } from '@/app/hooks';
-import { selectCate } from '@/feature/category/cateSlice';
-import { Button, Col, Flex, Result, Row, Select, Skeleton, Spin, Switch, Pagination, PaginationProps } from 'antd';
+import { selectCategories } from '@/app/feature/category/reducer';
+import { Button, Col, Flex, Result, Row, Select, Spin, Switch, Pagination, PaginationProps , Space, Tooltip } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import ProductCard from '@/conponents/ProductCard';
 import { OPTIONS_PRICE,OPTIONS_MATERIAL,OPTIONS_SORT } from '@/common/common';
-import { Filter,Sort } from '@/type';
-import { Space, Tooltip } from 'antd';
+import SkeletonCard from '@/conponents/SkeletonCard';
 const pageSize: number = 8;
 function ProductListShow() {
     const { id } = useParams();
     const [products, setProducts] = React.useState<Product[]>();
-    const cate = useAppSelector(selectCate);
+    const cate = useAppSelector(selectCategories).data;
     const [page, setPage] = React.useState<number>(1);
     const [sortOder, setSortOder] = React.useState<Sort>('ascending');
     const [optionPrice, setOptionPrice] = React.useState<number[]>([]);
@@ -235,7 +234,7 @@ function ProductListShow() {
                                             xl={6}
                                 className="gutter-row"
                             >
-                                <Skeleton/>
+                                <SkeletonCard style={{width:'100%',height:350}}/>
                             </Col>
                             ))}
                         </Row>

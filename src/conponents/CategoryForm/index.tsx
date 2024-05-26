@@ -4,9 +4,10 @@ import { Button, type FormProps, Form, Input, Select, SelectProps } from 'antd';
 import * as categoryServices from '@/api/categoryServices';
 import { Category } from '@/type';
 import { StatusForm } from '@/type';
-import { useAppSelector } from '@/app/hooks';
-import { selectCate } from '@/feature/category/cateSlice';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { selectCategories } from '@/app/feature/category/reducer';
 import { OPTIONS_STATUS, FORM_ITEM_LAYOUT, TAIL_FORM_ITEM_LAYOUT } from '@/common/common';
+import { loadCategories } from '@/app/feature/category/action';
 interface Props {
     category: Category | undefined;
     onSetState: SetStateAction<any> | undefined;
@@ -14,20 +15,26 @@ interface Props {
 }
 const CategoryForm: React.FC<Props> = ({ category, onSetState, onSetStatus }) => {
     const [form] = Form.useForm();
-    const cate = useAppSelector(selectCate)
+    const dispatch = useAppDispatch()
+    const cate = useAppSelector(selectCategories).data
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [optionParent, setOptionParent] = React.useState<SelectProps['options']>([]);
     useEffect(() => {
+        dispatch(loadCategories())
+    }, [dispatch]);
+    useEffect(()=>{
         form.setFieldsValue(category)
         const item: SelectProps['options'] = [];
-        cate.forEach((e: Category) => {
-            item.push({
-                label: e.name,
-                value: e.id,
+        if(cate){
+            cate.forEach((e: Category) => {
+                item.push({
+                    label: e.name,
+                    value: e.id,
+                });
             });
-        });
+        }
         setOptionParent(item);
-    }, [cate,category,form]);
+    },[cate,category,form])
     const [context, setContext] = React.useState<string>('Save');
     const onFinish: FormProps<Category>['onFinish'] = async (values) => {
         setIsLoading(true);

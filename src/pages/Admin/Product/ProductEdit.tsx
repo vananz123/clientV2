@@ -22,9 +22,7 @@ function ProductEdit() {
         if (id != undefined && status == 'loading') {
             const getProduct = async () => {
                 const res = await productServices.getProductDetail(Number(id));
-                if (res.isSuccessed == true) {
-                    setProduct(res.resultObj);
-                }
+                setProduct(res);
             };
             getProduct()
         }

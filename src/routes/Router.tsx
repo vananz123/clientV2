@@ -134,11 +134,12 @@ const Router: React.FC = () => {
                 {
                     path: 'checkout-vnpay',
                     element: (
-                        <AuthGuard>
-                            <RoleGuard role={['customer']}>
-                                <CheckoutVnpay />
-                            </RoleGuard>
-                        </AuthGuard>
+                        // <AuthGuard>
+                        //     <RoleGuard role={['customer']}>
+                        //         <CheckoutVnpay />
+                        //     </RoleGuard>
+                        // </AuthGuard>
+                        <CheckoutVnpay />
                     ),
                 },
             ],

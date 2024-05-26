@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Form, type FormProps, Input, Alert, Modal, message, Flex } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useAppDispatch } from '@/app/hooks';
-import { signIn } from '@/feature/user/userSlice';
+import { loadUser } from '@/app/feature/user/action';
 import * as loginServices from '@/api/loginServices';
 import * as userServices from '@/api/userServices';
 import type { Result, Role } from '@/api/ResType';
@@ -22,19 +22,16 @@ function Login() {
     const onFinish: FormProps<LoginType>['onFinish'] = (values) => {
         const login = async () => {
             const resuft = await loginServices.login(values);
-            console.log(resuft);
-            if (resuft.statusCode == 200) {
+            if (resuft.isSuccessed  === true) {
                 localStorage.setItem('accessToken', resuft.resultObj.accessToken);
-                //localStorage.setItem('refreshToken', resuft.resultObj.refreshToken);
                 const userResuft = await userServices.getUser();
                 if (userResuft.isSuccessed == true) {
-                    dispatch(signIn(userResuft.resultObj));
+                   dispatch(loadUser());
                     const roleAdmin: Role[] = ['admin', 'sale'];
-                    console.log(roleAdmin.indexOf(userResuft.resultObj.roles[0]));
                     if (roleAdmin.indexOf(userResuft.resultObj.roles[0]) >= 0) {
                         Navigate('/admin');
                     } else {
-                        Navigate(`/`);
+                        Navigate(-1);
                     }
                 } else {
                     setError(userResuft);
