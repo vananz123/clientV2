@@ -26,6 +26,9 @@ function OrderList() {
             title: 'Tổng Tiền Hóa Đơn',
             dataIndex: 'orderTotal',
             key: 'orderTotal',
+            render:(_, record) => (
+                <p>{ChangeCurrence(record.orderTotal)}</p>
+            )
         },
         {
             title: 'Ngày Tạo',
@@ -116,4 +119,15 @@ function OrderList() {
         </div>
     );
 }
+const ChangeCurrence = (number: number | undefined) => {
+    if (number) {
+        const formattedNumber = number.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+            currencyDisplay: 'code',
+        });
+        return formattedNumber;
+    }
+    return 0;
+};
 export default OrderList;

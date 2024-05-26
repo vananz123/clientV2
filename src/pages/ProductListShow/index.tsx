@@ -240,7 +240,7 @@ function ProductListShow() {
                         </Row>
                     )}
                 </Spin>
-                <div style={{ marginTop: 24, textAlign: 'center' }}>
+                <div style={{ marginTop: 14,marginBottom:14, textAlign: 'center' }}>
                     <Pagination onChange={onChange} current={page} pageSize={pageSize} total={totalRecord} />
                 </div>
             </div>
