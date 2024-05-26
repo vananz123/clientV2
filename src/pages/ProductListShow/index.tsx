@@ -56,7 +56,7 @@ function ProductListShow() {
         console.log(res);
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
-            setIsLoading(false);
+            setIsLoading(false);setTotalRecord(res.resultObj.totalRecords)
         }
     },[page, optionPrice, optionMaterial, sortOder, isPromotion]);
     const getProductPNPaging = useCallback(async () => {
@@ -74,6 +74,7 @@ function ProductListShow() {
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
             setIsLoading(false);
+            setTotalRecord(res.resultObj.totalRecords)
         }
     },[id, page, optionPrice, optionMaterial, sortOder, isPromotion]);
     const getProductStatusPaging = useCallback(
@@ -89,7 +90,7 @@ function ProductListShow() {
             };
             const res = await productServices.getProductPagingByFilter(filter);
             if (res.statusCode == 200) {
-                setProducts(res.resultObj.items);
+                setProducts(res.resultObj.items);setTotalRecord(res.resultObj.totalRecords)
             }
         },
         [page, optionPrice, optionMaterial, sortOder, isPromotion],
@@ -226,21 +227,21 @@ function ProductListShow() {
                         <Row gutter={[24, 24]}>
                             {Array.from({length:8}).map((_,index)=>(
                                 <Col key={index}
-                                style={{ display: 'flex', justifyContent: 'center' }}
-                                            xs={12}
-                                            sm={8}
-                                            md={8}
-                                            lg={8}
-                                            xl={6}
-                                className="gutter-row"
-                            >
-                                <SkeletonCard style={{width:'100%',height:350}}/>
-                            </Col>
+                                    style={{ display: 'flex', justifyContent: 'center' }}
+                                                xs={12}
+                                                sm={8}
+                                                md={8}
+                                                lg={8}
+                                                xl={6}
+                                    className="gutter-row"
+                                    >
+                                    <SkeletonCard style={{width:'100%',height:350}}/>
+                                </Col>
                             ))}
                         </Row>
                     )}
                 </Spin>
-                <div style={{ marginTop: 14,marginBottom:14, textAlign: 'center' }}>
+                <div style={{ marginTop: 24, marginBottom:24,textAlign: 'center' }}>
                     <Pagination onChange={onChange} current={page} pageSize={pageSize} total={totalRecord} />
                 </div>
             </div>
