@@ -7,7 +7,7 @@ function ProductDetailLoading() {
             <SkeletonCard style={{ width: 100, height: 40, marginBottom: 10 }} />
             <Row gutter={[8, 8]}>
                 <Col xs={24} sm={24} md={24} lg={24} xl={14} className="gutter-row">
-                    <Flex justify="space-between">
+                    <Flex justify="space-between" gap={5}>
                         <SkeletonCard style={{ width: 400, height: 400 }} />
                         <Space direction="vertical">
                             <SkeletonCard style={{ width: 150, height: 150 }} />

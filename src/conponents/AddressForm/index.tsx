@@ -147,7 +147,6 @@ const AddressForm: React.FC<Props> = ({ typeForm, address, onSetState, onSetStat
                 <Form.Item<Address>
                     name="province"
                     label="Tỉnh/Thành Phố"
-                    tooltip="What do you want others to call you?"
                     initialValue={address?.province || 'Chọn Tỉnh/ Thành Phố'}
                     rules={[{ required: true, message: 'Chọn Tỉnh/Thành Phố!' }]}
                 >
@@ -161,7 +160,6 @@ const AddressForm: React.FC<Props> = ({ typeForm, address, onSetState, onSetStat
                 <Form.Item<Address>
                     name="urbanDistrict"
                     label="Quận/ Huyện"
-                    tooltip="What do you want others to call you?"
                     initialValue={address?.urbanDistrict || 'Chọn Quận/ Huyện'}
                     rules={[{ required: true, message: 'Chọn Quận/Huyện!' }]}
                 >
@@ -170,7 +168,6 @@ const AddressForm: React.FC<Props> = ({ typeForm, address, onSetState, onSetStat
                 <Form.Item<Address>
                     name="wardCommune"
                     label="Xã/Phường"
-                    tooltip="What do you want others to call you?"
                     initialValue={address?.wardCommune || 'Chọn Xã/Phường'}
                     rules={[{ required: true, message: 'Chọn Xã/Phường!' }]}
                 >
@@ -179,8 +176,6 @@ const AddressForm: React.FC<Props> = ({ typeForm, address, onSetState, onSetStat
                 <Form.Item<Address>
                     name="streetNumber"
                     label="Số Đường"
-                    tooltip="What do you want others to call you?"
-                    //initialValue={''}
                     rules={[{ required: true, message: 'Chọn Số Đường!', whitespace: true }]}
                 >
                     <Input></Input>
@@ -188,7 +183,6 @@ const AddressForm: React.FC<Props> = ({ typeForm, address, onSetState, onSetStat
                 <Form.Item<Address>
                     name="phoneNumber"
                     label="Phone number"
-                    tooltip="What do you want others to call you?"
                     initialValue={''}
                     rules={[{ required: true, message: 'Please input Phone number!', whitespace: true }]}
                 >

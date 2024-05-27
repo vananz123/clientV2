@@ -74,29 +74,6 @@ function OrderConfirm() {
                 </div>
             ),
         },
-        // {
-        //     key: 'orderDetail',
-        //     label: 'Sản Phẩm',
-        //     children: (
-        //         <div>
-        //             {order?.orderDetail?.map((e: OrderDetail) => (
-        //                 <Row align={'middle'}>
-        //                     <Col span={12}>
-        //                         <p>{e.seoTitle}</p>
-        //                         <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: 70 }} />
-        //                     </Col>
-        //                     <Col span={6}>
-        //                         <p>{e.quantity}</p>
-        //                     </Col>
-        //                     <Col span={6}>
-        //                         <p>{e.price}</p>
-        //                     </Col>
-        //                 </Row>
-        //             ))}
-        //         </div>
-        //     ),
-        //     span: 2,
-        // },
     ];
     const desUser: DescriptionsProps['items'] = [
         {

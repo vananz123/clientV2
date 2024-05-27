@@ -234,7 +234,7 @@ function Purchase() {
             <Modal
                 title="Notification"
                 open={open}
-                //onOk={handleOk}
+                
                 onCancel={handleCancel}
                 footer={''}
             >

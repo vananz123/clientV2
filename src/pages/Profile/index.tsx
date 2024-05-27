@@ -205,7 +205,7 @@ function Profile() {
         setOpen(false);
     };
     return (
-        <div className="container">
+        <div className="container" style={{marginBottom:10,marginTop:10}}>
             <Button
                 type="text"
                 icon={<ArrowLeftOutlined />}
