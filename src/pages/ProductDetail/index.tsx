@@ -49,7 +49,7 @@ function ProductDetail() {
     const [listImage, setListImage] = React.useState<string[]>([]);
     const [listReview, setListReview] = React.useState<Review[]>([]);
     const { data, isLoading } = useQuery({
-        queryKey: ['product-detail'],
+        queryKey: [`product-detail-${id}`],
         queryFn: () => productServices.getProductDetail(Number(id)),
     });
     const [currentProductItem, setCurrentProductItem] = React.useState<ProductItem>();
