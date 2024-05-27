@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Table,  Space,  Image, Modal, Upload, Button, Flex, Descriptions } from 'antd';
-import type {  TableColumnsType, DescriptionsProps } from 'antd';
-import {  Drawer,} from 'antd';
+import { Table, Space, Image, Modal, Upload, Button, Flex, Descriptions, Input } from 'antd';
+import type { TableColumnsType, DescriptionsProps, InputRef, TableColumnType } from 'antd';
+import { Drawer } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
 import * as productServices from '@/api/productServices';
 import React, { useEffect } from 'react';
-import { DeleteOutlined, EditOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, InfoCircleOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { Product } from '@/type';
 import { FILTERS_PRODUCT_STATUS } from '@/common/common';
+import { FilterDropdownProps } from 'antd/es/table/interface';
+import Highlighter from 'react-highlight-words';
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 const getBase64 = (file: FileType): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -18,9 +20,9 @@ const getBase64 = (file: FileType): Promise<string> =>
         reader.onload = () => resolve(reader.result as string);
         reader.onerror = (error) => reject(error);
     });
-
+type DataIndex = keyof Product;
 function ProductList() {
-    const baseUrl =import.meta.env.VITE_BASE_URL
+    const baseUrl = import.meta.env.VITE_BASE_URL;
     const [data, setData] = React.useState<Product[]>();
     const [currentId, setCurrentId] = React.useState<number>(0);
     const [currentProductItem, setCurrentProductItem] = React.useState<Product>();
@@ -33,6 +35,97 @@ function ProductList() {
     const [previewImage, setPreviewImage] = React.useState('');
     const [fileList, setFileList] = React.useState<UploadFile[]>([]);
     const [openDrawer, setOpenDrawer] = React.useState(false);
+
+    //product search
+    const [searchText, setSearchText] = React.useState('');
+    const [searchedColumn, setSearchedColumn] = React.useState('');
+    const searchInput = React.useRef<InputRef>(null);
+
+    const handleSearch = (selectedKeys: string[], confirm: FilterDropdownProps['confirm'], dataIndex: DataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+    };
+
+    const handleReset = (clearFilters: () => void) => {
+        clearFilters();
+        setSearchText('');
+    };
+    //
+    const getColumnSearchProps = (dataIndex: DataIndex): TableColumnType<Product> => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+            <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+                <Input
+                    ref={searchInput}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+                    style={{ marginBottom: 8, display: 'block' }}
+                />
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+                        icon={<SearchOutlined />}
+                        size="small"
+                        style={{ width: 90 }}
+                    >
+                        Search
+                    </Button>
+                    <Button
+                        onClick={() => clearFilters && handleReset(clearFilters)}
+                        size="small"
+                        style={{ width: 90 }}
+                    >
+                        Reset
+                    </Button>
+                    <Button
+                        type="link"
+                        size="small"
+                        onClick={() => {
+                            confirm({ closeDropdown: false });
+                            setSearchText((selectedKeys as string[])[0]);
+                            setSearchedColumn(dataIndex);
+                        }}
+                    >
+                        Filter
+                    </Button>
+                    <Button
+                        type="link"
+                        size="small"
+                        onClick={() => {
+                            close();
+                        }}
+                    >
+                        close
+                    </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />,
+        onFilter: (value, record) =>
+            record[dataIndex]
+                .toString()
+                .toLowerCase()
+                .includes((value as string).toLowerCase()),
+        onFilterDropdownOpenChange: (visible) => {
+            if (visible) {
+                setTimeout(() => searchInput.current?.select(), 100);
+            }
+        },
+        render: (text) =>
+            searchedColumn === dataIndex ? (
+                <Highlighter
+                    highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                    searchWords={[searchText]}
+                    autoEscape
+                    textToHighlight={text ? text.toString() : ''}
+                />
+            ) : (
+                text
+            ),
+    });
     const showDrawer = (id: number) => {
         const loadProductDetail = async () => {
             const res = await productServices.getProductDetail(id);
@@ -82,7 +175,7 @@ function ProductList() {
         }
         return 0;
     };
-    const columns :TableColumnsType = [
+    const columns: TableColumnsType<Product> = [
         {
             title: 'Id',
             dataIndex: 'id',
@@ -92,27 +185,27 @@ function ProductList() {
             title: 'Tên',
             dataIndex: 'name',
             key: 'name',
-        },{
+        },
+        {
             title: 'Tiêu Đề',
             dataIndex: 'seoTitle',
             key: 'seoTitle',
+            ...getColumnSearchProps('seoTitle'),
         },
         {
             title: 'Giá',
             dataIndex: 'price',
             key: 'price',
             sorter: {
-                compare: (a :Product, b:Product) => a.price - b.price,
+                compare: (a: Product, b: Product) => a.price - b.price,
                 multiple: 2,
-              },
-            render: (_ :any, record :Product) => (
-                <p>{ChangeCurrence(record.price)}</p>
-            ),
+            },
+            render: (_: any, record: Product) => <p>{ChangeCurrence(record.price)}</p>,
         },
         {
             title: 'Ảnh',
             key: 'picture',
-            render: (_ :any, record : Product) => (
+            render: (_: any, record: Product) => (
                 <img
                     src={`${baseUrl + record.urlThumbnailImage}`}
                     style={{ width: '100px', height: 'auto', cursor: 'pointer' }}
@@ -124,45 +217,49 @@ function ProductList() {
             title: 'Trạng Thái',
             dataIndex: 'status',
             key: 'status',
-            filters:FILTERS_PRODUCT_STATUS,
-            onFilter: (value :any, record:Product) => record.status ===  value,
+            filters: FILTERS_PRODUCT_STATUS,
+            onFilter: (value: any, record: Product) => record.status === value,
         },
         {
             title: 'Lượt Xem',
             dataIndex: 'viewCount',
-            key: 'viewCount',sorter: {
-                compare: (a :Product, b:Product) => a.viewCount - b.viewCount,
+            key: 'viewCount',
+            sorter: {
+                compare: (a: Product, b: Product) => a.viewCount - b.viewCount,
                 multiple: 2,
-              },
+            },
         },
         {
             title: 'Action',
             key: 'action',
-            render: (_ :any, record : Product) => (
+            render: (_: any, record: Product) => (
                 <Space size="middle">
-                    <Button icon={<DeleteOutlined/>} onClick={() => showModalDel(record.id, record.name)}></Button>
+                    <Button icon={<DeleteOutlined />} onClick={() => showModalDel(record.id, record.name)}></Button>
                     <Link to={`/admin/product-edit/${record.id}`}>
-                        <Button icon={<EditOutlined/>}></Button>
+                        <Button icon={<EditOutlined />}></Button>
                     </Link>
-                    <Button icon={<InfoCircleOutlined/>} onClick={() => showDrawer(record.id)} key={`a-${record.id}`}>
-                       
-                    </Button>
+                    <Button
+                        icon={<InfoCircleOutlined />}
+                        onClick={() => showDrawer(record.id)}
+                        key={`a-${record.id}`}
+                    ></Button>
                 </Space>
             ),
         },
     ];
-    const desProduct :DescriptionsProps['items']= [
+    const desProduct: DescriptionsProps['items'] = [
         {
             key: 'Name',
             label: 'Name',
-            children: (<span>{currentProductItem?.name}</span>)
-        },{
+            children: <span>{currentProductItem?.name}</span>,
+        },
+        {
             key: 'Promotion',
             label: 'Promotion',
-            children: (<span>{currentProductItem?.valuePromotion}</span>)
+            children: <span>{currentProductItem?.valuePromotion}</span>,
         },
-    ]
-    const showModalImage = ( id: number) => {
+    ];
+    const showModalImage = (id: number) => {
         setCurrentId(id);
         setModal2Open(true);
     };
@@ -171,32 +268,32 @@ function ProductList() {
         setCurrentId(id);
         setOpen(true);
     };
-    const handleOkDel = async() => {
+    const handleOkDel = async () => {
         setModalText('deleting!');
         setConfirmLoading(true);
         const res = await productServices.deleteProduct(currentId);
-            if (res.statusCode == 204) {
-                const res = await productServices.getAllProduct();
-                if (res.statusCode == 200) {
-                    setData(res.resultObj);
-                    setConfirmLoading(false);
-                    setOpen(false);
-                    setFileList([]);
-                }
-            } else {
-                setModalText('error!');
+        if (res.statusCode == 204) {
+            const res = await productServices.getAllProduct();
+            if (res.statusCode == 200) {
+                setData(res.resultObj);
                 setConfirmLoading(false);
-            }
-    };
-    const uploadImageAPI = async() => {
-        setConfirmLoadingModal2(true);
-        const res = await productServices.uploadThumbnailImage(currentId, fileList[0].originFileObj);
-            if (res != null) {
-                setConfirmLoadingModal2(false);
-                setModal2Open(false);
-                loadAllProduct();
+                setOpen(false);
                 setFileList([]);
             }
+        } else {
+            setModalText('error!');
+            setConfirmLoading(false);
+        }
+    };
+    const uploadImageAPI = async () => {
+        setConfirmLoadingModal2(true);
+        const res = await productServices.uploadThumbnailImage(currentId, fileList[0].originFileObj);
+        if (res != null) {
+            setConfirmLoadingModal2(false);
+            setModal2Open(false);
+            loadAllProduct();
+            setFileList([]);
+        }
     };
     return (
         <div>
@@ -220,7 +317,7 @@ function ProductList() {
                 <p className="site-description-item-profile-p" style={{ marginBottom: 24 }}>
                     User Profile
                 </p>
-                <Descriptions title="Product profile" items={desProduct}  />
+                <Descriptions title="Product profile" items={desProduct} />
             </Drawer>
             <Modal
                 title="Upload image"
