@@ -218,7 +218,7 @@ function Purchase() {
                         size="large"
                         block
                         type="primary"
-                        style={{ marginTop: 10 }}
+                        style={{ marginBottom: 10 }}
                         disabled={
                             cart.items.length <= 0 ||
                             cart.items.some((s) => s.stock == 0 || s.stock < s.quantity || currentAddress == undefined)

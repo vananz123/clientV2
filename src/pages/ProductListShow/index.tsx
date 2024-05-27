@@ -227,16 +227,16 @@ function ProductListShow() {
                         <Row gutter={[24, 24]}>
                             {Array.from({length:8}).map((_,index)=>(
                                 <Col key={index}
-                                style={{ display: 'flex', justifyContent: 'center' }}
-                                            xs={12}
-                                            sm={8}
-                                            md={8}
-                                            lg={8}
-                                            xl={6}
-                                className="gutter-row"
-                            >
-                                <SkeletonCard style={{width:'100%',height:350}}/>
-                            </Col>
+                                    style={{ display: 'flex', justifyContent: 'center' }}
+                                                xs={12}
+                                                sm={8}
+                                                md={8}
+                                                lg={8}
+                                                xl={6}
+                                    className="gutter-row"
+                                    >
+                                    <SkeletonCard style={{width:'100%',height:350}}/>
+                                </Col>
                             ))}
                         </Row>
                     )}
