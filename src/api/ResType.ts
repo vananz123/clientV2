@@ -24,13 +24,13 @@ export type Result = {
     statusCode: number;
     resultObj: any;
 };
-export type PagingResult = {
+export interface PagingResult {
     items: any;
     pageIndex: number;
     pageSize: number;
     pageCount: number;
     totalRecords: number;
-};
+}
 export type Cart = {
     id: number;
     seoTitle: string;

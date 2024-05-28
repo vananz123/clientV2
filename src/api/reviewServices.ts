@@ -1,29 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as request from '../utils/request';
 import { PagingResult, Result, Review } from './ResType';
+export interface PagingReview extends PagingResult {
+    items: Review[];
+}
 export const getReivewByProductId = async (id: number,page:number) => {
     try {
         const res = await request.get(`/review/product/${encodeURIComponent(id)}?PageIndex=${encodeURIComponent(page)}&PageSize=5`);
-        const resultObj :Review[] = res.resultObj.items
-        const paging: PagingResult = {
-            items: resultObj,
+        const paging: PagingReview = {
+            items: res.resultObj.items,
             pageIndex : res.resultObj.pageIndex,
             pageCount:res.resultObj.pageCount,
             pageSize:res.resultObj.pageSize,
             totalRecords:res.resultObj.totalRecords
         }
-        const resp: Result ={
-            error :'',
-            isSuccessed:res.isSuccessed,
-            message:res.message,
-            statusCode:200,
-            resultObj : paging,
-        }
-        return resp
+        return paging
     } catch (error: any) {
-        console.log(error.response.data);
-        const resError: Result = error.response.data;
-        return resError;
+        return undefined;
     }
 };
 export const createReivew = async (data: Review) => {

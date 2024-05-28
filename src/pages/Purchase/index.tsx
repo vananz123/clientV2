@@ -16,7 +16,7 @@ import {
     Flex,
 } from 'antd';
 import { Link } from 'react-router-dom';
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import type { RadioChangeEvent, SelectProps } from 'antd';
 import type { DescriptionsProps } from 'antd';
@@ -29,28 +29,77 @@ import { StatusForm } from '@/type';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { selectCartDetail } from '@/app/feature/cart/reducer';
 import { selectUser } from '@/app/feature/user/reducer';
+import { useQuery } from '@tanstack/react-query';
 const { Title, Paragraph } = Typography;
 export type TypeFormAddress = 'ADD' | 'EDIT';
 function Purchase() {
     const baseUrl = import.meta.env.VITE_BASE_URL;
-    const user= useAppSelector(selectUser).data
+    const user = useAppSelector(selectUser).data;
     const navigate = useNavigate();
-    const cart= useAppSelector(selectCartDetail).data
+    const cart = useAppSelector(selectCartDetail).data;
     const [status, setStatus] = React.useState<StatusForm>('loading');
-    const [options, setOptions] = React.useState<SelectProps['options']>([]);
-    const [addresses, setAddresses] = React.useState<Address[]>([]);
+    const options: SelectProps['options'] = [];
+    //const [addresses, setAddresses] = React.useState<Address[]>([]);
     const [currentAddress, setCurrentAddress] = React.useState<Address>();
     const [currentAddressForm, setCurrentAddressForm] = React.useState<Address>();
-    const [type, setType] = React.useState<string>('');
+    const [type, setType] = React.useState<string>('Chọn phương thức thanh toán');
     const [open, setOpen] = React.useState(false);
     const [openDrawAddress, setOpenDrawAddress] = useState(false);
     const [typeFormAddress, setTypeFormAddress] = React.useState<TypeFormAddress>('EDIT');
+    const { data: listPaymentMethod } = useQuery({
+        queryKey: [`type-payment-method`],
+        queryFn: () => paymentServices.getPaymentMethodByUserId(user !== undefined ? user.id : ''),
+        enabled: !!user,
+    });
+    const { data: addresses } = useQuery({
+        queryKey: [`list-addresses`],
+        queryFn: () => userServices.getAddressByUserId(user !== undefined ? user.id : ''),
+        enabled: !!user,
+    });
+    
+    if (listPaymentMethod) {
+        listPaymentMethod.map((e: PaymentMethod) => {
+            options.push({
+                value: e.id.toString(),
+                label: e.name,
+            });
+        });
+    }
     const showDrawerAddress = () => {
         setOpenDrawAddress(true);
     };
     const onCloseDrawAddress = () => {
         setOpenDrawAddress(false);
     };
+    const handleChange = (value: string) => {
+        setType(value);
+    };
+    useEffect(() => {
+        if (addresses && addresses.length > 0) {
+            setCurrentAddress(addresses[0]);
+        }
+    }, [addresses]);
+    const handleCancel = () => {
+        setOpen(false);
+    };
+    const handleChangeAddresses = (e: RadioChangeEvent) => {
+        if (addresses !== undefined) {
+            setCurrentAddress(addresses.find((x) => x.id == Number(e.target.value)));
+        }
+    };
+    const createOrder = async () => {
+        if (user != undefined && currentAddress != undefined && type != 'Chọn phương thức thanh toán') {
+            const res = await orderServices.create(user.id, currentAddress.id, Number(type));
+            if (res.isSuccessed === true) {
+                if (res.resultObj?.paymentTypeName === 'Thanh toán VNPAY') {
+                    window.location.assign(res.resultObj.returnUrl);
+                } else {
+                    navigate(`/checkout/${res.resultObj.orderId}`);
+                }
+            }
+        }
+    };
+    console.log(addresses)
     let items: DescriptionsProps['items'] = [
         {
             key: 'phoneNumber',
@@ -66,66 +115,9 @@ function Purchase() {
     if (typeof currentAddress === 'undefined') {
         items = [];
     }
-    const handleChange = (value: string) => {
-        setType(value);
-    };
-    const getPaymentType = useCallback(async () => {
-        if (user != undefined) {
-            const res = await paymentServices.getPaymentMethodByUserId(user.id);
-            if (res.isSuccessed === true) {
-                setType(res.resultObj[0].id.toString());
-                const op: SelectProps['options'] = [];
-                res.resultObj.map((e: PaymentMethod) => {
-                    op.push({
-                        value: e.id.toString(),
-                        label: e.name,
-                    });
-                });
-                setOptions(op);
-            }
-        }
-    }, [user]);
-
-    const getAddress = useCallback(async () => {
-        if (user != undefined) {
-            const res = await userServices.getAddressByUserId(user.id);
-            if (res.isSuccessed === true) {
-                setAddresses(res.resultObj);
-                setCurrentAddress(res.resultObj[0]);
-            }
-        }
-    }, [user]);
-    useEffect(() => {
-        getPaymentType();
-        getAddress();
-        if (status != 'loading') {
-            handleCancel();
-        }
-    }, [status, getAddress, getPaymentType]);
-    const handleCancel = () => {
-        setOpen(false);
-    };
-    const handleChangeAddresses = (e: RadioChangeEvent) => {
-        const add = addresses.find((x) => x.id == Number(e.target.value));
-        if (add != undefined) {
-            setCurrentAddress(add);
-        }
-    };
-    const createOrder = async () => {
-        if (user != undefined && currentAddress != undefined && type != '') {
-            const res = await orderServices.create(user.id, currentAddress.id, Number(type));
-            if (res.isSuccessed === true) {
-                if (res.resultObj?.paymentTypeName === 'Thanh toán VNPAY') {
-                    window.location.assign(res.resultObj.returnUrl);
-                } else {
-                    navigate(`/checkout/${res.resultObj.orderId}`);
-                }
-            }
-        }
-    };
     return (
         <div className="container">
-            <Row gutter={[24, 24]} style={{marginBottom:24}}>
+            <Row gutter={[24, 24]} style={{ marginBottom: 24 }}>
                 <Col className="gutter-row" xs={24} lg={16} xl={16}>
                     <Title level={4}>Phương Thức Thanh Toán</Title>
                     <Select
@@ -218,10 +210,11 @@ function Purchase() {
                         size="large"
                         block
                         type="primary"
-                        style={{ marginBottom: 10 }}
+                        style={{ marginBottom: 10 ,marginTop:10}}
                         disabled={
                             cart.items.length <= 0 ||
-                            cart.items.some((s) => s.stock == 0 || s.stock < s.quantity || currentAddress == undefined)
+                            cart.items.some((s) => s.stock == 0 || s.stock < s.quantity || currentAddress == undefined) ||
+                            type === "Chọn phương thức thanh toán"
                         }
                         onClick={() => {
                             createOrder();
@@ -231,13 +224,7 @@ function Purchase() {
                     </Button>
                 </Col>
             </Row>
-            <Modal
-                title="Notification"
-                open={open}
-                
-                onCancel={handleCancel}
-                footer={''}
-            >
+            <Modal title="Notification" open={open} onCancel={handleCancel} footer={''}>
                 <AddressForm
                     typeForm={typeFormAddress}
                     address={currentAddressForm}
@@ -248,7 +235,7 @@ function Purchase() {
             <Drawer title="Sửa Địa Chỉ" onClose={onCloseDrawAddress} open={openDrawAddress}>
                 <Radio.Group value={currentAddress?.id} onChange={handleChangeAddresses}>
                     <Space direction="vertical">
-                        {addresses.map((e: Address) => (
+                        {addresses && addresses.map((e: Address) => (
                             <Space>
                                 <Radio key={e?.id} value={e?.id}>
                                     <p>{e?.phoneNumber}</p>

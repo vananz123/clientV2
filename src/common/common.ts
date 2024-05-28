@@ -105,11 +105,11 @@ export const OPTIONS_MATERIAL :OptionBase[]= [
 export const OPTIONS_SORT : OptionSort[]=[
     {
         value: 'ascending',
-        label: 'Acending',
+        label: 'Giá tăng dần',
     },
     {
         value: 'descending',
-        label: 'Decrease',
+        label: 'Giá giảm dần',
     }
 ]
 

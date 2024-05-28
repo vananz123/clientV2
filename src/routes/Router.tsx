@@ -24,6 +24,7 @@ import ForgotPassword from '@/pages/ForgotPassword';
 import UserList from '@/pages/Admin/User/UserList';
 import { GuarantiesAdd, GuarantiesList, GuarantiesEdit } from '@/pages/Admin/Guaranty';
 import Page404 from '@/pages/Page404/Page404';
+import LoginAdmin from '@/pages/Admin/LoginAdmin';
 const Router: React.FC = () => {
     return useRoutes([
         {
@@ -42,6 +43,14 @@ const Router: React.FC = () => {
                     element: (
                         <GuestGuard>
                             <Login />
+                        </GuestGuard>
+                    ),
+                },
+                {
+                    path: 'login-admin',
+                    element: (
+                        <GuestGuard>
+                            <LoginAdmin />
                         </GuestGuard>
                     ),
                 },

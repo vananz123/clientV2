@@ -7,12 +7,11 @@ import * as loginServices from '@/api/loginServices';
 import * as userServices from '@/api/userServices';
 import type { Result, Role } from '@/api/ResType';
 import { Link, useNavigate } from 'react-router-dom';
-import Logo from '/logo.png'
 export type LoginType = {
     email?: string;
     password?: string;
 };
-function Login() {
+function LoginAdmin() {
     const [error, setError] = React.useState<Result>();
     const Navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -26,10 +25,13 @@ function Login() {
                 localStorage.setItem('accessToken', resuft.resultObj.accessToken);
                 const userResuft = await userServices.getUser();
                 if (userResuft.isSuccessed == true) {
-                   dispatch(loadUser());
                     const roleAdmin: Role[] = ['admin', 'sale'];
-                    if (roleAdmin.indexOf(userResuft.resultObj.roles[0]) < 0) {
-                        Navigate(-1);
+                    if (roleAdmin.indexOf(userResuft.resultObj.roles[0]) >= 0) {
+                        dispatch(loadUser());
+                        Navigate('/admin/product');
+                    }else{
+                        userResuft.message = "Lỗi role"
+                        setError(userResuft);
                     }
                 } else {
                     setError(userResuft);
@@ -70,7 +72,7 @@ function Login() {
             <div>
                 {error != undefined ? <Alert message="Error" description={error.message} type="error" showIcon /> : ''}
                 <h2 style={{ textAlign: 'center' }}>
-                   <Link to='/'> <img width={100} height={100} src={Logo} alt='la'/></Link>
+                   Login admin
                 </h2>
                 <Form
                     name="basic"
@@ -128,8 +130,6 @@ function Login() {
                 style={{ width: 300 }}
                 title="Forgot password"
                 open={open}
-                //onOk={handleOk}
-                //confirmLoading={confirmLoading}
                 onCancel={() => {
                     setOpen(false);
                 }}
@@ -164,4 +164,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default LoginAdmin;

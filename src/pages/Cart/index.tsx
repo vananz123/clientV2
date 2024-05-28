@@ -24,7 +24,6 @@ const { Paragraph } = Typography;
 import * as cartServices from '@/api/cartServices';
 import { Link } from 'react-router-dom';
 import { selectUser } from '@/app/feature/user/reducer';
-import CartLoading from './CartLoading';
 const baseUrl = import.meta.env.VITE_BASE_URL;
 function Cart() {
     const dispatch = useAppDispatch();
@@ -33,7 +32,6 @@ function Cart() {
     const [currentCart, setCurrentCart] = React.useState<Cart>();
     const [open, setOpen] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
-    const [loadingHandleQuantity, setLoadingHandleQuantity] = React.useState(false);
     const showModal = (cart: Cart) => {
         setOpen(true);
         setCurrentCart(cart);
@@ -58,38 +56,26 @@ function Cart() {
         if (typeof e !== 'undefined') {
             const newQuantity = e?.quantity + 1;
             if (newQuantity <= e?.stock) {
-                setLoadingHandleQuantity(true);
                 const res = await cartServices.updateCart(e?.id, newQuantity);
-                if (res.isSuccessed == true) {
-                    dispatch(loadCartDetail({ userId: user?.id as string }));
-                    setLoadingHandleQuantity(false);
-                } else {
-                    setLoadingHandleQuantity(false);
-                }
+                if (res.isSuccessed == true) dispatch(loadCartDetail({ userId: user?.id as string }));
             }
         }
     };
     const decline = async (e: Cart) => {
         if (typeof e !== 'undefined' && e.quantity > 0) {
-            setLoadingHandleQuantity(true);
             const newQuantity = e?.quantity - 1;
             const res = await cartServices.updateCart(e?.id, newQuantity);
             if (res.isSuccessed == true) {
                 dispatch(loadCartDetail({ userId: user?.id as string }));
-                setLoadingHandleQuantity(false);
-            } else {
-                setLoadingHandleQuantity(false);
             }
         }
     };
     return (
         <div className="container" style={{ marginTop: 16 }}>
-            {isLoading ? (
-                <CartLoading />
-            ) : (
+            { (
                 data && (
                     <>
-                        <Spin spinning={loadingHandleQuantity}>
+                        <Spin spinning={isLoading}>
                             {data.items.length == 0 ? (
                                 <>
                                     <Empty imageStyle={{ height: 60 }}>

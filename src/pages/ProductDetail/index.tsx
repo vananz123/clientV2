@@ -42,20 +42,23 @@ interface OptionSize {
 }
 function ProductDetail() {
     const Navigate = useNavigate();
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
     const { id } = useParams();
     const baseUrl = import.meta.env.VITE_BASE_URL;
-    const user = useAppSelector(selectUser).data;
-    const [listReview, setListReview] = React.useState<Review[]>([]);
+    const {data:user } = useAppSelector(selectUser);
     const { data, isLoading } = useQuery({
         queryKey: [`product-detail-${id}`],
         queryFn: () => productServices.getProductDetail(Number(id)),
     });
+    const { data: listReview} = useQuery({
+        queryKey: [`product-detail-review`],
+        queryFn: () => reviewServices.getReivewByProductId(Number(id), 1),
+    });
     const [currentProductItem, setCurrentProductItem] = React.useState<ProductItem>();
     const [quantity, setQuantity] = React.useState(1);
-    const optionSize :OptionSize[] =[];
-    const listImage:string[]=[];
-    if(data){
+    const optionSize: OptionSize[] = [];
+    const listImage: string[] = [];
+    if (data) {
         const arr: string[] = data.urlImage.split('*');
         const t = arr.pop();
         console.log(t);
@@ -84,6 +87,48 @@ function ProductDetail() {
         const quan = quantity + 1;
         if (currentProductItem != undefined && quan <= currentProductItem?.stock) {
             setQuantity(quan);
+        }
+    };
+    const decline = () => {
+        let newCount = quantity - 1;
+        if (newCount < 1) {
+            newCount = 1;
+        }
+        setQuantity(newCount);
+    };
+    useEffect(() => {
+        if (data && data.items && data.items.length > 0) setCurrentProductItem(data.items[0]);
+    }, [data]);
+    const handleChangeColl = (key: string | string[]) => {
+        console.log(key);
+    };
+    const GoBack = () => {
+        Navigate(-1);
+    };
+    const onChangeSize = async (value: any) => {
+        if (data != undefined) {
+            const item = data.items?.find((x) => x.id == value);
+            if (item != undefined) {
+                setCurrentProductItem(item);
+                await productServices.productItemViewCount(item.id);
+            }
+        }
+    };
+    const handleAddToCart = async () => {
+        if (typeof user !== 'undefined') {
+            if (typeof currentProductItem !== 'undefined') {
+                const res = await cartServices.addCart(user.id, currentProductItem.id, quantity);
+                if (res.isSuccessed === true) {
+                    dispatch(loadCartDetail({ userId: user.id as string }));
+                    openNotificationWithIcon('success', 'Thêm thành công!');
+                } else {
+                    openNotificationWithIcon('error', res.message);
+                }
+            } else {
+                openNotificationWithIcon('error', 'error');
+            }
+        } else {
+            Navigate('/auth/login');
         }
     };
     const items: CollapseProps['items'] = [
@@ -128,57 +173,6 @@ function ProductDetail() {
             ),
         },
     ];
-    const decline = () => {
-        let newCount = quantity - 1;
-        if (newCount < 1) {
-            newCount = 1;
-        }
-        setQuantity(newCount);
-    };
-    const getReview = async (id: number) => {
-        const r = await reviewServices.getReivewByProductId(id, 1);
-        if (r.isSuccessed === true) {
-            setListReview(r.resultObj.items);
-        }
-    };
-    useEffect(() => {
-        if (id != undefined && data) {
-            if(data.items && data.items.length > 0) setCurrentProductItem(data.items[0])
-            getReview(data.id);
-        }
-    }, [id, data]);
-    const handleChangeColl = (key: string | string[]) => {
-        console.log(key);
-    };
-    const GoBack = () => {
-        Navigate(-1);
-    };
-    const onChangeSize = async (value: any) => {
-        if (data != undefined) {
-            const item = data.items?.find((x) => x.id == value);
-            if (item != undefined) {
-                setCurrentProductItem(item);
-                await productServices.productItemViewCount(item.id);
-            }
-        }
-    };
-    const handleAddToCart = async () => {
-        if (typeof user !== 'undefined') {
-            if (typeof currentProductItem !== 'undefined') {
-                const res = await cartServices.addCart(user.id, currentProductItem.id, quantity);
-                if (res.isSuccessed === true) {
-                    dispatch(loadCartDetail({userId:user.id as string}))
-                    openNotificationWithIcon('success', 'Thêm thành công!');
-                } else {
-                    openNotificationWithIcon('error', res.message);
-                }
-            } else {
-                openNotificationWithIcon('error', 'error');
-            }
-        } else {
-            Navigate('/auth/login');
-        }
-    };
     return (
         <div className="container">
             {contextHolder}
@@ -194,7 +188,7 @@ function ProductDetail() {
                 Go back
             </Button>
 
-            {isLoading  ? (
+            {isLoading ? (
                 <ProductDetailLoading />
             ) : (
                 data && (
@@ -232,7 +226,7 @@ function ProductDetail() {
                                 </Col>
                                 <Col xs={8} sm={8} md={8} lg={4} xl={4}>
                                     <Space align="center" direction="vertical" style={{ padding: 20 }}>
-                                        {listImage.map((e: string,index) => (
+                                        {listImage.map((e: string, index) => (
                                             <Image key={index} alt={`${data.seoTitle}`} src={`${baseUrl + e}`} />
                                         ))}
                                     </Space>
@@ -276,6 +270,7 @@ function ProductDetail() {
 
                                                 {typeof data.items !== 'undefined' && (
                                                     <>
+                                                     
                                                         {data.items.length > 1 && (
                                                             <div>
                                                                 <p>Size</p>
@@ -335,67 +330,77 @@ function ProductDetail() {
                                             />
                                         </>
                                     )}
+                                    {/* {data.items &&(
+                                        <><SelectProductItem options={data.items}/></>
+                                    )} */}
+                                    
                                 </Col>
                             </Row>
                             <Row gutter={16}>
                                 <Col xs={24} lg={14}>
-                                    {listReview.length > 0 ? (
+                                    {listReview && (
                                         <>
-                                            {listReview.map((e: Review) => (
-                                                <Card key={e.id} style={{ width: '100%', marginTop: 16 }}>
-                                                    <Meta
-                                                        avatar={
-                                                            <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
-                                                        }
-                                                        title={e.user.userName}
-                                                        description={
-                                                            <>
-                                                                <Space align="baseline" direction="vertical">
-                                                                    <Rate value={e.rate} disabled />
-                                                                    <p>{e.comment}</p>
-                                                                    <p>{dayjs(e.createAt).format('YYYY-MM-DD')}</p>
-                                                                </Space>
-                                                            </>
-                                                        }
-                                                    />
-                                                    {e.feelback !== null && (
-                                                        <>
-                                                            <Card
-                                                                key={e.id}
-                                                                type="inner"
-                                                                style={{ width: '100%', marginTop: 16 }}
-                                                            >
-                                                                <Meta
-                                                                    avatar={<Avatar icon={<UserOutlined />} />}
-                                                                    title={'Feedback of admin'}
-                                                                    description={
-                                                                        <>
-                                                                            <Space
-                                                                                align="baseline"
-                                                                                direction="vertical"
-                                                                            >
-                                                                                <p>{e.feelback}</p>
-                                                                                <p>
-                                                                                    {dayjs(e.feelbackAt).format(
-                                                                                        'YYYY-MM-DD',
-                                                                                    )}
-                                                                                </p>
-                                                                            </Space>
-                                                                        </>
-                                                                    }
-                                                                />
-                                                            </Card>
-                                                        </>
-                                                    )}
-                                                </Card>
-                                            ))}
+                                            {listReview.items.length > 0 ? (
+                                                <>
+                                                    {listReview.items.map((e: Review) => (
+                                                        <Card key={e.id} style={{ width: '100%', marginTop: 16 }}>
+                                                            <Meta
+                                                                avatar={
+                                                                    <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
+                                                                }
+                                                                title={e.user.userName}
+                                                                description={
+                                                                    <>
+                                                                        <Space align="baseline" direction="vertical">
+                                                                            <Rate value={e.rate} disabled />
+                                                                            <p>{e.comment}</p>
+                                                                            <p>
+                                                                                {dayjs(e.createAt).format('YYYY-MM-DD')}
+                                                                            </p>
+                                                                        </Space>
+                                                                    </>
+                                                                }
+                                                            />
+                                                            {e.feelback !== null && (
+                                                                <>
+                                                                    <Card
+                                                                        key={e.id}
+                                                                        type="inner"
+                                                                        style={{ width: '100%', marginTop: 16 }}
+                                                                    >
+                                                                        <Meta
+                                                                            avatar={<Avatar icon={<UserOutlined />} />}
+                                                                            title={'Feedback of admin'}
+                                                                            description={
+                                                                                <>
+                                                                                    <Space
+                                                                                        align="baseline"
+                                                                                        direction="vertical"
+                                                                                    >
+                                                                                        <p>{e.feelback}</p>
+                                                                                        <p>
+                                                                                            {dayjs(e.feelbackAt).format(
+                                                                                                'YYYY-MM-DD',
+                                                                                            )}
+                                                                                        </p>
+                                                                                    </Space>
+                                                                                </>
+                                                                            }
+                                                                        />
+                                                                    </Card>
+                                                                </>
+                                                            )}
+                                                        </Card>
+                                                    ))}
+                                                </>
+                                            ) : (
+                                                <Empty
+                                                    image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                                                    imageStyle={{ height: 60 }}
+                                                    description={<span>Chưa có bình luận nào</span>}
+                                                ></Empty>
+                                            )}
                                         </>
-                                    ) : (
-                                        <Empty
-                                            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                                            imageStyle={{ height: 60 }}
-                                            description={<span>Chưa có bình luận nào</span>}
-                                        ></Empty>
                                     )}
                                 </Col>
                                 <Col xs={24} lg={10}>

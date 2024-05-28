@@ -45,7 +45,7 @@ function UserOrderDetail() {
             description: mess,
         });
     };
-    const { data, isLoading } = useQuery({
+    const { data, isLoading ,refetch} = useQuery({
         queryKey: [`order-detail`],
         queryFn: () => orderServices.getOrderDetailByOrderId(Number(id)),
     });
@@ -63,7 +63,6 @@ function UserOrderDetail() {
             statusTimeLine.push(line);
         });
     }
-
     const onFinish: FormProps<Review>['onFinish'] = async (values) => {
         if (currentOD != undefined && user != undefined) {
             if (currentOD?.review == undefined) {
@@ -71,12 +70,14 @@ function UserOrderDetail() {
                 values.orderDetailId = currentOD.id;
                 const res = await reviewServices.createReivew(values);
                 if (res.isSuccessed === true) {
+                    refetch()
                     onClose();
                 }
             } else {
                 values.id = currentOD?.review.id;
                 const res = await reviewServices.updateReivew(values);
                 if (res.isSuccessed === true) {
+                    refetch()
                     onClose();
                 }
             }

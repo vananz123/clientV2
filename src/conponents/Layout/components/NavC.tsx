@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectCategories } from '@/app/feature/category/reducer';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Category } from '@/type';
-import React, { SetStateAction, useCallback, useEffect } from 'react';
+import React, { SetStateAction, useEffect } from 'react';
 import { loadCategories } from '@/app/feature/category/action';
 import SkeletonCard from '@/conponents/SkeletonCard';
 type MenuItem = Required<MenuProps>['items'][number];
@@ -65,9 +65,9 @@ const NavC: React.FC<Props> = ({ type = 'forDesktop', closeDrawer }) => {
         return arr;
     };
     const item: MenuProps['items'] = [...renderCateItem(), getItem('Khuyến mãi', '/product/promotion')];
-    const handleCloseDrawer = useCallback(() => {
+    const handleCloseDrawer = () => {
         closeDrawer(false);
-    }, [closeDrawer]);
+    };
     const handleClick: MenuProps['onClick'] = (e) => {
         Navigate(`${e.key}`);
         handleCloseDrawer();

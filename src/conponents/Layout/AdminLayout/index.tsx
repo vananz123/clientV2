@@ -28,7 +28,7 @@ function AdminLayout(){
                         <Outlet/>
                     </div>
                 </Content>
-                <FooterC></FooterC>
+                <FooterC/>
             </Layout>
         </Layout>
     );
