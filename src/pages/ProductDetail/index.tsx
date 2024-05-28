@@ -46,7 +46,6 @@ function ProductDetail() {
     const { id } = useParams();
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const user = useAppSelector(selectUser).data;
-    const [listImage, setListImage] = React.useState<string[]>([]);
     const [listReview, setListReview] = React.useState<Review[]>([]);
     const { data, isLoading } = useQuery({
         queryKey: [`product-detail-${id}`],
@@ -54,6 +53,26 @@ function ProductDetail() {
     });
     const [currentProductItem, setCurrentProductItem] = React.useState<ProductItem>();
     const [quantity, setQuantity] = React.useState(1);
+    const optionSize :OptionSize[] =[];
+    const listImage:string[]=[];
+    if(data){
+        const arr: string[] = data.urlImage.split('*');
+        const t = arr.pop();
+        console.log(t);
+        listImage.push(...arr);
+        if (data.items && data.items.length > 0) {
+            data.items.forEach((element: ProductItem) => {
+                const option: OptionSize = {
+                    label: element.value,
+                    value: element.id,
+                };
+                if (element.status == 2) {
+                    option.disabled = true;
+                }
+                optionSize.push(option);
+            });
+        }
+    }
     const [api, contextHolder] = notification.useNotification();
     const openNotificationWithIcon = (type: NotificationType, mess: string) => {
         api[type]({
@@ -109,7 +128,6 @@ function ProductDetail() {
             ),
         },
     ];
-    const [optionSize, setOptionSize] = React.useState<OptionSize[]>([]);
     const decline = () => {
         let newCount = quantity - 1;
         if (newCount < 1) {
@@ -125,26 +143,8 @@ function ProductDetail() {
     };
     useEffect(() => {
         if (id != undefined && data) {
-            const arr: string[] = data.urlImage.split('*');
-            const t = arr.pop();
-            console.log(t);
-            setListImage(arr);
+            if(data.items && data.items.length > 0) setCurrentProductItem(data.items[0])
             getReview(data.id);
-            const sizeOption: OptionSize[] = [];
-            if (data.items && data.items.length > 0) {
-                setCurrentProductItem(data.items[0]);
-                data.items.forEach((element: ProductItem) => {
-                    const option: OptionSize = {
-                        label: element.value,
-                        value: element.id,
-                    };
-                    if (element.status == 2) {
-                        option.disabled = true;
-                    }
-                    sizeOption.push(option);
-                });
-                setOptionSize(sizeOption);
-            }
         }
     }, [id, data]);
     const handleChangeColl = (key: string | string[]) => {
@@ -232,8 +232,8 @@ function ProductDetail() {
                                 </Col>
                                 <Col xs={8} sm={8} md={8} lg={4} xl={4}>
                                     <Space align="center" direction="vertical" style={{ padding: 20 }}>
-                                        {listImage.map((e: string) => (
-                                            <Image src={`${baseUrl + e}`} />
+                                        {listImage.map((e: string,index) => (
+                                            <Image key={index} alt={`${data.seoTitle}`} src={`${baseUrl + e}`} />
                                         ))}
                                     </Space>
                                 </Col>

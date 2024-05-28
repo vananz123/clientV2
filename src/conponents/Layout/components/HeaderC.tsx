@@ -83,8 +83,8 @@ function HeaderC() {
                         </div>
                         <div className="header-container__logo">
                             <div className="menu-right">
-                                <div className="menu-right__bars">
-                                    <BarsOutlined onClick={() => showDrawer()} />
+                                <div className="menu-right__bars" onClick={() => showDrawer()}>
+                                  <BarsOutlined/>
                                 </div>
                                 <Link className="menu-right__logo" style={{ width: 64, height: 64 }} to="/">
                                     <img style={{ width: '100%', height: '100%' }} alt="al store" src={Logo2} />

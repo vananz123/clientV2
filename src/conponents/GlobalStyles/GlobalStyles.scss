@@ -122,9 +122,14 @@ body {
             justify-content: start;
             align-items: center;
             &__bars {
-                display: block;
+                display: flex;
+                align-items: center;
+                text-align: center;
                 @include Responsive(MD) {
                     display: none;
+                }
+                & span{
+                    font-size: 24px;
                 }
             }
             &__logo {
@@ -166,7 +171,7 @@ body {
     }
 }
 .search {
-    width: 195px;
+    width: 185px;
     @include Responsive(XS) {
         width: 200px;
     }
