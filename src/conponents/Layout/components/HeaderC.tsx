@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Space, Drawer, Button } from 'antd';
+import { Space, Drawer, Button, Switch } from 'antd';
 import { memo, useCallback } from 'react';
-import { Layout, theme, Badge, Avatar, Dropdown } from 'antd';
+import { Layout, Badge, Avatar, Dropdown } from 'antd';
 import { UserOutlined, ShoppingCartOutlined, BarsOutlined, LoginOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
@@ -17,16 +17,18 @@ import React, { useEffect } from 'react';
 import { selectCartDetail } from '@/app/feature/cart/reducer';
 import { loadCartDetail } from '@/app/feature/cart/action';
 import { loadUser } from '@/app/feature/user/action';
+import { changemode } from '@/app/feature/mode/reducer';
+import { selectMode } from '@/app/feature/mode/reducer';
 const HeaderC = memo(()=> {
     const Navigate = useNavigate();
     const { data } = useAppSelector(selectUser);
+    const {color,colorBg} = useAppSelector(selectMode)
     const user = data;
     const cart = useAppSelector(selectCartDetail).data;
     const dispatch = useAppDispatch();
     useEffect(() => {
         if (user) dispatch(loadCartDetail({ userId: user?.id as string }));
     }, [dispatch, user]);
-    const { token } = theme.useToken();
     const items: MenuProps['items'] = [
         {
             label: (
@@ -73,10 +75,13 @@ const HeaderC = memo(()=> {
     const onClose = () => {
         setOpen(false);
     };
+    const onChange = () => {
+        dispatch(changemode())
+      };
     return (
         <>
             <div>
-                <Header style={{ padding: 0, backgroundColor: token.colorBgContainer }}>
+                <Header style={{ padding: 0, backgroundColor: colorBg , color:color}}>
                     <div className="header-container">
                         <div className="header-container__nav">
                             <NavC />
@@ -116,6 +121,7 @@ const HeaderC = memo(()=> {
                                                 <Avatar icon={<ShoppingCartOutlined />} />
                                             </Badge>
                                         </Link>
+                                        <Switch checkedChildren="light" unCheckedChildren="dark" onChange={onChange}/>
                                     </Space>
                                 </>
                             ) : (
@@ -163,6 +169,7 @@ const HeaderC = memo(()=> {
                                 right: 10,
                             }}
                         >
+                            <Switch onChange={onChange}/>
                             {user && (
                                 <Button
                                     icon={<LogoutOutlined />}

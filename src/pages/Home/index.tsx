@@ -18,10 +18,13 @@ const imgStyles: React.CSSProperties = {
     width: '100%',
     height: '100%',
 };
+import { selectMode } from '@/app/feature/mode/reducer';
+import { useAppSelector } from '@/app/hooks';
 function Home() {
     const [productsNew, setProductsNew] = React.useState<Product[]>();
     const [productsHot, setProductsHot] = React.useState<Product[]>();
     const [products,setProducts] = React.useState<Product[]>();
+    const {color,colorBg} = useAppSelector(selectMode)
     const getProductPaging = async (status: number) => {
         const filter: Filter = {
             page: 1,
@@ -98,8 +101,8 @@ function Home() {
                 </div>
                 <div>
                     <Card bordered={false}
-                        title="Xu Hướng"
-                        style={{marginTop: 20,borderRadius:'50%' }}
+                        title={<p style={{color:color}}>Xu hướng</p>}
+                        style={{marginTop: 20 ,background:colorBg}}
                     >
                         {typeof productsNew !== 'undefined' && (
                             <Row gutter={[12, 12]}>

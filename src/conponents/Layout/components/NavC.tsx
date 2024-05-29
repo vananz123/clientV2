@@ -21,9 +21,11 @@ interface Props {
     type?: ResponsiveType;
     closeDrawer?: SetStateAction<any>;
 }
+import { selectMode } from '@/app/feature/mode/reducer';
 const NavC: React.FC<Props> =memo( ({ type = 'forDesktop', closeDrawer }) => {
     const loca = useLocation();
     const arr = [loca.pathname];
+    const {data:mode , colorBg} = useAppSelector(selectMode)
     const Navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { isLoading, data } = useAppSelector(selectCategories);
@@ -44,15 +46,14 @@ const NavC: React.FC<Props> =memo( ({ type = 'forDesktop', closeDrawer }) => {
             data.forEach((element: Category) => {
                 const item = getItem(
                     <>
-                        <a
+                        <span
                             onClick={() => {
                                 Navigate(`/product/${element.id}`);
                                 handleCloseDrawer();
                             }}
-                            style={{ color: 'black' }}
                         >
                             {element.name}
-                        </a>
+                        </span>
                     </>,
                     `/product/${element.id}`,
                     '',
@@ -83,11 +84,11 @@ const NavC: React.FC<Props> =memo( ({ type = 'forDesktop', closeDrawer }) => {
             ) : (
                 data && (
                     <Menu
-                        theme="light"
+                    theme={mode}
                         mode={type === 'forDesktop' ? 'horizontal' : 'inline'}
                         selectedKeys={arr}
                         items={item}
-                        style={{ flex: 1, minWidth: 0 ,marginLeft:0}}
+                        style={{ flex: 1, minWidth: 0 ,marginLeft:0 ,background:colorBg}}
                         onClick={handleClick}
                     />
                 )

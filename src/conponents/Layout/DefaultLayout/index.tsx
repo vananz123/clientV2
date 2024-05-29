@@ -1,23 +1,26 @@
-import { PhoneOutlined } from '@ant-design/icons';
+
 import { HeaderC, FooterC } from '../components';
-import { Avatar, Layout, theme } from 'antd';
+import {  Layout, theme } from 'antd';
 const { Content } = Layout;
 import { Outlet } from 'react-router-dom';
+import { useAppSelector } from '@/app/hooks';
+import { selectMode } from '@/app/feature/mode/reducer';
 function DefaultLayout() {
+    const {colorBg, color} = useAppSelector(selectMode)
     const {
-        token: { colorBgContainer, borderRadiusLG },
+        token: { borderRadiusLG },
     } = theme.useToken();
-
     return (
         <div>
             <Layout>
-                <Layout>
+                <Layout style={{background:colorBg}}>
                     <HeaderC />
                     <Content
                         style={{
                             marginTop:10,
                             minHeight: 360,
-                            background: colorBgContainer,
+                            background: colorBg,
+                            color:color,
                             borderRadius: borderRadiusLG,
                         }}
                     >
@@ -26,16 +29,6 @@ function DefaultLayout() {
                     <FooterC />
                 </Layout>
             </Layout>
-            <div
-                style={{
-                    position: 'fixed',
-                    bottom: 20,
-                    right: 20,
-                    cursor: 'pointer',
-                }}
-            >
-                <Avatar size={45} icon={<PhoneOutlined />} />
-            </div>
         </div>
     );
 }
