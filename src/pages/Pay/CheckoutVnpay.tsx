@@ -1,57 +1,53 @@
 import queryString from 'query-string';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import * as orderServices from '@/api/orderServices';
 import { Button, Result } from 'antd';
-import { useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { loadCartDetail } from '@/app/feature/cart/action';
 import { selectUser } from '@/app/feature/user/reducer';
+import { useMutation } from '@tanstack/react-query';
 function CheckoutVnpay() {
-    const {id} = useParams()
     const user = useAppSelector(selectUser).data
     const [content,setContent] = React.useState<string>('')
     const [status,setStatus] = React.useState<boolean>(false)
     const p = queryString.parse(window.location.search);
     const dispatch = useAppDispatch()
-    const paided = async () => {
-        if (p != undefined) {
-            const orderInfo = p.vnp_OrderInfo;
-            if (typeof orderInfo === 'string') {
-                const list = orderInfo.split(' ');
-                const res = await orderServices.paided(Number(list[0]));
-                console.log(res);
-            }
-        }
-    };
-    const canceled = async () => {
-        if (p != undefined) {
-            const orderInfo = p.vnp_OrderInfo;
-            if (typeof orderInfo === 'string') {
-                const list = orderInfo.split(' ');
-                const res = await orderServices.canceled(Number(list[0]));
-                console.log(res);
-            }
-        }
-    };
+    const mutationPaided = useMutation({
+        mutationKey:['paided'],
+        mutationFn:(orderId:number)=> orderServices.paided(Number(orderId)),
+        onSuccess:()=>{
+            setStatus(true)
+            setContent('Bạn đã thanh toán thành công')
+        }   
+    })
+    const mutationCanceled = useMutation({
+        mutationKey:['canceled'],
+        mutationFn:(orderId:number)=> orderServices.canceled(Number(orderId)),
+        onSuccess:()=>{
+            setContent('Thanh toán thất bại')
+        }   
+    })
     useEffect(()=>{
         if(user) dispatch(loadCartDetail({userId:user.id}))
     },[dispatch,user])
-    useEffect(() => {
+    
+    useMemo(()=>{
         if (p != undefined) {
             if (p.vnp_TransactionStatus == '00') {
-                paided();
-                setStatus(true)
-                setContent('Bạn đã thanh toán thành công')
+                const orderInfo = p.vnp_OrderInfo;
+                if (typeof orderInfo === 'string') {
+                    const list = orderInfo.split(' ');
+                    mutationPaided.mutate(Number(list[0]))
+                }
             } else {
-                canceled();
-                setContent('Thanh toán thất bại')
+                const orderInfo = p.vnp_OrderInfo;
+                if (typeof orderInfo === 'string') {
+                    const list = orderInfo.split(' ');
+                    mutationCanceled.mutate(Number(list[0]))
+                }
             }
         }
-        if(id != undefined){
-            setStatus(true)
-            setContent("Bạn đã đặt hàng thành công, vui lòng kiểm trả hàng trước khi thanh toán!")
-        }
-    },[id,p]);
+    },[p,mutationCanceled,mutationPaided])
     return (
         <div className='container'>
             <Result

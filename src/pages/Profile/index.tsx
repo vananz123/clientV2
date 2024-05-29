@@ -1,6 +1,6 @@
 import { ArrowLeftOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { Badge, Button, Card, Col, Descriptions, Divider, Flex, Modal, Result, Row, Space, Tabs } from 'antd';
-import React, { useCallback, useEffect } from 'react';
+import React, {  useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import * as orderServices from '@/api/orderServices';
 import * as userServices from '@/api/userServices';
@@ -12,7 +12,7 @@ import { TypeFormAddress } from '../Purchase';
 import AddressForm from '@/conponents/AddressForm';
 import { StatusForm } from '@/type';
 import dayjs from 'dayjs';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import ProfileLoading from './ProfileLoading';
 function Profile() {
     const Navigate = useNavigate();
@@ -22,28 +22,31 @@ function Profile() {
         queryFn: () => orderServices.getOrderByUserId(user?.id || ''),
     });
     //const [currentData, setCurrentData] = React.useState<Order>();
-    const [addresses, setAddresses] = React.useState<Address[]>([]);
     const [currentAddress, setCurrentAddress] = React.useState<Address>();
     const [currentAddressForm, setCurrentAddressForm] = React.useState<Address>();
     const [open, setOpen] = React.useState(false);
     const [openDel, setOpenDel] = React.useState(false);
-    const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [status, setStatus] = React.useState<StatusForm>('loading');
     const [typeFormAddress, setTypeFormAddress] = React.useState<TypeFormAddress>('EDIT');
-    const getAddress = useCallback(async () => {
-        if (user != undefined) {
-            const res = await userServices.getAddressByUserId(user.id);
-            if (res.isSuccessed === true) {
-                setAddresses(res.resultObj);
-            }
-        }
-    }, [user]);
+    const { data: addresses ,refetch} = useQuery({
+        queryKey: [`list-addresses`],
+        queryFn: () => userServices.getAddressByUserId(user !== undefined ? user.id : ''),
+        enabled: !!user,
+    });
+    const mutation = useMutation({
+        mutationKey:['del-address'],
+        mutationFn:(userId:number)=> userServices.deleteAddress(userId),
+        onSuccess:()=>{
+            refetch()
+            setOpenDel(false);
+        }   
+    })
     useEffect(() => {
-        getAddress();
         if (status != 'loading') {
+            refetch()
             setOpen(false);
         }
-    }, [user, status, getAddress]);
+    }, [refetch, status]);
     const GoBack = () => {
         Navigate(-1);
     };
@@ -130,7 +133,7 @@ function Profile() {
                         <Col xs={24} lg={10}>
                             <Card title="Thông tin địa chỉ">
                                 <div>
-                                    {addresses.map((e: Address) => (
+                                    {addresses && addresses.map((e: Address) => (
                                         <>
                                             <Flex align="center" justify="space-between">
                                                 <Space>
@@ -186,20 +189,10 @@ function Profile() {
             ),
         },
     ];
-    const handleDelOk = () => {
-        setConfirmLoading(true);
-        setTimeout(async () => {
-            if (typeof currentAddress !== 'undefined') {
-                const res = await userServices.deleteAddress(currentAddress?.id);
-                if (res.isSuccessed === true) {
-                    getAddress();
-                    setConfirmLoading(false);
-                    setOpenDel(false);
-                }
-            }
-            setConfirmLoading(false);
-            setOpenDel(false);
-        }, 200);
+    const handleDelOk =async () => {
+        if (typeof currentAddress !== 'undefined') {
+            await mutation.mutateAsync(currentAddress.id)
+        }
     };
     const handleCancel = () => {
         setOpen(false);
@@ -227,7 +220,7 @@ function Profile() {
                             title="Notification"
                             open={open}
                             //onOk={handleOk}
-                            confirmLoading={confirmLoading}
+                            confirmLoading={mutation.isPending}
                             onCancel={handleCancel}
                             footer={''}
                         >
@@ -242,7 +235,7 @@ function Profile() {
                             title="Notification"
                             open={openDel}
                             onOk={handleDelOk}
-                            confirmLoading={confirmLoading}
+                            confirmLoading={mutation.isPending}
                             onCancel={() => {
                                 setOpenDel(false);
                             }}
@@ -255,7 +248,7 @@ function Profile() {
         </div>
     );
 }
-const getLateArray = (os: OrderStatus[] | undefined) => {
+const getLateArray =  (os: OrderStatus[] | undefined) => {
     if (os && os.length > 0) {
         return os[os.length - 1].name;
     }

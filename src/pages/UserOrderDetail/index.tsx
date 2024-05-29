@@ -116,6 +116,7 @@ function UserOrderDetail() {
                 res = await orderServices.returned(order.id);
             }
             if (res.isSuccessed === true) {
+                refetch()
                 openNotificationWithIcon('success', res.message);
             } else {
                 openNotificationWithIcon('error', res.message);

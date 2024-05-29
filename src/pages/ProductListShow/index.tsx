@@ -5,8 +5,7 @@ import React, { useCallback, useEffect } from 'react';
 import { Product,Filter,Sort } from '@/type';
 import { useAppSelector } from '@/app/hooks';
 import { selectCategories } from '@/app/feature/category/reducer';
-import { Button, Col, Flex, Result, Row, Select, Spin, Switch, Pagination, PaginationProps , Space, Tooltip } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import { Button, Col, Flex, Result, Row, Select, Switch, Pagination, PaginationProps , Space, Tooltip } from 'antd';
 import ProductCard from '@/conponents/ProductCard';
 import { OPTIONS_PRICE,OPTIONS_MATERIAL,OPTIONS_SORT } from '@/common/common';
 import SkeletonCard from '@/conponents/SkeletonCard';
@@ -22,9 +21,7 @@ function ProductListShow() {
     const [totalRecord,setTotalRecord] = React.useState<number>(0)
     const [isPromotion, setIsPromotion] = React.useState<boolean>(false);
     const [titleContent, setTitleContent] = React.useState<string | undefined>('');
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const getProductPaging = useCallback(async () => {
-        setIsLoading(true);
         const filter: Filter = {
             categoryId: Number(id),
             page: page,
@@ -38,12 +35,10 @@ function ProductListShow() {
         if (res.statusCode == 200) {
             console.log(res)
             setProducts(res.resultObj.items);
-            setIsLoading(false);
             setTotalRecord(res.resultObj.totalRecords)
         }
     },[id,page, optionPrice, optionMaterial, sortOder, isPromotion]);
     const getProductPromotionPaging = useCallback(async () => {
-        setIsLoading(true);
         const filter: Filter = {
             page: page,
             sortOder: sortOder,
@@ -56,11 +51,11 @@ function ProductListShow() {
         console.log(res);
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
-            setIsLoading(false);setTotalRecord(res.resultObj.totalRecords)
+            setTotalRecord(res.resultObj.totalRecords)
         }
     },[page, optionPrice, optionMaterial, sortOder, isPromotion]);
     const getProductPNPaging = useCallback(async () => {
-        setIsLoading(true);
+       
         const filter: Filter = {
             page: page,
             sortOder: sortOder,
@@ -73,7 +68,6 @@ function ProductListShow() {
         const res = await productServices.getProductPagingByFilter(filter);
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
-            setIsLoading(false);
             setTotalRecord(res.resultObj.totalRecords)
         }
     },[id, page, optionPrice, optionMaterial, sortOder, isPromotion]);
@@ -102,10 +96,10 @@ function ProductListShow() {
                 setTitleContent('Khuyến mãi');
                 getProductPromotionPaging();
             } else if (id === 'new') {
-                setTitleContent(id);
+                setTitleContent('Sản phẩm mới');
                 getProductStatusPaging(2);
             } else if (id === 'hot') {
-                setTitleContent(id);
+                setTitleContent('Sản phẩm bán chạy');
                 getProductStatusPaging(3);
             } else {
                 try {
@@ -199,7 +193,7 @@ function ProductListShow() {
                     </Space>
                     <Select value={sortOder} style={{ width: 120 }} onChange={handleChangeSort} options={OPTIONS_SORT} />
                 </Flex>
-                <Spin spinning={isLoading} indicator={<LoadingOutlined style={{ fontSize: 24 }} />}>
+               
                     {products != undefined ? (
                         <>
                             {products.length > 0 ? (
@@ -240,7 +234,6 @@ function ProductListShow() {
                             ))}
                         </Row>
                     )}
-                </Spin>
                 <div style={{ marginTop: 24, marginBottom:24,textAlign: 'center' }}>
                     <Pagination onChange={onChange} current={page} pageSize={pageSize} total={totalRecord} />
                 </div>

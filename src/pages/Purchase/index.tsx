@@ -17,7 +17,6 @@ import {
 } from 'antd';
 import { Link } from 'react-router-dom';
 import React, { useEffect } from 'react';
-import { useState } from 'react';
 import type { RadioChangeEvent, SelectProps } from 'antd';
 import type { DescriptionsProps } from 'antd';
 import * as userServices from '@/api/userServices';
@@ -39,24 +38,22 @@ function Purchase() {
     const cart = useAppSelector(selectCartDetail).data;
     const [status, setStatus] = React.useState<StatusForm>('loading');
     const options: SelectProps['options'] = [];
-    //const [addresses, setAddresses] = React.useState<Address[]>([]);
     const [currentAddress, setCurrentAddress] = React.useState<Address>();
     const [currentAddressForm, setCurrentAddressForm] = React.useState<Address>();
     const [type, setType] = React.useState<string>('Chọn phương thức thanh toán');
     const [open, setOpen] = React.useState(false);
-    const [openDrawAddress, setOpenDrawAddress] = useState(false);
+    const [openDrawAddress, setOpenDrawAddress] = React.useState(false);
     const [typeFormAddress, setTypeFormAddress] = React.useState<TypeFormAddress>('EDIT');
     const { data: listPaymentMethod } = useQuery({
         queryKey: [`type-payment-method`],
         queryFn: () => paymentServices.getPaymentMethodByUserId(user !== undefined ? user.id : ''),
         enabled: !!user,
     });
-    const { data: addresses } = useQuery({
+    const { data: addresses ,refetch} = useQuery({
         queryKey: [`list-addresses`],
         queryFn: () => userServices.getAddressByUserId(user !== undefined ? user.id : ''),
         enabled: !!user,
     });
-    
     if (listPaymentMethod) {
         listPaymentMethod.map((e: PaymentMethod) => {
             options.push({
@@ -74,6 +71,9 @@ function Purchase() {
     const handleChange = (value: string) => {
         setType(value);
     };
+    useEffect(()=>{
+        if(status != 'loading') refetch()
+    },[status,refetch])
     useEffect(() => {
         if (addresses && addresses.length > 0) {
             setCurrentAddress(addresses[0]);
@@ -99,7 +99,6 @@ function Purchase() {
             }
         }
     };
-    console.log(addresses)
     let items: DescriptionsProps['items'] = [
         {
             key: 'phoneNumber',

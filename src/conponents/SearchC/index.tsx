@@ -5,12 +5,12 @@ import { Input, Popover } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
 import * as productServices from '@/api/productServices';
 import type { InputRef } from 'antd';
-import React, {  useEffect, useRef } from 'react';
+import React, {  memo, useEffect, useRef } from 'react';
 import { Product } from '@/type';
 import { Link, useNavigate } from 'react-router-dom';
 import { Filter } from '@/type';
 import ProductCard from '../ProductCard';
-const SearchC: React.FC = () => {
+const SearchC: React.FC = memo(() => {
     const { Search } = Input;
     const [searchValue, setSearchValue] = React.useState('');
     const navigate = useNavigate();
@@ -28,6 +28,7 @@ const SearchC: React.FC = () => {
     const onChangeInput: SearchProps['onChange'] = (value) => {
         setSearchValue(value.target.value);
     };
+    console.log('dsdf')
     useEffect(() => {
         const Search = async () => {
             if (debounce != '') {
@@ -88,5 +89,5 @@ const SearchC: React.FC = () => {
             </div>
         </>
     );
-};
+});
 export default SearchC;

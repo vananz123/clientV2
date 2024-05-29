@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectCategories } from '@/app/feature/category/reducer';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Category } from '@/type';
-import React, { SetStateAction, useEffect } from 'react';
+import React, { SetStateAction, memo, useEffect } from 'react';
 import { loadCategories } from '@/app/feature/category/action';
 import SkeletonCard from '@/conponents/SkeletonCard';
 type MenuItem = Required<MenuProps>['items'][number];
@@ -21,7 +21,7 @@ interface Props {
     type?: ResponsiveType;
     closeDrawer?: SetStateAction<any>;
 }
-const NavC: React.FC<Props> = ({ type = 'forDesktop', closeDrawer }) => {
+const NavC: React.FC<Props> =memo( ({ type = 'forDesktop', closeDrawer }) => {
     const loca = useLocation();
     const arr = [loca.pathname];
     const Navigate = useNavigate();
@@ -94,5 +94,5 @@ const NavC: React.FC<Props> = ({ type = 'forDesktop', closeDrawer }) => {
             )}
         </>
     );
-};
+});
 export default NavC;

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Space, Drawer, Button } from 'antd';
+import { memo, useCallback } from 'react';
 import { Layout, theme, Badge, Avatar, Dropdown } from 'antd';
 import { UserOutlined, ShoppingCartOutlined, BarsOutlined, LoginOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '@/app/hooks';
@@ -16,7 +17,7 @@ import React, { useEffect } from 'react';
 import { selectCartDetail } from '@/app/feature/cart/reducer';
 import { loadCartDetail } from '@/app/feature/cart/action';
 import { loadUser } from '@/app/feature/user/action';
-function HeaderC() {
+const HeaderC = memo(()=> {
     const Navigate = useNavigate();
     const { data } = useAppSelector(selectUser);
     const user = data;
@@ -66,10 +67,9 @@ function HeaderC() {
     };
     const [open, setOpen] = React.useState(false);
 
-    const showDrawer = () => {
+    const showDrawer = useCallback(() => {
         setOpen(true);
-    };
-
+    },[]);
     const onClose = () => {
         setOpen(false);
     };
@@ -180,6 +180,6 @@ function HeaderC() {
             </div>
         </>
     );
-}
+})
 
 export default HeaderC;
