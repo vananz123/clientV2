@@ -1,21 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {  Space } from 'antd';
-import {  Layout,  theme, Avatar, Dropdown } from 'antd';
+import { Space, Switch } from 'antd';
+import { Layout, Avatar, Dropdown } from 'antd';
 import { UserOutlined, DownOutlined } from '@ant-design/icons';
-import { useAppSelector ,useAppDispatch} from '@/app/hooks';
+import { useAppSelector, useAppDispatch } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
 import type { MenuProps } from 'antd';
 const { Header } = Layout;
 import { useNavigate } from 'react-router-dom';
 import './style.scss';
 import { loadUser } from '@/app/feature/user/action';
+import { useSkin } from '@/hooks';
 function HeaderA() {
     const Navigate = useNavigate();
     const user = useAppSelector(selectUser).data;
-    const dispatch = useAppDispatch()
-    const {
-        token: { colorBgContainer },
-    } = theme.useToken();
+    const { style, skin, setSkin } = useSkin();
+    const dispatch = useAppDispatch();
     const items: MenuProps['items'] = [
         {
             label: <a href="https://www.antgroup.com">Setting</a>,
@@ -41,20 +40,30 @@ function HeaderA() {
         const accessToken = localStorage.getItem('accessToken');
         if (accessToken != null) {
             localStorage.removeItem('accessToken');
-            dispatch(loadUser())
-            Navigate('/auth/login');
+            dispatch(loadUser());
+            Navigate('/auth/login-admin');
         }
+    };
+    const onChange = (check: boolean) => {
+        setSkin(!check ? 'light' : 'dark');
     };
     return (
         <Header
             style={{
+                ...style,
                 padding: 24,
-                background: colorBgContainer,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'end',
             }}
         >
+            <Switch
+                checked={skin == 'dark' ? true : false}
+                checkedChildren="light"
+                unCheckedChildren="dark"
+                onChange={onChange}
+                style={{marginRight:10}}
+            />
             <Dropdown menu={{ items }} trigger={['hover']}>
                 <a onClick={(e) => e.preventDefault()}>
                     <Space>

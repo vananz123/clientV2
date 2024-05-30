@@ -5,13 +5,14 @@ import type { TableColumnsType, DescriptionsProps, InputRef, TableColumnType } f
 import { Drawer } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
 import * as productServices from '@/api/productServices';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { DeleteOutlined, EditOutlined, InfoCircleOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { Product } from '@/type';
 import { FILTERS_PRODUCT_STATUS } from '@/common/common';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import Highlighter from 'react-highlight-words';
+import { useQuery } from '@tanstack/react-query';
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 const getBase64 = (file: FileType): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -23,19 +24,20 @@ const getBase64 = (file: FileType): Promise<string> =>
 type DataIndex = keyof Product;
 function ProductList() {
     const baseUrl = import.meta.env.VITE_BASE_URL;
-    const [data, setData] = React.useState<Product[]>();
     const [currentId, setCurrentId] = React.useState<number>(0);
     const [currentProductItem, setCurrentProductItem] = React.useState<Product>();
     const [modal2Open, setModal2Open] = React.useState(false);
     const [confirmLoadinModal2, setConfirmLoadingModal2] = React.useState(false);
     const [open, setOpen] = React.useState(false);
-    const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [modalText, setModalText] = React.useState('Do you want delete!');
     const [previewOpen, setPreviewOpen] = React.useState(false);
     const [previewImage, setPreviewImage] = React.useState('');
     const [fileList, setFileList] = React.useState<UploadFile[]>([]);
     const [openDrawer, setOpenDrawer] = React.useState(false);
-
+    const {data ,isLoading , refetch} = useQuery({
+        queryKey:['load-product-list'],
+        queryFn:()=> productServices.getAllProduct()
+    })
     //product search
     const [searchText, setSearchText] = React.useState('');
     const [searchedColumn, setSearchedColumn] = React.useState('');
@@ -138,16 +140,6 @@ function ProductList() {
     const onClose = () => {
         setOpenDrawer(false);
     };
-    const loadAllProduct = async () => {
-        const res = await productServices.getAllProduct();
-        console.log(res);
-        if (res.isSuccessed === true) {
-            setData(res.resultObj);
-        }
-    };
-    useEffect(() => {
-        loadAllProduct();
-    }, []);
     const handlePreview = async (file: UploadFile) => {
         if (!file.url && !file.preview) {
             file.preview = await getBase64(file.originFileObj as FileType);
@@ -164,17 +156,6 @@ function ProductList() {
             <div style={{ marginTop: 8 }}>Upload</div>
         </button>
     );
-    const ChangeCurrence = (number: number | undefined) => {
-        if (number) {
-            const formattedNumber = number.toLocaleString('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-                currencyDisplay: 'code',
-            });
-            return formattedNumber;
-        }
-        return 0;
-    };
     const columns: TableColumnsType<Product> = [
         {
             title: 'Id',
@@ -270,19 +251,13 @@ function ProductList() {
     };
     const handleOkDel = async () => {
         setModalText('deleting!');
-        setConfirmLoading(true);
         const res = await productServices.deleteProduct(currentId);
         if (res.statusCode == 204) {
-            const res = await productServices.getAllProduct();
-            if (res.statusCode == 200) {
-                setData(res.resultObj);
-                setConfirmLoading(false);
-                setOpen(false);
-                setFileList([]);
-            }
+            refetch()
+            setOpen(false);
+            setFileList([]);
         } else {
             setModalText('error!');
-            setConfirmLoading(false);
         }
     };
     const uploadImageAPI = async () => {
@@ -291,7 +266,7 @@ function ProductList() {
         if (res != null) {
             setConfirmLoadingModal2(false);
             setModal2Open(false);
-            loadAllProduct();
+            refetch()
             setFileList([]);
         }
     };
@@ -352,7 +327,7 @@ function ProductList() {
                 title="Delete"
                 open={open}
                 onOk={handleOkDel}
-                confirmLoading={confirmLoading}
+                confirmLoading={isLoading}
                 onCancel={() => setOpen(false)}
             >
                 <p>{modalText}</p>
@@ -360,5 +335,15 @@ function ProductList() {
         </div>
     );
 }
-
+const ChangeCurrence = (number: number | undefined) => {
+    if (number) {
+        const formattedNumber = number.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+            currencyDisplay: 'code',
+        });
+        return formattedNumber;
+    }
+    return 0;
+};
 export default ProductList;

@@ -6,7 +6,24 @@ export type ResponseLoginType ={
     accessToken:string,
     refreshToken:string
 }
-
+export const loginGoogle = async(accessToken:string)=>{
+    try{
+       
+        const res = await request.post(`/authentication/login-google`,{accessToken:accessToken,provider:"google"})
+        const resultObj : ResponseLoginType = res.resultObj
+        const resp: Result ={
+            error :'',
+            isSuccessed:res.isSuccessed,
+            message:res.message,
+            statusCode:200,
+            resultObj : resultObj
+        }
+        return resp
+    }catch(error:any){
+        const resError: Result =error.response.data
+        return resError
+    }
+}
 export const login = async(user:LoginType)=>{
     try{
         const login ={

@@ -9,7 +9,7 @@ import storage from "redux-persist/lib/storage";
 import cartReducer from "./feature/cart/reducer";
 import cateReducer from "./feature/category/reducer";
 import userReducer from "./feature/user/reducer";
-import modeReducer from "./feature/mode/reducer";
+import themeReducer from "./feature/theme/reducer";
 const persistConfig = {
   key: "la-store-website",
   storage,
@@ -20,7 +20,7 @@ const rootReducer = combineReducers({
   cart:cartReducer,
   categories:cateReducer,
   user:userReducer,
-  mode:modeReducer
+  theme:themeReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -4,31 +4,30 @@ import { HeaderA ,SiderC} from '../components';
 import { Layout, theme } from 'antd';
 import { Outlet } from 'react-router-dom';
 const { Content } = Layout;
-import './style.scss';
-import {FooterC} from '../components';
+import { useSkin } from '@/hooks';
 function AdminLayout(){
+    const {style} = useSkin()
     const {
-        token: { colorBgContainer, borderRadiusLG },
+        token: { borderRadiusLG },
     } = theme.useToken();
 
     return (
         <Layout>
             <SiderC/>
             <Layout>
-                <HeaderA />
+                <HeaderA/>
                 <Content style={{ margin: '24px 16px 0' }}>
                     <div
                         style={{
+                            ...style,
                             padding: 24,
-                            minHeight: 550,
-                            background: colorBgContainer,
+                            minHeight: '100vh',
                             borderRadius: borderRadiusLG,
                         }}
                     >
                         <Outlet/>
                     </div>
                 </Content>
-                <FooterC/>
             </Layout>
         </Layout>
     );

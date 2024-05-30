@@ -6,7 +6,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Category } from '@/type';
 import React, { SetStateAction, memo, useEffect } from 'react';
 import { loadCategories } from '@/app/feature/category/action';
-import SkeletonCard from '@/conponents/SkeletonCard';
 type MenuItem = Required<MenuProps>['items'][number];
 function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
     return {
@@ -21,14 +20,12 @@ interface Props {
     type?: ResponsiveType;
     closeDrawer?: SetStateAction<any>;
 }
-import { selectMode } from '@/app/feature/mode/reducer';
 const NavC: React.FC<Props> =memo( ({ type = 'forDesktop', closeDrawer }) => {
     const loca = useLocation();
     const arr = [loca.pathname];
-    const {data:mode , colorBg} = useAppSelector(selectMode)
     const Navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const { isLoading, data } = useAppSelector(selectCategories);
+    const { data } = useAppSelector(selectCategories);
     useEffect(() => {
         dispatch(loadCategories());
     }, [dispatch]);
@@ -75,24 +72,16 @@ const NavC: React.FC<Props> =memo( ({ type = 'forDesktop', closeDrawer }) => {
     };
     return (
         <>
-            {isLoading ? (
-                <div style={{ width: 70, display: 'flex', justifyContent: 'start', alignItems: 'center', gap: 10 }}>
-                    <SkeletonCard style={{ width: 150, height: 50 }} />
-                    <SkeletonCard style={{ width: 150, height: 50 }} />
-                    <SkeletonCard style={{ width: 150, height: 50 }} />
-                </div>
-            ) : (
-                data && (
+            {data && (
                     <Menu
-                    theme={mode}
+                        theme={'light'}
                         mode={type === 'forDesktop' ? 'horizontal' : 'inline'}
                         selectedKeys={arr}
                         items={item}
-                        style={{ flex: 1, minWidth: 0 ,marginLeft:0 ,background:colorBg}}
+                        style={{  flex: 1, minWidth: 0 ,marginLeft:0}}
                         onClick={handleClick}
                     />
-                )
-            )}
+                )}
         </>
     );
 });

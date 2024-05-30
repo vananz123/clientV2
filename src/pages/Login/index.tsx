@@ -1,13 +1,13 @@
 import React from 'react';
 import { Button, Form, type FormProps, Input, Alert, Modal, message, Flex } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useAppDispatch } from '@/app/hooks';
-import { loadUser } from '@/app/feature/user/action';
 import * as loginServices from '@/api/loginServices';
 import * as userServices from '@/api/userServices';
-import type { Result, Role } from '@/api/ResType';
+import type { Result } from '@/api/ResType';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '/logo.png'
+import GoogleButton from '@/conponents/GoogleButton';
+import { useAuthStore } from '@/hooks';
 export type LoginType = {
     email?: string;
     password?: string;
@@ -15,7 +15,7 @@ export type LoginType = {
 function Login() {
     const [error, setError] = React.useState<Result>();
     const Navigate = useNavigate();
-    const dispatch = useAppDispatch();
+    const {isAuth, setAccessToken} = useAuthStore()
     const [open, setOpen] = React.useState(false);
     const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
     const [messageApi, contextHolder] = message.useMessage();
@@ -23,16 +23,9 @@ function Login() {
         const login = async () => {
             const resuft = await loginServices.login(values);
             if (resuft.isSuccessed  === true) {
-                localStorage.setItem('accessToken', resuft.resultObj.accessToken);
-                const userResuft = await userServices.getUser();
-                if (userResuft.isSuccessed == true) {
-                   dispatch(loadUser());
-                    const roleAdmin: Role[] = ['admin', 'sale'];
-                    if (roleAdmin.indexOf(userResuft.resultObj.roles[0]) < 0) {
-                        Navigate(-1);
-                    }
-                } else {
-                    setError(userResuft);
+                setAccessToken(resuft.resultObj.accessToken)
+                if (isAuth === true) {
+                    Navigate(-1);
                 }
             } else if (resuft) {
                 setError(resuft);
@@ -123,6 +116,7 @@ function Login() {
                         </Flex>
                     </Form.Item>
                 </Form>
+                <GoogleButton/>
             </div>
             <Modal
                 style={{ width: 300 }}
