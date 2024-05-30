@@ -1,29 +1,30 @@
-import Dashboard from '@/pages/Admin/Dashboard';
-import Home from '@/pages/Home';
-import ProductListShow from '@/pages/ProductListShow';
+import React, { Suspense, lazy } from 'react';
+const Dashboard = lazy(()=>import('@/pages/Admin/Dashboard'));
+const Home = lazy(() => import('@/pages/Home'));
+const ProductListShow = lazy(()=> import('@/pages/ProductListShow'));
 import { ProductList, ProductEdit, ProductAdd } from '@/pages/Admin/Product';
 import { CategoriesList, CategoryEdit, CategoryAdd } from '@/pages/Admin/Category';
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import ProductDetail from '@/pages/ProductDetail';
+const Login = lazy(() => import('@/pages/Login'));
+const Register = lazy(() => import('@/pages/Register'));
+const ProductDetail =lazy(()=>import('@/pages/ProductDetail'));
 import { useRoutes } from 'react-router-dom';
 import DefaultLayout from '@/conponents/Layout/DefaultLayout';
 import AdminLayout from '@/conponents/Layout/AdminLayout';
 import AuthGuard from './AuthGuard';
 import GuestGuard from './GuestGuard';
 import RoleGuard from './RoleGuard';
-import Profile from '@/pages/Profile';
-import Cart from '@/pages/Cart';
+const Profile =lazy(()=> import('@/pages/Profile'));
+const Cart = lazy(() => import('@/pages/Cart'));
 import Purchase from '@/pages/Purchase';
 import Checkout from '@/pages/Pay/Checkout';
 import CheckoutVnpay from '@/pages/Pay/CheckoutVnpay';
 import { OrderConfirm, OrderList } from '@/pages/Admin/Order';
-import UserOrderDetail from '@/pages/UserOrderDetail';
+const UserOrderDetail = lazy(()=>import('@/pages/UserOrderDetail'));
 import { PromotionAdd, PromotionEdit, PromotionList } from '@/pages/Admin/Promotion';
-import ForgotPassword from '@/pages/ForgotPassword';
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
 import UserList from '@/pages/Admin/User/UserList';
 import { GuarantiesAdd, GuarantiesList, GuarantiesEdit } from '@/pages/Admin/Guaranty';
-import Page404 from '@/pages/Page404/Page404';
+const Page404 = lazy(() => import('@/pages/Page404/Page404'));
 import LoginAdmin from '@/pages/Admin/LoginAdmin';
 const Router: React.FC = () => {
     return useRoutes([
@@ -34,7 +35,10 @@ const Router: React.FC = () => {
                     path: 'reset-password',
                     element: (
                         <GuestGuard>
-                            <ForgotPassword />
+                            <Suspense>
+                                {' '}
+                                <ForgotPassword />
+                            </Suspense>
                         </GuestGuard>
                     ),
                 },
@@ -42,7 +46,10 @@ const Router: React.FC = () => {
                     path: 'login',
                     element: (
                         <GuestGuard>
-                            <Login />
+                            <Suspense>
+                                {' '}
+                                <Login />
+                            </Suspense>
                         </GuestGuard>
                     ),
                 },
@@ -58,7 +65,10 @@ const Router: React.FC = () => {
                     path: 'register',
                     element: (
                         <GuestGuard>
-                            <Register />
+                            <Suspense>
+                                {' '}
+                                <Register />
+                            </Suspense>
                         </GuestGuard>
                     ),
                 },
@@ -67,23 +77,28 @@ const Router: React.FC = () => {
         {
             path: '*',
             element: <DefaultLayout />,
-            children: [{ path: '*', element: <Page404/> }],
+            children: [{ path: '*', element: <Page404 /> }],
         },
         {
             path: '/',
             element: <DefaultLayout />,
             children: [
-              
                 {
                     path: '/',
-                    element: <Home />,
+                    element: (
+                        <Suspense>
+                            <Home />
+                        </Suspense>
+                    ),
                 },
                 {
                     path: 'cart',
                     element: (
                         <AuthGuard>
                             <RoleGuard role={['customer']}>
-                                <Cart />
+                                <Suspense>
+                                    <Cart />
+                                </Suspense>
                             </RoleGuard>
                         </AuthGuard>
                     ),
@@ -100,22 +115,22 @@ const Router: React.FC = () => {
                 },
                 {
                     path: 'product/',
-                    element: <ProductListShow />,
+                    element: <Suspense><ProductListShow /></Suspense>,
                 },
                 {
                     path: 'product/:id',
-                    element: <ProductListShow />,
+                    element: <Suspense><ProductListShow /></Suspense>,
                 },
                 {
                     path: 'product/detail/:id',
-                    element: <ProductDetail />,
+                    element: <Suspense><ProductDetail /></Suspense>,
                 },
                 {
                     path: 'profile',
                     element: (
                         <AuthGuard>
                             <RoleGuard role={['customer']}>
-                                <Profile />
+                               <Suspense> <Profile /></Suspense>
                             </RoleGuard>
                         </AuthGuard>
                     ),
@@ -125,7 +140,7 @@ const Router: React.FC = () => {
                     element: (
                         <AuthGuard>
                             <RoleGuard role={['customer']}>
-                                <UserOrderDetail />
+                               <Suspense> <UserOrderDetail /></Suspense>
                             </RoleGuard>
                         </AuthGuard>
                     ),
@@ -142,14 +157,7 @@ const Router: React.FC = () => {
                 },
                 {
                     path: 'checkout-vnpay',
-                    element: (
-                        // <AuthGuard>
-                        //     <RoleGuard role={['customer']}>
-                        //         <CheckoutVnpay />
-                        //     </RoleGuard>
-                        // </AuthGuard>
-                        <CheckoutVnpay />
-                    ),
+                    element: <CheckoutVnpay />,
                 },
             ],
         },
@@ -162,7 +170,7 @@ const Router: React.FC = () => {
                     element: (
                         <AuthGuard>
                             <RoleGuard role={['admin']}>
-                                <Dashboard />
+                               <Suspense> <Dashboard /></Suspense>
                             </RoleGuard>
                         </AuthGuard>
                     ),

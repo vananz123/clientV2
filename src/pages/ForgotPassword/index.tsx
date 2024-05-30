@@ -47,7 +47,7 @@ function ForgotPassword() {
                     name="password"
                     rules={[{ required: true, message: 'Please input your password!'}]}
                 >
-                    <Input.Password minLength={8} placeholder="New password" prefix={<LockOutlined />} />
+                    <Input.Password minLength={6} placeholder="New password" prefix={<LockOutlined />} />
                 </Form.Item>
                 <Form.Item
                     name="confirmPassword"

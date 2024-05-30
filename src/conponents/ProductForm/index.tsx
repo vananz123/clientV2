@@ -4,7 +4,7 @@ import React, { SetStateAction, useCallback, useEffect } from 'react';
 import { Button, type FormProps, Form, Input, Upload, Select, Space, Drawer, Col, Row } from 'antd';
 import { notification } from 'antd';
 type NotificationType = 'success' | 'error';
-import {  ArrowLeftOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Product, Category } from '@/type';
 import * as productServices from '@/api/productServices';
 import type { SelectProps } from 'antd';
@@ -15,7 +15,7 @@ import { FORM_ITEM_LAYOUT, TAIL_FORM_ITEM_LAYOUT, OPTIONS_PRODUCT_STATUS, editor
 import UploadImages from '@/view/product/UploadImages';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import { ClassicEditor } from '@ckeditor/ckeditor5-editor-classic';
-import {  useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 const normFile = (e: any) => {
     if (Array.isArray(e)) {
         return e;
@@ -27,13 +27,13 @@ const ProductForm: React.FC<{
     onSetState: SetStateAction<any>;
     onSetStatus: SetStateAction<any>;
 }> = ({ product, onSetState, onSetStatus }) => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [form] = Form.useForm();
     useEffect(() => {
-        if(product) setValue(product.seoDescription)
+        if (product) setValue(product.seoDescription);
         form.setFieldsValue(product);
-    }, [form,product]);
-    const [value,setValue] = React.useState<string>('<p></p>')
+    }, [form, product]);
+    const [value, setValue] = React.useState<string>('<p></p>');
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [options, setOptions] = React.useState<SelectProps['options']>([]);
     const [openVariaton, setOpenVariaton] = React.useState(false);
@@ -52,21 +52,21 @@ const ProductForm: React.FC<{
         const list: Category[] = [];
         if (listCate && listCate.length > 0) {
             listCate.forEach((element) => {
-            if (element.subCategory && element.subCategory.length > 0) {
-              element.subCategory.forEach((item) => {
-                if (item) {
-                  list.push(item);
+                if (element.subCategory && element.subCategory.length > 0) {
+                    element.subCategory.forEach((item) => {
+                        if (item) {
+                            list.push(item);
+                        }
+                    });
                 }
-              });
-            }
-          });
+            });
         }
         return list;
-      };
+    };
     const getAllCate = useCallback(async () => {
-        const res = await categoryServices.getAllAdminCate()
-        console.log(res)
-        const list = ConcatList(res.resultObj)
+        const res = await categoryServices.getAllAdminCate();
+        console.log(res);
+        const list = ConcatList(res.resultObj);
         const options: SelectProps['options'] = [];
         list.forEach((e: Category) => {
             options.push({
@@ -75,14 +75,14 @@ const ProductForm: React.FC<{
             });
         });
         setOptions(options);
-    },[]);
+    }, []);
     useEffect(() => {
         getAllCate();
     }, [getAllCate]);
     const onFinish: FormProps<Product>['onFinish'] = async (values) => {
         setIsLoading(true);
         if (product != undefined) {
-            values.seoDescription = value
+            values.seoDescription = value;
             const res = await productServices.updateProduct(product.id, values);
             if (res.statusCode == 200) {
                 if (values.file != undefined) {
@@ -99,7 +99,7 @@ const ProductForm: React.FC<{
             }
             setIsLoading(false);
         } else {
-            values.seoDescription = value
+            values.seoDescription = value;
             const res = await productServices.addProduct(values);
             if (res.statusCode == 201) {
                 if (values.file != undefined) {
@@ -115,14 +115,14 @@ const ProductForm: React.FC<{
             setIsLoading(false);
         }
     };
-    const onFinishVariation =async (values: any) => {
+    const onFinishVariation = async (values: any) => {
         if (product != undefined) {
             const res = await productServices.addVariation(product.id, values.variations);
-                if (res.isSuccessed === true) {
-                    onSetState(res.resultObj);
-                    setOpenVariaton(false);
-                    openNotificationWithIcon('success', 'Add variation success');
-                }
+            if (res.isSuccessed === true) {
+                onSetState(res.resultObj);
+                setOpenVariaton(false);
+                openNotificationWithIcon('success', 'Add variation success');
+            }
         }
     };
     const onFinishFailed: FormProps<Product>['onFinishFailed'] = (errorInfo) => {
@@ -130,7 +130,7 @@ const ProductForm: React.FC<{
     };
     return (
         <div>
-             <Button
+            <Button
                 type="text"
                 icon={<ArrowLeftOutlined />}
                 size="small"
@@ -170,27 +170,26 @@ const ProductForm: React.FC<{
                         >
                             <Input.TextArea showCount maxLength={100} />
                         </Form.Item>
-                        <Form.Item<Product>
-                            label="Mô Tả"
-                        >
+                        <Form.Item<Product> label="Mô Tả">
                             <CKEditor
-                        editor={ClassicEditor}
-                        config={editorConfiguration}
-                        data={value || '<p></p>'}
-                        // onReady={(editor) => {
-                        //     // You can store the "editor" and use when it is needed.
-                        //     console.log('Editor is ready to use!', editor);
-                        // }}
-                        onChange={(_, editor) => {
-                            setValue(editor.getData());
-                        }}
-                        // onBlur={(event, editor) => {
-                        //     console.log('Blur.', editor);
-                        // }}
-                        // onFocus={(event, editor) => {
-                        //     console.log('Focus.', editor);
-                        // }}
-                    />
+                        
+                                editor={ClassicEditor}
+                                config={editorConfiguration}
+                                data={value || '<p></p>'}
+                                // onReady={(editor) => {
+                                //     // You can store the "editor" and use when it is needed.
+                                //     console.log('Editor is ready to use!', editor);
+                                // }}
+                                onChange={(_, editor) => {
+                                    setValue(editor.getData());
+                                }}
+                                // onBlur={(event, editor) => {
+                                //     console.log('Blur.', editor);
+                                // }}
+                                // onFocus={(event, editor) => {
+                                //     console.log('Focus.', editor);
+                                // }}
+                            />
                         </Form.Item>
                         <Form.Item name="file" label="Ảnh Nền" valuePropName="fileList" getValueFromEvent={normFile}>
                             <Upload listType="picture-card" maxCount={1}>
@@ -203,7 +202,6 @@ const ProductForm: React.FC<{
                         <Form.Item<Product>
                             name="categoryId"
                             label="Loại Sản Phẩm"
-                            //initialValue={product?.categoryId}
                             rules={[{ required: true, message: 'Please select categories!' }]}
                         >
                             <Select size={'middle'} style={{ width: 200 }} options={options} />
@@ -219,7 +217,6 @@ const ProductForm: React.FC<{
                                     (product?.items && product.items.length < 1) || typeof product === 'undefined'
                                 }
                                 size={'middle'}
-                                //onChange={handleChange}
                                 style={{ width: 200 }}
                                 options={OPTIONS_PRODUCT_STATUS}
                             />
@@ -267,7 +264,7 @@ const ProductForm: React.FC<{
                         {(fields, { add, remove }) => (
                             <>
                                 {fields.map(({ key, name, ...restField }) => (
-                                    <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                                    <Space key={key} style={{ display: 'flex', marginBottom: 8}} align="baseline">
                                         <Form.Item
                                             {...restField}
                                             name={[name, 'name']}

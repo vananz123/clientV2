@@ -11,6 +11,7 @@ export type ModePromotionType = 'EDIT' | 'DEL';
 import { notification } from 'antd';
 import { Promotion } from '@/api/ResType';
 import dayjs from 'dayjs';
+import { useMutation, useQuery } from '@tanstack/react-query';
 type NotificationType = 'success' | 'error';
 interface Props {
     openModalAssignPI: boolean;
@@ -18,15 +19,17 @@ interface Props {
     productItemProps: ProductItem | undefined;
     setStateProduct:SetStateAction<any>;
 }
+interface RequsetBody {
+    id:number,
+    data:Promotion[]
+}
 const ModalAssginPromotionsProductItem: React.FC<Props> = ({
     openModalAssignPI,
     setStateOpenModalAssignPI,
     productItemProps,setStateProduct,
 }) => {
-    const [promotions, setPromotions] = React.useState<Promotion[]>([]);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const [listSelectRowKeys, setListSelectRowKeys] = React.useState<number[]>([]);
-    //const [listSelectRow, setListSelectRow] = React.useState<Guaranty[]>([]);
     const [api, contextHolder] = notification.useNotification();
     const openNotificationWithIcon = (type: NotificationType, mess: string) => {
         api[type]({
@@ -34,41 +37,47 @@ const ModalAssginPromotionsProductItem: React.FC<Props> = ({
             description: mess,
         });
     };
-    const getAllPromotions = async () => {
-        const res = await promotionServices.getAllPromotion();
-        if (res.isSuccessed === true) {
-            setPromotions(res.resultObj);
-        }
-    };
-    const handleSaveGuaranties = async () => {
-        setConfirmLoading(true);
-        if (productItemProps != undefined) {
-            const res = await productServices.assignPromotion( productItemProps?.id,
-                promotions.filter((s) => listSelectRowKeys.includes(s.id))
-            )
-            
-            if (res.isSuccessed === true) {
+    const {data:promotions} = useQuery({
+        queryKey:['load-all-promotion'],
+        queryFn:()=> promotionServices.getAllPromotion()
+    })
+    const {data:listPromotionByPI} = useQuery({
+        queryKey:[`load-all-promotion-${productItemProps}`],
+        queryFn:()=> promotionServices.getAllPromotionByPI(productItemProps ? productItemProps.id : 0),
+        enabled:!!productItemProps
+    }) 
+    const mutation = useMutation({
+        mutationKey:['assgin-promotion'],
+        mutationFn:(body:RequsetBody)=> productServices.assignPromotion(body.id,body.data),
+        onSuccess:(data)=>{
+            if (data.isSuccessed === true) {
                 openNotificationWithIcon('success', 'thêm bảo hành thành công');
-                setStateProduct(res.resultObj)
-                setConfirmLoading(false);
+                setStateProduct(data.resultObj)
             } else {
                 openNotificationWithIcon('error', 'lỗi');
-                setConfirmLoading(false);
             }
+        }
+    })
+    const handleSaveGuaranties = async () => {
+        setConfirmLoading(true);
+        if (productItemProps != undefined && promotions) {
+            const requset:RequsetBody ={
+                id :productItemProps.id,
+                data:promotions.filter((s) => listSelectRowKeys.includes(s.id))
+            }
+            mutation.mutate(requset)
         }
     };
     const GenaratorListSelectRowKeys = useCallback(async()=>{
-        if (typeof productItemProps !== 'undefined') {
-            const res = await promotionServices.getAllPromotionByPI(productItemProps.id)
+        if (listPromotionByPI) {
             const arrKey: number[] = [];
-            res.resultObj?.forEach((e: Promotion) => {
+            listPromotionByPI.forEach((e: Promotion) => {
                 arrKey.push(e.id);
             });
             setListSelectRowKeys(arrKey);
         }
-    },[productItemProps])
+    },[listPromotionByPI])
     useEffect(() => {
-        getAllPromotions();
         GenaratorListSelectRowKeys()
     }, [openModalAssignPI,GenaratorListSelectRowKeys]);
 
@@ -121,13 +130,13 @@ const ModalAssginPromotionsProductItem: React.FC<Props> = ({
     ];
     const rowSelection: TableRowSelection<Promotion> = {
         selectedRowKeys: listSelectRowKeys,
+        hideSelectAll :true,
         onChange: (selectedRowKeys, selectedRows: Promotion[]) => {
             const arrKey: number[] = [];
             selectedRows.forEach((e: Promotion) => {
                 arrKey.push(e.id);
             });
             setListSelectRowKeys(arrKey);
-            //setListSelectRow(selectedRows);
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
         },
         // onSelect: (record, selected, selectedRows) => {
@@ -171,7 +180,7 @@ const ModalAssginPromotionsProductItem: React.FC<Props> = ({
                     </Space>
                 </Flex>
                 <Table
-                    loading={confirmLoading}
+                    loading={mutation.isPending}
                     pagination={{ position: ['none'] }}
                     columns={columns}
                     dataSource={promotions}

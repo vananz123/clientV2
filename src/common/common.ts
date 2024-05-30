@@ -173,7 +173,7 @@ export const editorConfiguration = {
     language: 'en',
     table: {
         contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'],
-    },
+    }
 };
 export const OPTIONS_SKU: SelectProps['options'] = [
     {

@@ -71,7 +71,7 @@ function Home() {
                             <h3 style={contentStyle}>
                                 <img
                                     style={imgStyles}
-                                    src="/gold-ncm-2024-1972x640_CTA_.png"
+                                    src="/gold-ncm-2024-1972x640_CTA_.webp"
                                     alt="ƯU ĐÃI NGÀY CỦA MẸ - QUÀ THƯƠNG CÀI ÁO THỜI TRANG"
                                 />
                             </h3>
@@ -80,7 +80,7 @@ function Home() {
                             <h3 style={contentStyle}>
                                 <img
                                     style={imgStyles}
-                                    src="/ngaydoi-05-05-24-1972x640CTA.jpg"
+                                    src="/ngaydoi-05-05-24-1972x640CTA.webp"
                                     alt="Ngày đôi 5.5 - Chào hè bất tận"
                                 />
                             </h3>
@@ -89,7 +89,7 @@ function Home() {
                             <h3 style={contentStyle}>
                                 <img
                                     style={imgStyles}
-                                    src="/pnjfast-t1-24-1972x640CTA.jpg"
+                                    src="/pnjfast-t1-24-1972x640CTA.webp"
                                     alt="Sở hữu trang sức yêu thích chỉ trong 3h"
                                 />
                             </h3>
@@ -169,7 +169,7 @@ function Home() {
                     </Card>
                 </div>
                 <div style={contentStyle}>
-                    <img style={imgStyles} src="./watch-t5-24-1200x450CTA.jpg" alt="" />
+                    <img style={imgStyles} src="./watch-t5-24-1200x450CTA.webp" alt="" />
                 </div>
                 <div>
                     <Card bordered={false}

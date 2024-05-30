@@ -65,10 +65,7 @@ function PromotionList() {
     };
     const getAllPromotion = async () => {
         const res = await promotionServices.getAllPromotion();
-        console.log(res)
-        if (res.isSuccessed === true) {
-            setData(res.resultObj);
-        }
+        setData(res);
     };
     useEffect(() => {
         getAllPromotion();

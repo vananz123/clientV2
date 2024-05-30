@@ -5,18 +5,17 @@ export const getAllPromotion = async () => {
     try {
         const res = await request.get(`/promotion/type`);
         const resultObj: Promotion[] = res.resultObj;
-        const resp: Result = {
-            error: '',
-            isSuccessed: res.isSuccessed,
-            message: res.message,
-            statusCode: 200,
-            resultObj: resultObj,
-        };
-        return resp;
+        // const resp: Result = {
+        //     error: '',
+        //     isSuccessed: res.isSuccessed,
+        //     message: res.message,
+        //     statusCode: 200,
+        //     resultObj: resultObj,
+        // };
+        return resultObj;
     } catch (error: any) {
-        console.log(error.response.data);
-        const resError: Result = error.response.data;
-        return resError;
+        
+        return undefined;
     }
 }
 export const getAllPromotionByType = async ( type:string) => {
@@ -41,18 +40,9 @@ export const getAllPromotionByPI = async ( id:number) => {
     try {
         const res = await request.get(`/promotion/product-item/${encodeURIComponent(id)}`);
         const resultObj: Promotion[] = res.resultObj;
-        const resp: Result = {
-            error: '',
-            isSuccessed: res.isSuccessed,
-            message: res.message,
-            statusCode: 200,
-            resultObj: resultObj,
-        };
-        return resp;
+        return resultObj;
     } catch (error: any) {
-        console.log(error.response.data);
-        const resError: Result = error.response.data;
-        return resError;
+        return undefined;
     }
 }
 export const getById= async (id:number) => {
