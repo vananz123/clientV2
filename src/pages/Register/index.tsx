@@ -91,9 +91,9 @@ function Register() {
                     <Form.Item<RegisterUser>
                         name="userName"
                         tooltip="What do you want others to call you?"
-                        rules={[{ required: true, message: 'Please input userName!', whitespace: true }]}
+                        rules={[{ required: true, message: 'Please input display name!', whitespace: true }]}
                     >
-                        <Input placeholder="User name" prefix={<UserOutlined />} />
+                        <Input placeholder="Display name" prefix={<UserOutlined />} />
                     </Form.Item>
                     <Form.Item<RegisterUser>
                         name="email"

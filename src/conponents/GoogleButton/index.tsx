@@ -9,7 +9,6 @@ const GoogleButton = () => {
     const Navigate = useNavigate()
     const {isAuth ,setAccessToken} = useAuthStore()
     const login = async(credentialResponse:any)=>{
-      
       const res = await loginServices.loginGoogle(credentialResponse.credential)
       console.log(credentialResponse , res)
       if(res.isSuccessed === true){
@@ -21,14 +20,16 @@ const GoogleButton = () => {
     };
 
     return (
-        <GoogleLogin
-        onSuccess={async (credentialResponse) => {
-          login(credentialResponse)
-        }}
-        onError={() => {
-            console.log('Login Failed');
-        }}
-      />
+      <GoogleLogin
+      width={350}
+      shape='pill'
+      onSuccess={async (credentialResponse) => {
+        login(credentialResponse)
+      }}
+      onError={() => {
+          console.log('Login Failed');
+      }}
+    />
     );
 };
 
