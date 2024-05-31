@@ -262,15 +262,15 @@ function ProductDetail() {
                                                         >
                                                             {ChangeCurrence(currentProductItem?.price)}
                                                         </span>
-                                                        <span style={{ textDecorationLine: 'line-through' }}>
+                                                        <span style={{ textDecorationLine: 'line-through', color:'#6D6E72' }}>
                                                             {ChangeCurrence(currentProductItem?.priceBeforeDiscount)}
                                                         </span>
+                                                        <span className='pro-percent'>-{currentProductItem.valuePromotion}%</span>
                                                     </div>
                                                 )}
 
                                                 {typeof data.items !== 'undefined' && (
-                                                    <>
-                                                     
+                                                    <>                    
                                                         {data.items.length > 1 && (
                                                             <div>
                                                                 <p>Size</p>
@@ -303,7 +303,6 @@ function ProductDetail() {
                                                         max={currentProductItem?.stock}
                                                         value={quantity}
                                                     />
-
                                                     <Button
                                                         onClick={() => {
                                                             increase();

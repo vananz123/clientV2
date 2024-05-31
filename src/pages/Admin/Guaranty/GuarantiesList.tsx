@@ -18,23 +18,18 @@ function GuaranriesList() {
             key: 'id',
         },
         {
-            title: 'Name',
+            title: 'Tên',
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: 'Mô Tả',
-            dataIndex: 'description',
-            key: 'description',
-        },
-        {
-            title: 'Date Created',
+            title: 'Ngày tạo',
             dataIndex: 'dateCreate',
             key: 'dateCreate',
             render: (_, record) => <p>{new Date(record.dateCreated).toUTCString()}</p>,
         },
         {
-            title: 'Date Modify',
+            title: 'Ngày bắt đâu',
             dataIndex: 'dateModify',
             key: 'dateModify',
             render: (_, record) => <p>{new Date(record.dateModify).toUTCString()}</p>,
@@ -90,7 +85,7 @@ function GuaranriesList() {
                 <Flex justify="space-between">
                     <Link to={'/admin/guaranties-add'}>
                         <Button type="primary" icon={<PlusOutlined />} size="large">
-                            Add
+                            Thêm
                         </Button>
                     </Link>
                     {/* <SearchC typeSearch={2} onSetState={setData} /> */}
