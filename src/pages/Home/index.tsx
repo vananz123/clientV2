@@ -74,7 +74,8 @@ function Home() {
                     </div>
                     <div style={contentStyle}>
                         <img
-                            style={imgStyles}
+                            //style={imgStyles}
+                            className='w-full h-full'
                             src="/ngaydoi-05-05-24-1972x640CTA.webp"
                             alt="Ngày đôi 5.5 - Chào hè bất tận"
                         />

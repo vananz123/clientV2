@@ -1,8 +1,6 @@
-import './App.css';
 import Router from './routes/Router';
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-
 function App() {
     const firebaseConfig = {
         apiKey: "AIzaSyCMapSsR9QpGVR6a5GdfF68hiaxJ5onXZE",
