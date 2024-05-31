@@ -35,6 +35,7 @@ import ProductCard from '@/conponents/ProductCard';
 import { useQuery } from '@tanstack/react-query';
 import ProductDetailLoading from './ProductDetailLoading';
 import { loadCartDetail } from '@/app/feature/cart/action';
+import Container from '@/conponents/Container';
 interface OptionSize {
     label: string;
     value: number;
@@ -174,7 +175,7 @@ function ProductDetail() {
         },
     ];
     return (
-        <div className="container">
+        <Container>
             {contextHolder}
             <Button
                 type="text"
@@ -423,7 +424,7 @@ function ProductDetail() {
                     </>
                 )
             )}
-        </div>
+        </Container>
     );
 }
 const ChangeCurrence = (number: number | undefined) => {

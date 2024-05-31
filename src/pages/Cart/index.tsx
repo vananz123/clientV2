@@ -24,6 +24,7 @@ const { Paragraph } = Typography;
 import * as cartServices from '@/api/cartServices';
 import { Link } from 'react-router-dom';
 import { selectUser } from '@/app/feature/user/reducer';
+import Container from '@/conponents/Container';
 const baseUrl = import.meta.env.VITE_BASE_URL;
 function Cart() {
     const dispatch = useAppDispatch();
@@ -71,7 +72,7 @@ function Cart() {
         }
     };
     return (
-        <div className="container" style={{ marginTop: 16 }}>
+        <Container>
             { (
                 data && (
                     <>
@@ -241,7 +242,7 @@ function Cart() {
                     </>
                 )
             )}
-        </div>
+        </Container>
     );
 }
 const ChangeCurrence = (number: number) => {

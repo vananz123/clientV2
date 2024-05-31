@@ -9,6 +9,7 @@ import {
     Descriptions,
     Divider,
     Drawer,
+    Flex,
     Form,
     FormProps,
     Input,
@@ -18,7 +19,7 @@ import {
     Timeline,
     notification,
 } from 'antd';
-import { DescriptionsProps } from 'antd';
+import { DescriptionsProps, Typography } from 'antd';
 import * as reviewServices from '@/api/reviewServices';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useAppSelector } from '@/app/hooks';
@@ -26,6 +27,7 @@ import { selectUser } from '@/app/feature/user/reducer';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import UserOrderDatailLoading from './UserOrderDatailLoading';
+import Container from '@/conponents/Container';
 type NotificationType = 'success' | 'error';
 type TimeLineProps = {
     label?: string;
@@ -35,6 +37,7 @@ type ConfirmType = 'CANCELED' | 'SUCCESSED' | 'RETURNED';
 function UserOrderDetail() {
     const { id } = useParams();
     const baseUrl = import.meta.env.VITE_BASE_URL;
+    const { Paragraph } = Typography;
     const [form] = Form.useForm();
     const user = useAppSelector(selectUser).data;
     const [api, contextHolder] = notification.useNotification();
@@ -45,7 +48,7 @@ function UserOrderDetail() {
             description: mess,
         });
     };
-    const { data, isLoading ,refetch} = useQuery({
+    const { data, isLoading, refetch } = useQuery({
         queryKey: [`order-detail`],
         queryFn: () => orderServices.getOrderDetailByOrderId(Number(id)),
     });
@@ -70,14 +73,14 @@ function UserOrderDetail() {
                 values.orderDetailId = currentOD.id;
                 const res = await reviewServices.createReivew(values);
                 if (res.isSuccessed === true) {
-                    refetch()
+                    refetch();
                     onClose();
                 }
             } else {
                 values.id = currentOD?.review.id;
                 const res = await reviewServices.updateReivew(values);
                 if (res.isSuccessed === true) {
-                    refetch()
+                    refetch();
                     onClose();
                 }
             }
@@ -116,7 +119,7 @@ function UserOrderDetail() {
                 res = await orderServices.returned(order.id);
             }
             if (res.isSuccessed === true) {
-                refetch()
+                refetch();
                 openNotificationWithIcon('success', res.message);
             } else {
                 openNotificationWithIcon('error', res.message);
@@ -165,7 +168,7 @@ function UserOrderDetail() {
         },
     ];
     return (
-        <div className="container" style={{ marginBottom: 10, marginTop: 10 }}>
+        <Container>
             {contextHolder}
             {isLoading ? (
                 <UserOrderDatailLoading />
@@ -248,40 +251,42 @@ function UserOrderDetail() {
                                 <Card title="Danh sách sản phẩm" bordered={false}>
                                     <div>
                                         {order.orderDetail?.map((e: OrderDetail) => (
-                                            <>
-                                                <Row align={'top'}>
-                                                    <Col xs={8} lg={6}>
-                                                        <p>
+                                            <React.Fragment key={e.id}>
+                                                <Flex vertical>
+                                                    <div style={{ width: 300 }}>
+                                                        <Paragraph
+                                                            ellipsis={{
+                                                                rows: 1,
+                                                            }}
+                                                        >
                                                             <Link to={`/product/detail/${e.productId}`}>
                                                                 {e.seoTitle}
                                                             </Link>
-                                                        </p>
-                                                        <img
-                                                            src={`${baseUrl + e.urlThumbnailImage}`}
-                                                            style={{ width: 70 }}
-                                                        />
-                                                    </Col>
-                                                    <Col xs={8} lg={5}>
-                                                        <p>Số lượng: {e.quantity}</p>
-                                                        <p>Giá: {e.price}</p>
-                                                        {e.value != undefined ? (
-                                                            <p>Size: {e.value + ' ' + e.sku}</p>
-                                                        ) : (
-                                                            ''
-                                                        )}
-                                                    </Col>
-                                                    <Col xs={8} lg={5}>
-                                                        <p>Total:{ChangeCurrence(e.total)}</p>
-                                                    </Col>
-                                                    <Col xs={24} lg={8}>
-                                                        <Col>
-                                                            <Card
-                                                                size="small"
-                                                                title="Review"
-                                                                extra={
+                                                        </Paragraph>
+                                                    </div>
+                                                    <Row gutter={16} align={'top'}>
+                                                        <Col xs={8} lg={8}>
+                                                            <div style={{ width: 100 }}>
+                                                                <img
+                                                                    src={`${baseUrl + e.urlThumbnailImage}`}
+                                                                    style={{ width: '100%' }}
+                                                                />
+                                                            </div>
+                                                        </Col>
+                                                        <Col xs={16} lg={16}>
+                                                            <Flex justify={'space-between'} wrap="wrap">
+                                                                <div>
+                                                                    <span>Số lượng: {e.quantity}</span>
+                                                                    <p>Giá: {e.price}</p>
+                                                                    {e.value != undefined && (
+                                                                        <p>Size: {e.value + ' ' + e.sku}</p>
+                                                                    )}
+                                                                    <p>Thành tiền:{ChangeCurrence(e.total)}</p>
+                                                                </div>
+                                                                <div className="review">
                                                                     <Button
                                                                         type="primary"
-                                                                        size="small"
+                                                                        size="middle"
                                                                         disabled={
                                                                             order?.status?.some(
                                                                                 (s) => s.name === 'Đã hoàng thành',
@@ -292,30 +297,44 @@ function UserOrderDetail() {
                                                                         }}
                                                                     >
                                                                         {e.review?.comment == null
-                                                                            ? 'Review'
-                                                                            : 'Edit review'}
+                                                                            ? 'Đánh giá'
+                                                                            : 'Xem đánh giá'}
                                                                     </Button>
-                                                                }
-                                                            >
-                                                                {e.review != undefined && (
-                                                                    <div style={{ marginBottom: 10 }}>
-                                                                        <p>{e.review?.comment || ''}</p>
-                                                                        <Rate value={e.review?.rate} />
-                                                                    </div>
-                                                                )}
-                                                            </Card>
+                                                                </div>
+                                                            </Flex>
                                                         </Col>
-                                                    </Col>
-                                                </Row>
+                                                        <Col span={24}>
+                                                            <div className="review__moblie">
+                                                                <Button
+                                                                    type="primary"
+                                                                    size="middle"
+                                                                    block
+                                                                    disabled={
+                                                                        order?.status?.some(
+                                                                            (s) => s.name === 'Đã hoàng thành',
+                                                                        ) === false
+                                                                    }
+                                                                    onClick={() => {
+                                                                        showDrawer(e);
+                                                                    }}
+                                                                >
+                                                                    {e.review?.comment == null
+                                                                        ? 'Đánh giá'
+                                                                        : 'Xem đánh giá'}
+                                                                </Button>
+                                                            </div>
+                                                        </Col>
+                                                    </Row>
+                                                </Flex>
                                                 <Divider />
-                                            </>
+                                            </React.Fragment>
                                         ))}
                                     </div>
                                 </Card>
                             </Col>
                         </Row>
 
-                        <Drawer title="Basic Drawer" onClose={onClose} open={open}>
+                        <Drawer title="Bình luận" onClose={onClose} open={open}>
                             {order && (
                                 <Form
                                     form={form}
@@ -358,7 +377,7 @@ function UserOrderDetail() {
                     </>
                 )
             )}
-        </div>
+        </Container>
     );
 }
 const ChangeCurrence = (number: number | undefined) => {

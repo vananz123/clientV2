@@ -2,13 +2,14 @@
 import { useParams } from 'react-router-dom';
 import * as productServices from '@/api/productServices';
 import React, { useCallback, useEffect } from 'react';
-import { Product,Filter,Sort } from '@/type';
+import { Product, Filter, Sort } from '@/type';
 import { useAppSelector } from '@/app/hooks';
 import { selectCategories } from '@/app/feature/category/reducer';
-import { Button, Col, Flex, Result, Row, Select, Switch, Pagination, PaginationProps , Space, Tooltip } from 'antd';
+import { Button, Col, Flex, Result, Row, Select, Switch, Pagination, PaginationProps, Space, Tooltip } from 'antd';
 import ProductCard from '@/conponents/ProductCard';
-import { OPTIONS_PRICE,OPTIONS_MATERIAL,OPTIONS_SORT } from '@/common/common';
+import { OPTIONS_PRICE, OPTIONS_MATERIAL, OPTIONS_SORT } from '@/common/common';
 import SkeletonCard from '@/conponents/SkeletonCard';
+import Container from '@/conponents/Container';
 const pageSize: number = 8;
 function ProductListShow() {
     const { id } = useParams();
@@ -18,7 +19,7 @@ function ProductListShow() {
     const [sortOder, setSortOder] = React.useState<Sort>('ascending');
     const [optionPrice, setOptionPrice] = React.useState<number[]>([]);
     const [optionMaterial, setOptionMaterial] = React.useState<string[]>([]);
-    const [totalRecord,setTotalRecord] = React.useState<number>(0)
+    const [totalRecord, setTotalRecord] = React.useState<number>(0);
     const [isPromotion, setIsPromotion] = React.useState<boolean>(false);
     const [titleContent, setTitleContent] = React.useState<string | undefined>('');
     const getProductPaging = useCallback(async () => {
@@ -33,11 +34,11 @@ function ProductListShow() {
         };
         const res = await productServices.getProductPagingByFilter(filter);
         if (res.statusCode == 200) {
-            console.log(res)
+            console.log(res);
             setProducts(res.resultObj.items);
-            setTotalRecord(res.resultObj.totalRecords)
+            setTotalRecord(res.resultObj.totalRecords);
         }
-    },[id,page, optionPrice, optionMaterial, sortOder, isPromotion]);
+    }, [id, page, optionPrice, optionMaterial, sortOder, isPromotion]);
     const getProductPromotionPaging = useCallback(async () => {
         const filter: Filter = {
             page: page,
@@ -51,11 +52,10 @@ function ProductListShow() {
         console.log(res);
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
-            setTotalRecord(res.resultObj.totalRecords)
+            setTotalRecord(res.resultObj.totalRecords);
         }
-    },[page, optionPrice, optionMaterial, sortOder, isPromotion]);
+    }, [page, optionPrice, optionMaterial, sortOder, isPromotion]);
     const getProductPNPaging = useCallback(async () => {
-       
         const filter: Filter = {
             page: page,
             sortOder: sortOder,
@@ -68,9 +68,9 @@ function ProductListShow() {
         const res = await productServices.getProductPagingByFilter(filter);
         if (res.statusCode == 200) {
             setProducts(res.resultObj.items);
-            setTotalRecord(res.resultObj.totalRecords)
+            setTotalRecord(res.resultObj.totalRecords);
         }
-    },[id, page, optionPrice, optionMaterial, sortOder, isPromotion]);
+    }, [id, page, optionPrice, optionMaterial, sortOder, isPromotion]);
     const getProductStatusPaging = useCallback(
         async (status: number) => {
             const filter: Filter = {
@@ -84,7 +84,8 @@ function ProductListShow() {
             };
             const res = await productServices.getProductPagingByFilter(filter);
             if (res.statusCode == 200) {
-                setProducts(res.resultObj.items);setTotalRecord(res.resultObj.totalRecords)
+                setProducts(res.resultObj.items);
+                setTotalRecord(res.resultObj.totalRecords);
             }
         },
         [page, optionPrice, optionMaterial, sortOder, isPromotion],
@@ -147,11 +148,11 @@ function ProductListShow() {
         }
     };
     const onChange: PaginationProps['onChange'] = (pageNumber) => {
-        setPage(pageNumber)
-      };
+        setPage(pageNumber);
+    };
     return (
         <>
-            <div className="container">
+            <Container>
                 <h3>{titleContent}</h3>
                 <Flex justify="space-between" gap={16} style={{ marginBottom: '10px' }}>
                     <Space wrap>
@@ -191,53 +192,59 @@ function ProductListShow() {
                             }}
                         />
                     </Space>
-                    <Select value={sortOder} style={{ width: 120 }} onChange={handleChangeSort} options={OPTIONS_SORT} />
+                    <Select
+                        value={sortOder}
+                        style={{ width: 120 }}
+                        onChange={handleChangeSort}
+                        options={OPTIONS_SORT}
+                    />
                 </Flex>
-               
-                    {products != undefined ? (
-                        <>
-                            {products.length > 0 ? (
-                                <Row gutter={[24, 24]}>
-                                    {products.map((e: Product) => (
-                                        <Col
-                                            style={{ display: 'flex', justifyContent: 'center' }}
-                                            xs={12}
-                                            sm={8}
-                                            md={8}
-                                            lg={8}
-                                            xl={6}
-                                            className="gutter-row"
-                                            key={e.id}
-                                        >
-                                            <ProductCard product={e} />
-                                        </Col>
-                                    ))}
-                                </Row>
-                            ) : (
-                                <Result title="No resulf" extra={<Button type="primary">See more</Button>} />
-                            )}
-                        </>
-                    ) : (
-                        <Row gutter={[24, 24]}>
-                            {Array.from({length:8}).map((_,index)=>(
-                                <Col key={index}
-                                    style={{ display: 'flex', justifyContent: 'center' }}
-                                                xs={12}
-                                                sm={8}
-                                                md={8}
-                                                lg={8}
-                                                xl={6}
-                                    className="gutter-row"
+
+                {products != undefined ? (
+                    <>
+                        {products.length > 0 ? (
+                            <Row gutter={[24, 24]}>
+                                {products.map((e: Product) => (
+                                    <Col
+                                        style={{ display: 'flex', justifyContent: 'center' }}
+                                        xs={12}
+                                        sm={8}
+                                        md={8}
+                                        lg={8}
+                                        xl={6}
+                                        className="gutter-row"
+                                        key={e.id}
                                     >
-                                    <SkeletonCard style={{width:'100%',height:350}}/>
-                                </Col>
-                            ))}
-                        </Row>
-                    )}
-                <div style={{ marginTop: 24, marginBottom:24,textAlign: 'center' }}>
+                                        <ProductCard product={e} />
+                                    </Col>
+                                ))}
+                            </Row>
+                        ) : (
+                            <Result title="No resulf" extra={<Button type="primary">See more</Button>} />
+                        )}
+                    </>
+                ) : (
+                    <Row gutter={[24, 24]}>
+                        {Array.from({ length: 8 }).map((_, index) => (
+                            <Col
+                                key={index}
+                                style={{ display: 'flex', justifyContent: 'center' }}
+                                xs={12}
+                                sm={8}
+                                md={8}
+                                lg={8}
+                                xl={6}
+                                className="gutter-row"
+                            >
+                                <SkeletonCard style={{ width: '100%', height: 350 }} />
+                            </Col>
+                        ))}
+                    </Row>
+                )}
+                <div style={{ marginTop: 24, marginBottom: 24, textAlign: 'center' }}>
                     <Pagination onChange={onChange} current={page} pageSize={pageSize} total={totalRecord} />
                 </div>
-            </div>
+            </Container>
         </>
     );
 }
