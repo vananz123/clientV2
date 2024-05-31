@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { loadCartDetail } from '@/app/feature/cart/action';
 import { selectUser } from '@/app/feature/user/reducer';
 import { useMutation } from '@tanstack/react-query';
+import Container from '@/conponents/Container';
 function CheckoutVnpay() {
     const user = useAppSelector(selectUser).data
     const [content,setContent] = React.useState<string>('')
@@ -49,7 +50,7 @@ function CheckoutVnpay() {
         }
     },[p,mutationCanceled,mutationPaided])
     return (
-        <div className='container'>
+        <Container>
             <Result
                 status={status ? 'success' : 'warning'}
                 title="Thông tin đơn hàng!"
@@ -61,7 +62,7 @@ function CheckoutVnpay() {
                     <Button key="buy">Buy Again</Button>,
                 ]}
             />
-        </div>
+        </Container>
     );
 }
 

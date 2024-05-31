@@ -104,7 +104,14 @@ body {
     }
 }
 .container {
+    display: grid;
+    grid-column: 1;
+    justify-items: center;
+}
+.container .content{
     padding: 16px;
+    width: 100%;
+    max-width: 1300px;
     @include Responsive(SM) {
         padding: 0 24px;
     }
@@ -203,4 +210,16 @@ body {
 }
 .carouselHome{
     height: auto;
+}
+.review{
+    display:none;
+    @include Responsive(SM) {
+        display: block;
+    }
+}
+.review__moblie{
+    display: block;
+    @include Responsive(SM) {
+        display: none;
+    }
 }

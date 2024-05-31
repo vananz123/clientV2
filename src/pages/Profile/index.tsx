@@ -14,6 +14,7 @@ import { StatusForm } from '@/type';
 import dayjs from 'dayjs';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import ProfileLoading from './ProfileLoading';
+import Container from '@/conponents/Container';
 function Profile() {
     const Navigate = useNavigate();
     const user = useAppSelector(selectUser).data;
@@ -198,54 +199,54 @@ function Profile() {
         setOpen(false);
     };
     return (
-        <div className="container" style={{marginBottom:10,marginTop:10}}>
+        <Container>
             <Button
-                type="text"
-                icon={<ArrowLeftOutlined />}
-                size="small"
-                style={{ marginBottom: '10px' }}
-                onClick={() => {
-                    GoBack();
-                }}
-            >
-                Go back
-            </Button>
-            {isLoading ? (
-                <ProfileLoading />
-            ) : (
-                data && (
-                    <>
-                        <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
-                        <Modal
-                            title="Notification"
-                            open={open}
-                            //onOk={handleOk}
-                            confirmLoading={mutation.isPending}
-                            onCancel={handleCancel}
-                            footer={''}
-                        >
-                            <AddressForm
-                                typeForm={typeFormAddress}
-                                address={currentAddressForm}
-                                onSetState={setCurrentAddress}
-                                onSetStatus={setStatus}
-                            />
-                        </Modal>
-                        <Modal
-                            title="Notification"
-                            open={openDel}
-                            onOk={handleDelOk}
-                            confirmLoading={mutation.isPending}
-                            onCancel={() => {
-                                setOpenDel(false);
-                            }}
-                        >
-                            Do you want to detele!
-                        </Modal>
-                    </>
-                )
-            )}
-        </div>
+                    type="text"
+                    icon={<ArrowLeftOutlined />}
+                    size="small"
+                    style={{ marginBottom: '10px' }}
+                    onClick={() => {
+                        GoBack();
+                    }}
+                >
+                    Go back
+                </Button>
+                {isLoading ? (
+                    <ProfileLoading />
+                ) : (
+                    data && (
+                        <>
+                            <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+                            <Modal
+                                title="Notification"
+                                open={open}
+                                //onOk={handleOk}
+                                confirmLoading={mutation.isPending}
+                                onCancel={handleCancel}
+                                footer={''}
+                            >
+                                <AddressForm
+                                    typeForm={typeFormAddress}
+                                    address={currentAddressForm}
+                                    onSetState={setCurrentAddress}
+                                    onSetStatus={setStatus}
+                                />
+                            </Modal>
+                            <Modal
+                                title="Notification"
+                                open={openDel}
+                                onOk={handleDelOk}
+                                confirmLoading={mutation.isPending}
+                                onCancel={() => {
+                                    setOpenDel(false);
+                                }}
+                            >
+                                Do you want to detele!
+                            </Modal>
+                        </>
+                    )
+                )}
+        </Container>
     );
 }
 const getLateArray =  (os: OrderStatus[] | undefined) => {

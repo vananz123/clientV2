@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { loadCartDetail } from '@/app/feature/cart/action';
 import { selectUser } from '@/app/feature/user/reducer';
+import Container from '@/conponents/Container';
 function Checkout() {
     const {id} = useParams()
     const [content,setContent] = React.useState<string>('')
@@ -20,19 +21,17 @@ function Checkout() {
         }
     },[dispatch,id]);
     return (
-        <div className='container'>
-            <Result
-                status={status ? 'success' : 'warning'}
-                title="Thông tin đơn hàng!"
-                subTitle={content}
-                extra={[
-                    <Button type="primary" key="console" onClick={()=>{navigate('/profile')}}>
-                        Order detail
-                    </Button>,
-                    <Button key="buy" onClick={()=>{navigate('/home')}}>Buy Again</Button>,
-                ]}
-            />
-        </div>
+        <Container><Result
+        status={status ? 'success' : 'warning'}
+        title="Thông tin đơn hàng!"
+        subTitle={content}
+        extra={[
+            <Button type="primary" key="console" onClick={()=>{navigate('/profile')}}>
+                Order detail
+            </Button>,
+            <Button key="buy" onClick={()=>{navigate('/home')}}>Buy Again</Button>,
+        ]}
+    /></Container>
     );
 }
 

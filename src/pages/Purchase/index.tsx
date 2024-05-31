@@ -16,19 +16,20 @@ import {
     Flex,
 } from 'antd';
 import { Link } from 'react-router-dom';
-import React, { useEffect } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import type { RadioChangeEvent, SelectProps } from 'antd';
 import type { DescriptionsProps } from 'antd';
 import * as userServices from '@/api/userServices';
 import * as orderServices from '@/api/orderServices';
 import * as paymentServices from '@/api/paymentServices';
 import { useNavigate } from 'react-router-dom';
-import AddressForm from '@/conponents/AddressForm';
+const AddressForm = lazy(()=> import('@/conponents/AddressForm'));
 import { StatusForm } from '@/type';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { selectCartDetail } from '@/app/feature/cart/reducer';
 import { selectUser } from '@/app/feature/user/reducer';
 import { useQuery } from '@tanstack/react-query';
+import Container from '@/conponents/Container';
 const { Title, Paragraph } = Typography;
 export type TypeFormAddress = 'ADD' | 'EDIT';
 function Purchase() {
@@ -115,7 +116,7 @@ function Purchase() {
         items = [];
     }
     return (
-        <div className="container">
+        <Container>
             <Row gutter={[24, 24]} style={{ marginBottom: 24 }}>
                 <Col className="gutter-row" xs={24} lg={16} xl={16}>
                     <Title level={4}>Phương Thức Thanh Toán</Title>
@@ -224,12 +225,14 @@ function Purchase() {
                 </Col>
             </Row>
             <Modal title="Notification" open={open} onCancel={handleCancel} footer={''}>
-                <AddressForm
-                    typeForm={typeFormAddress}
-                    address={currentAddressForm}
-                    onSetState={setCurrentAddress}
-                    onSetStatus={setStatus}
-                />
+                <Suspense>
+                    <AddressForm
+                        typeForm={typeFormAddress}
+                        address={currentAddressForm}
+                        onSetState={setCurrentAddress}
+                        onSetStatus={setStatus}
+                    />
+                </Suspense>
             </Modal>
             <Drawer title="Sửa Địa Chỉ" onClose={onCloseDrawAddress} open={openDrawAddress}>
                 <Radio.Group value={currentAddress?.id} onChange={handleChangeAddresses}>
@@ -273,7 +276,7 @@ function Purchase() {
                     }}
                 ></Button>
             </Drawer>
-        </div>
+        </Container>
     );
 }
 const ChangeCurrence = (number: number) => {

@@ -1,26 +1,25 @@
-
 import { HeaderC, FooterC } from '../components';
-import {  Layout, theme } from 'antd';
+import { Layout, theme } from 'antd';
 const { Content } = Layout;
 import { Outlet } from 'react-router-dom';
 function DefaultLayout() {
     const {
-        token: {  borderRadiusLG ,colorBgContainer},
+        token: { borderRadiusLG, colorBgContainer },
     } = theme.useToken();
     return (
         <div>
             <Layout>
-                <Layout >
+                <Layout>
                     <HeaderC />
                     <Content
                         style={{
-                            marginTop:10,
+                            marginTop: 10,
                             minHeight: 360,
                             borderRadius: borderRadiusLG,
-                            background:colorBgContainer
+                            background: colorBgContainer,
                         }}
                     >
-                         <Outlet />
+                        <Outlet />
                     </Content>
                     <FooterC />
                 </Layout>
