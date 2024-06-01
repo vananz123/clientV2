@@ -4,17 +4,13 @@ import * as request from '../utils/request'
 import {  PagingResult, Promotion, Result } from './ResType'
 import {  Product ,Filter} from '@/type'
 import { UploadFile } from 'antd'
+export interface PagingProduct extends PagingResult{
+    items:Product[]
+}
 export const getAllProduct = async()=>{
     try{
         const res = await request.get(`/product`)
         const resultObj : Product[]  = res.resultObj
-        // const resp: Result ={
-        //     error :'',
-        //     isSuccessed:res.isSuccessed,
-        //     message:res.message,
-        //     statusCode:200,
-        //     resultObj : resultObj
-        // }
         return resultObj
     }catch(error:any){
         return undefined
@@ -38,8 +34,7 @@ export const getProductDetail = async(id:number)=>{
     }
 }
 export const getProductPagingByFilter = async(filter:Filter)=>{
-    try{
-        let material:string = ""
+    let material:string = ""
         filter.optionMaterial?.forEach((e:string)=>{
             material += e + ","
         })
@@ -54,15 +49,13 @@ export const getProductPagingByFilter = async(filter:Filter)=>{
             isPromotion:filter.isPromotion || false,
             productStatus:filter.productStatus
         }
-        const res = await request.post(`/product/filter`,params)
-        const resultObj :Product[] = res.resultObj.items
-        const paging: PagingResult = {
-            items: resultObj,
-            pageIndex : res.resultObj.pageIndex,
-            pageCount:res.resultObj.pageCount,
-            pageSize:res.resultObj.pageSize,
-            totalRecords:res.resultObj.totalRecords
-        }
+        const res = await request.get(`/product/filter`,{
+            params,
+            paramsSerializer: {
+                indexes: null // by default: false
+            }
+        })
+        const paging: PagingProduct = res.resultObj;
         const resp: Result ={
             error :'',
             isSuccessed:res.isSuccessed,
@@ -71,11 +64,6 @@ export const getProductPagingByFilter = async(filter:Filter)=>{
             resultObj : paging,
         }
         return resp
-    }catch(error:any){
-        console.log(error.response.data)
-        const resError: Result =error.response.data
-        return resError
-    }
 }
 export const addProduct = async(data:Product)=>{
     try{

@@ -253,7 +253,7 @@ function UserOrderDetail() {
                                         {order.orderDetail?.map((e: OrderDetail) => (
                                             <React.Fragment key={e.id}>
                                                 <Flex vertical>
-                                                    <div style={{ width: 300 }}>
+                                                    <div className="w-[300px] xs:w-[400px] sm:w-[500px] md:w-full">
                                                         <Paragraph
                                                             ellipsis={{
                                                                 rows: 1,
@@ -266,10 +266,10 @@ function UserOrderDetail() {
                                                     </div>
                                                     <Row gutter={16} align={'top'}>
                                                         <Col xs={8} lg={8}>
-                                                            <div style={{ width: 100 }}>
+                                                            <div className="w-[100px]">
                                                                 <img
                                                                     src={`${baseUrl + e.urlThumbnailImage}`}
-                                                                    style={{ width: '100%' }}
+                                                                    className="w-full h-full"
                                                                 />
                                                             </div>
                                                         </Col>
@@ -283,7 +283,7 @@ function UserOrderDetail() {
                                                                     )}
                                                                     <p>Thành tiền:{ChangeCurrence(e.total)}</p>
                                                                 </div>
-                                                                <div className="review">
+                                                                <div className="hidden sm:block">
                                                                     <Button
                                                                         type="primary"
                                                                         size="middle"
@@ -304,7 +304,7 @@ function UserOrderDetail() {
                                                             </Flex>
                                                         </Col>
                                                         <Col span={24}>
-                                                            <div className="review__moblie">
+                                                            <div className="sm:hidden">
                                                                 <Button
                                                                     type="primary"
                                                                     size="middle"
