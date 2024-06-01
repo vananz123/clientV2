@@ -1,6 +1,7 @@
 import { Col, Layout, Row, Space } from 'antd';
 import { FacebookOutlined, LinkedinOutlined, TwitterOutlined, YoutubeOutlined } from '@ant-design/icons';
 import { Flex, Tag } from 'antd';
+import Container from '@/conponents/Container';
 const { Footer } = Layout;
 const footerStyle: React.CSSProperties = {
     color: '#282828',
@@ -10,8 +11,8 @@ const footerStyle: React.CSSProperties = {
 };
 function FooterC() {
     return (
-        <div style={{ borderTop: '1px solid #858585', paddingTop: '20px' }}>
-            <Footer style={{ textAlign: 'center' }}>
+        <Container>
+            <Footer style={{ textAlign: 'center',borderTop: '1px solid #858585', paddingTop: '20px' } }>
                 <Row gutter={[8, 8]} align={'top'} justify={'start'}>
                     <Col xs={24} md={24} lg={8} xl={8}>
                         <div style={{ textAlign: 'left', width: '80%' }}>
@@ -130,7 +131,7 @@ function FooterC() {
                     </Col>
                 </Row>
             </Footer>
-        </div>
+        </Container>
     );
 }
 
