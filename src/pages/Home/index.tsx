@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Card, Carousel, Col, Row } from 'antd';
+import { Carousel, Col, Row } from 'antd';
 import { Product } from '@/type';
 import ProductCard from '@/conponents/ProductCard';
 import React, { useEffect } from 'react';
@@ -75,7 +75,7 @@ function Home() {
                     <div style={contentStyle}>
                         <img
                             //style={imgStyles}
-                            className='w-full h-full'
+                            className="w-full h-full"
                             src="/ngaydoi-05-05-24-1972x640CTA.webp"
                             alt="Ngày đôi 5.5 - Chào hè bất tận"
                         />
@@ -90,9 +90,12 @@ function Home() {
                 </Carousel>
             </div>
             <Container>
-                <Card bordered={false} title={<p>Xu hướng</p>} style={{ marginTop: 20 }}>
+                <div>
+                    <div className="flex justify-start my-3">
+                        <p className="text-[18px] font-bold">Xu hướng</p>
+                    </div>
                     {typeof productsNew !== 'undefined' && (
-                        <Row gutter={[12, 12]}>
+                        <Row gutter={[16, 16]}>
                             {productsNew.map((e: Product) => (
                                 <Col
                                     style={{ display: 'flex', justifyContent: 'center' }}
@@ -109,15 +112,16 @@ function Home() {
                             ))}
                         </Row>
                     )}
-                </Card>
-                <Card
-                    bordered={false}
-                    title="Sản phẩm mới"
-                    style={{ marginTop: 24 }}
-                    extra={<Link to={'/product/hot'}>Xem thêm</Link>}
-                >
+                </div>
+                <div>
+                    <div className="flex justify-between my-5 items-center">
+                        <p className="text-[18px] font-bold">Sản phẩm bán chạy</p>
+                        <div>
+                            <Link to={'/product/hot'} className='underline'>Xem thêm</Link>
+                        </div>
+                    </div>
                     {typeof productsHot !== 'undefined' && (
-                        <Row gutter={[12, 12]}>
+                        <Row gutter={[16, 16]}>
                             {productsHot.map((e: Product) => (
                                 <Col
                                     style={{ display: 'flex', justifyContent: 'center' }}
@@ -134,15 +138,16 @@ function Home() {
                             ))}
                         </Row>
                     )}
-                </Card>
-                <Card
-                    bordered={false}
-                    title="Sản phẩm mới"
-                    style={{ marginTop: 24 }}
-                    extra={<Link to={'/product/new'}>Xem thêm</Link>}
-                >
+                </div>
+                <div>
+                    <div className="flex justify-between my-5 items-center">
+                        <p className="text-[18px] font-bold">Sản phẩm mới</p>
+                        <div>
+                            <Link to={'/product/new'}className='underline'>Xem thêm</Link>
+                        </div>
+                    </div>
                     {typeof productsNew !== 'undefined' && (
-                        <Row gutter={[12, 12]}>
+                        <Row gutter={[16, 16]}>
                             {productsNew.map((e: Product) => (
                                 <Col
                                     style={{ display: 'flex', justifyContent: 'center' }}
@@ -159,20 +164,21 @@ function Home() {
                             ))}
                         </Row>
                     )}
-                </Card>
+                </div>
             </Container>
             <div style={contentStyle}>
                 <img style={imgStyles} src="./watch-t5-24-1200x450CTA.webp" alt="" />
             </div>
             <Container>
-                <Card
-                    bordered={false}
-                    title="Đồng Hồ"
-                    style={{ marginTop: -50 }}
-                    extra={<Link to={'/product/2'}>Xem thêm</Link>}
-                >
+                <div>
+                    <div className="flex justify-between my-5 items-center">
+                        <p className="text-[18px] font-bold">Đồng hồ</p>
+                        <div>
+                            <Link to={'/product/2'} className='underline'>Xem thêm</Link>
+                        </div>
+                    </div>
                     {typeof products !== 'undefined' && (
-                        <Row gutter={[12, 12]}>
+                        <Row gutter={[16, 16]}>
                             {products.map((e: Product) => (
                                 <Col
                                     style={{ display: 'flex', justifyContent: 'center' }}
@@ -189,15 +195,16 @@ function Home() {
                             ))}
                         </Row>
                     )}
-                </Card>
-                <Card
-                    bordered={false}
-                    title="Có Thể Bạn Sẽ Thích"
-                    style={{ marginTop: 20 }}
-                    extra={<Link to={'/product/hot'}>Xem thêm</Link>}
-                >
+                </div>
+                <div>
+                    <div className="flex justify-between my-5 items-center">
+                        <p className="text-[18px] font-bold">Có Thể Bạn Sẽ Thích</p>
+                        <div>
+                            <Link to={'/product/hot'} className='underline'>Xem thêm</Link>
+                        </div>
+                    </div>
                     {typeof productsHot !== 'undefined' && (
-                        <Row gutter={[12, 12]}>
+                        <Row gutter={[16, 16]}>
                             {productsHot.map((e: Product) => (
                                 <Col
                                     style={{ display: 'flex', justifyContent: 'center' }}
@@ -214,7 +221,7 @@ function Home() {
                             ))}
                         </Row>
                     )}
-                </Card>
+                </div>
             </Container>
         </div>
     );

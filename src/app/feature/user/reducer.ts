@@ -11,7 +11,7 @@ export interface UserDefaultState {
 
 const initialState: UserDefaultState = {
     isAuthenticated: false,
-    isInitialized: false,
+    isInitialized: true,
     data: undefined,
     isLoading: false,
 };
@@ -20,7 +20,7 @@ const userReducer = createReducer(initialState, (builder) => {
         .addCase(loadUser.pending, (state) => {
             state.isLoading = true;
             state.isAuthenticated =false,
-            state.isInitialized = false
+            state.isInitialized = true
         })
         .addCase(loadUser.fulfilled, (state, action) => {
             if (!action.payload) return;

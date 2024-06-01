@@ -1,7 +1,7 @@
 @import './ColorStyle.scss';
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,300;1,400&display=swap');
 :root {
-    
+
 }
 html {
     font-size: 100%;
@@ -103,19 +103,6 @@ body {
         }
     }
 }
-// .container {
-//     display: grid;
-//     grid-column: 1;
-//     justify-items: center;
-// }
-.container .content{
-    padding: 16px;
-    width: 100%;
-    max-width: 1300px;
-    @include Responsive(SM) {
-        padding: 0 24px;
-    }
-}
 .header-container {
     padding: 0 16px;
     display: flex;
@@ -210,16 +197,4 @@ body {
 }
 .carouselHome{
     height: auto;
-}
-.review{
-    display:none;
-    @include Responsive(SM) {
-        display: block;
-    }
-}
-.review__moblie{
-    display: block;
-    @include Responsive(SM) {
-        display: none;
-    }
 }
