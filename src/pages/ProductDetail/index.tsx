@@ -6,8 +6,8 @@ import * as productServices from '@/api/productServices';
 import * as cartServices from '@/api/cartServices';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
-import { Col,Badge, Typography, Row, Image, Space, Button, notification, Flex, Divider, Segmented } from 'antd';
-import {ArrowLeftOutlined } from '@ant-design/icons';
+import { Col, Badge, Typography, Row, Image, Button, notification, Flex, Divider, Segmented } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 type NotificationType = 'success' | 'error';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -15,9 +15,10 @@ import ProductDetailLoading from './ProductDetailLoading';
 import { loadCartDetail } from '@/app/feature/cart/action';
 import Container from '@/conponents/Container';
 import InputQuatity from '@/conponents/InputQuatity';
-const ProductDetailReview =lazy(()=> import('./ProductDetailReview'));
-const ProductDetailSimilarProduct =lazy(()=> import('./ProductDetailSimilarProduct'))
-const ProductDetailInfo =lazy(()=> import('./ProductDetailInfo'));
+const ProductDetailImage = lazy(()=> import('./ProductDetailImage'));
+const ProductDetailReview = lazy(() => import('./ProductDetailReview'));
+const ProductDetailSimilarProduct = lazy(() => import('./ProductDetailSimilarProduct'));
+const ProductDetailInfo = lazy(() => import('./ProductDetailInfo'));
 
 interface OptionSize {
     label: string;
@@ -41,7 +42,7 @@ function ProductDetail() {
     const listImage: string[] = [];
     if (data) {
         const arr: string[] = data.urlImage.split('*');
-        const arrFilter = arr.filter( s => s !== '')
+        const arrFilter = arr.filter((s) => s !== '');
         listImage.push(...arrFilter);
         if (data.items && data.items.length > 0) {
             data.items.forEach((element: ProductItem) => {
@@ -95,7 +96,7 @@ function ProductDetail() {
             Navigate('/auth/login');
         }
     };
-    
+
     return (
         <section>
             {contextHolder}
@@ -125,9 +126,9 @@ function ProductDetail() {
                                         md={16}
                                         lg={10}
                                         xl={10}
-                                        className="gutter-row"
+                                        className="gutter-row bg-[#fafafa] rounded"
                                     >
-                                        <div style={{ padding: 20 }}>
+                                        <div>
                                             <Image width={'100%'} src={`${baseUrl + data.urlThumbnailImage}`} />
                                         </div>
                                         <span style={{ position: 'absolute', top: '5px', right: '5px' }}>
@@ -138,31 +139,29 @@ function ProductDetail() {
                                                     color="red"
                                                 ></Badge.Ribbon>
                                             ) : (
-                                                <Badge.Ribbon text="New" style={{ display: 'none' }}></Badge.Ribbon>
-                                            )}
-                                            {data?.status == 3 ? (
-                                                <Badge.Ribbon
-                                                    text="Hot"
-                                                    style={{ display: '' }}
-                                                    color="yellow"
-                                                ></Badge.Ribbon>
-                                            ) : (
-                                                <Badge.Ribbon text="New" style={{ display: 'none' }}></Badge.Ribbon>
+                                                <>
+                                                    {data?.status == 3 && (
+                                                        <Badge.Ribbon
+                                                            text="Hot"
+                                                            style={{ display: '' }}
+                                                            color="yellow"
+                                                        ></Badge.Ribbon>
+                                                    )
+                                                    }
+                                                </>
                                             )}
                                         </span>
                                     </Col>
                                     <Col xs={8} sm={8} md={8} lg={4} xl={4}>
-                                        <Space align="center" direction="vertical" style={{ padding: 20 }}>
-                                            {listImage.map((e: string, index) => (
-                                                <Image key={index} alt={`${data.seoTitle}`} src={`${baseUrl + e}`} />
-                                            ))}
-                                        </Space>
+                                        <ProductDetailImage listImage={listImage} seo={data.seoTitle}/>
                                     </Col>
                                     <Col xs={24} sm={24} md={24} lg={10} xl={10} className="gutter-row">
-                                        <Paragraph style={{fontWeight:500}} copyable>{data.seoTitle}</Paragraph>
+                                        <Paragraph style={{ fontWeight: 500,fontSize:18 }} copyable>
+                                            {data.seoTitle}
+                                        </Paragraph>
                                         {typeof currentProductItem !== 'undefined' && (
                                             <>
-                                                <div style={{ marginBottom: 15 }}>
+                                                <div className='mb-5'>
                                                     {currentProductItem.type == undefined ? (
                                                         <>
                                                             <span
@@ -175,32 +174,39 @@ function ProductDetail() {
                                                                 }}
                                                             >
                                                                 {ChangeCurrence(
-                                                                    currentProductItem?.priceBeforeDiscount
+                                                                    currentProductItem?.priceBeforeDiscount,
                                                                 )}
                                                             </span>
                                                         </>
                                                     ) : (
                                                         <div>
-                                                            <span
-                                                                className='text-[red] text-lg font-medium mr-[5px]'
-                                                            >
+                                                            <span className="text-[red] text-lg font-medium mr-[5px]">
                                                                 {ChangeCurrence(currentProductItem?.price)}
                                                             </span>
-                                                            <span
-                                                                className='line-through text-[#6D6E72] font-medium'
-                                                            >
+                                                            <span className="line-through text-[#6D6E72] font-medium">
                                                                 {ChangeCurrence(
                                                                     currentProductItem?.priceBeforeDiscount,
                                                                 )}
                                                             </span>
-                                                            <span className='pro-percent'> -{currentProductItem.valuePromotion}%</span>
+                                                            {currentProductItem.type === 'fixed' ? (
+                                                                <span className="pro-percent ml-1">
+                                                                    {' '}
+                                                                    -{currentProductItem.valuePromotion}
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-[#E30019] text-[10px] sm:text-[12px] text-center rounded border-[1px] border-[#E30019] px-1 ml-1">
+                                                                    -{currentProductItem.valuePromotion}%
+                                                                </span>
+                                                            )}
                                                         </div>
                                                     )}
                                                     {typeof data.items !== 'undefined' && (
                                                         <>
                                                             {data.items.length > 1 && (
                                                                 <div>
-                                                                    <p className='text-[#595959] font-medium'>Kích thước</p>
+                                                                    <p className="text-[#595959] font-medium">
+                                                                        Kích thước
+                                                                    </p>
                                                                     <Segmented
                                                                         options={optionSize}
                                                                         value={currentProductItem.id}
@@ -210,14 +216,22 @@ function ProductDetail() {
                                                                 </div>
                                                             )}
                                                             <Flex justify="space-between">
-                                                                <p className='text-[#595959] font-medium'>Số Tồn: {currentProductItem.stock}</p>
-                                                                <p className='text-[#595959] font-medium'>Lượt xem: {currentProductItem.viewCount}</p>
+                                                                <p className="text-[#595959] font-medium">
+                                                                    Số Tồn: {currentProductItem.stock}
+                                                                </p>
+                                                                <p className="text-[#595959] font-medium">
+                                                                    Lượt xem: {currentProductItem.viewCount}
+                                                                </p>
                                                             </Flex>
                                                         </>
                                                     )}
                                                 </div>
                                                 <Flex justify="space-between">
-                                                    <InputQuatity stock={currentProductItem.stock} setQuantity={setQuantity} quantity={quantity}/>
+                                                    <InputQuatity
+                                                        stock={currentProductItem.stock}
+                                                        setQuantity={setQuantity}
+                                                        quantity={quantity}
+                                                    />
                                                     <Button
                                                         type="primary"
                                                         onClick={() => {
@@ -230,7 +244,10 @@ function ProductDetail() {
                                                     </Button>
                                                 </Flex>
                                                 <Divider dashed />
-                                                <ProductDetailInfo product={data} guaranty={currentProductItem.guaranty} />
+                                                <ProductDetailInfo
+                                                    product={data}
+                                                    guaranty={currentProductItem.guaranty}
+                                                />
                                             </>
                                         )}
                                     </Col>

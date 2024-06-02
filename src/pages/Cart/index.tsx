@@ -88,7 +88,7 @@ function Cart() {
                                 <Row gutter={24}>
                                     <Col className="gutter-row" xs={24} md={24} lg={16} xl={16}>
                                         {data.items.map((e) => (
-                                            <div className="rounded bg-[#fafafa] p-2 md:p-5">
+                                            <div className="rounded bg-[#fafafa] p-2 md:p-5 mb-3">
                                                 <div className="flex justify-between">
                                                     <div className="w-[300px] md:w-full">
                                                         <Paragraph
