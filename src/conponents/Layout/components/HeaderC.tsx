@@ -171,7 +171,7 @@ const HeaderC = memo(()=> {
                                     icon={<LogoutOutlined />}
                                     style={{ color: 'black' }}
                                     onClick={() => {
-                                        Logout;
+                                        Logout();
                                     }}
                                 >
                                     Logout
