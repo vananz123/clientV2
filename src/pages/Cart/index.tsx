@@ -31,6 +31,7 @@ function Cart() {
     const [currentCart, setCurrentCart] = React.useState<Cart>();
     const [open, setOpen] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
+    console.log(data);
     const showModal = (cart: Cart) => {
         setOpen(true);
         setCurrentCart(cart);
@@ -88,8 +89,8 @@ function Cart() {
                                     <Col className="gutter-row" xs={24} md={24} lg={16} xl={16}>
                                         {data.items.map((e) => (
                                             <div className="rounded bg-[#fafafa] p-2 md:p-5">
-                                                <div className='flex justify-between'>
-                                                    <div className='w-[300px] md:w-full'>
+                                                <div className="flex justify-between">
+                                                    <div className="w-[300px] md:w-full">
                                                         <Paragraph
                                                             ellipsis={{
                                                                 rows: 1,
@@ -114,46 +115,81 @@ function Cart() {
                                                         ></Avatar>
                                                     </div>
                                                 </div>
-                                                <Row gutter={[0, 8]}>
+                                                <Row gutter={[8, 0]}>
                                                     <Col className="gutter-row" xs={6} lg={4}>
-                                                        <img
-                                                            src={`${baseUrl + e.urlThumbnailImage}`}
-                                                            style={{ width: '100%' }}
-                                                        />
+                                                        <div className="w-full h-full bg-white rounded">
+                                                            <img
+                                                                className="w-full"
+                                                                src={`${baseUrl + e.urlThumbnailImage}`}
+                                                            />
+                                                        </div>
                                                     </Col>
                                                     <Col className="gutter-row" xs={18} lg={20}>
-                                                        <div className='flex justify-between h-full'>
-                                                            
-                                                            <div className='flex flex-col justify-evenly'>
-                                                                <p>
-                                                                    {e?.name}: {e?.value}
-                                                                </p>
-                                                                <div>
-                                                                    <Space>
-                                                                        <>
-                                                                            <p
-                                                                                style={{
-                                                                                    fontWeight: 500,
-                                                                                    color: 'red',
-                                                                                }}
-                                                                            >
-                                                                                {ChangeCurrence(e?.total)}
-                                                                            </p>
-                                                                            {e.valuePromotion != null && (
-                                                                                <p
-                                                                                    style={{
-                                                                                        textDecoration: 'line-through',
-                                                                                    }}
-                                                                                >
+                                                        <div className="w-full h-full sm:p-2">
+                                                            <div className="h-full flex flex-col justify-between">
+                                                                <div className="w-full">
+                                                                    {e?.type == undefined ? (
+                                                                        <div className="text-[14px] sm:text-[16px] text-red-500 font-medium mr-[5px]">
+                                                                            <span>
+                                                                                {ChangeCurrence(e?.priceBeforeDiscount)}
+                                                                            </span>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className="flex flex-row">
+                                                                            <div>
+                                                                                <span className="text-[14px] sm:text-[16px] text-red-500 font-medium mr-[5px]">
+                                                                                    {ChangeCurrence(e?.price)}
+                                                                                </span>
+                                                                            </div>
+                                                                            <div>
+                                                                                <span className="text-[10px] sm:text-[12px] text-[#6D6E72] font-medium mr-[5px] line-through">
                                                                                     {ChangeCurrence(
-                                                                                        e?.priceBeforeDiscount *
-                                                                                            e?.quantity,
+                                                                                        e?.priceBeforeDiscount,
                                                                                     )}
-                                                                                </p>
-                                                                            )}
-                                                                        </>
-                                                                    </Space>
+                                                                                </span>
+                                                                                {e.type === 'fixed' ? (
+                                                                                    <span className="pro-percent">
+                                                                                        {' '}
+                                                                                        -{e.valuePromotion}
+                                                                                    </span>
+                                                                                ) : (
+                                                                                    <span className="text-[#E30019] text-[10px] sm:text-[12px] text-center rounded border-[1px] border-[#E30019] px-1">
+                                                                                        -{e.valuePromotion}%
+                                                                                    </span>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
                                                                 </div>
+                                                                <div className="flex justify-start gap-4">
+                                                                    <p>
+                                                                        {e?.name}: {e?.value} {e.sku}
+                                                                    </p>
+                                                                    <div>
+                                                                        <Space.Compact size="small">
+                                                                            <Button
+                                                                                onClick={() => {
+                                                                                    decline(e);
+                                                                                }}
+                                                                                icon={<MinusOutlined />}
+                                                                            />
+                                                                            <InputNumber
+                                                                                min={1}
+                                                                                max={e?.stock}
+                                                                                style={{ width: 50 }}
+                                                                                value={e.quantity}
+                                                                            />
+
+                                                                            <Button
+                                                                                onClick={() => {
+                                                                                    increase(e);
+                                                                                }}
+                                                                                icon={<PlusOutlined />}
+                                                                            />
+                                                                        </Space.Compact>
+                                                                    </div>
+                                                                </div>
+                                                                <div><p className='font-bold' >Tổng: {ChangeCurrence(e?.total)} </p></div>
                                                             </div>
                                                             <>
                                                                 {e.stock == 0 && (
@@ -166,29 +202,6 @@ function Cart() {
                                                                     <Alert type="error" message="Product kh đủ!" />
                                                                 )}
                                                             </>
-                                                            <div>
-                                                                    <Space.Compact size="small">
-                                                                        <Button
-                                                                            onClick={() => {
-                                                                                decline(e);
-                                                                            }}
-                                                                            icon={<MinusOutlined />}
-                                                                        />
-                                                                        <InputNumber
-                                                                            min={1}
-                                                                            max={e?.stock}
-                                                                            style={{ width: 50 }}
-                                                                            value={e.quantity}
-                                                                        />
-    
-                                                                        <Button
-                                                                            onClick={() => {
-                                                                                increase(e);
-                                                                            }}
-                                                                            icon={<PlusOutlined />}
-                                                                        />
-                                                                    </Space.Compact>
-                                                                </div>
                                                         </div>
                                                     </Col>
                                                 </Row>
@@ -240,12 +253,11 @@ function Cart() {
         </Container>
     );
 }
-const ChangeCurrence = (number: number) => {
+const ChangeCurrence = (number: number | undefined) => {
     if (number) {
         const formattedNumber = number.toLocaleString('vi-VN', {
             style: 'currency',
             currency: 'VND',
-            currencyDisplay: 'code',
         });
         return formattedNumber;
     }
