@@ -284,7 +284,6 @@ const ChangeCurrence = (number: number) => {
         const formattedNumber = number.toLocaleString('vi-VN', {
             style: 'currency',
             currency: 'VND',
-            currencyDisplay: 'code',
         });
         return formattedNumber;
     }
