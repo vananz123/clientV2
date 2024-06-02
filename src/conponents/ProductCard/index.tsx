@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Product } from '@/type';
 import { Link } from 'react-router-dom';
-import { Badge, Space } from 'antd';
+import { Badge } from 'antd';
 import * as productServices from '@/api/productServices';
 import { Card, Typography } from 'antd';
 import React from 'react';
@@ -10,9 +10,8 @@ type ProductCardType = 'forCard' | 'forList';
 interface Props {
     product: Product | undefined;
     type?: ProductCardType;
-    height?: number;
 }
-const ProductCard: React.FC<Props> = ({ product, type = 'forCard', height = 100 }) => {
+const ProductCard: React.FC<Props> = ({ product, type = 'forCard'}) => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const viewConut = async () => {
         if (typeof product !== 'undefined') {
@@ -31,7 +30,7 @@ const ProductCard: React.FC<Props> = ({ product, type = 'forCard', height = 100 
                         cover={<img alt={product?.name} src={`${baseUrl + product?.urlThumbnailImage}`} />}
                     >
                         <div className="flex flex-col text-center justify-between h-full w-full">
-                            <div className='h-[48px]'>
+                            <div className="h-[48px]">
                                 <Paragraph
                                     ellipsis={{
                                         rows: 2,
@@ -43,16 +42,16 @@ const ProductCard: React.FC<Props> = ({ product, type = 'forCard', height = 100 
                             </div>
                             {product?.type == undefined ? (
                                 <div className="text-[14px] sm:text-[16px] text-center text-red-500 font-medium mr-[5px]">
-                                    <span>{ChangeCurrence(product?.priceBeforeDiscount)}</span>
+                                    <span>{ChangeCurrence(product?.price)}</span>
                                 </div>
                             ) : (
-                                <div className="flex justify-center items-end text-center flex-col md:flex-row">
+                                <div className="flex justify-center text-center flex-col md:flex-row">
                                     <div>
                                         <span className="text-[14px] sm:text-[16px] text-red-500 font-medium mr-[5px]">
                                             {ChangeCurrence(product?.price)}
                                         </span>
                                     </div>
-                                    <div >
+                                    <div>
                                         <span className="text-[10px] sm:text-[12px] text-[#6D6E72] font-medium mr-[5px] line-through">
                                             {ChangeCurrence(product?.priceBeforeDiscount)}
                                         </span>
@@ -82,53 +81,51 @@ const ProductCard: React.FC<Props> = ({ product, type = 'forCard', height = 100 
                     </Card>
                 </>
             ) : (
-                <>
-                    <Card type="inner" style={{ marginBottom: 10 }}>
-                        <Space align="center" style={{ height: height }}>
-                            <div style={{ width: '50px' }}>
-                                <img
-                                    style={{ width: '100%', height: height - 10 }}
-                                    src={baseUrl + product?.urlThumbnailImage}
-                                />
-                            </div>
-                            <div>
-                                <Paragraph
-                                    ellipsis={{
-                                        rows: 2,
-                                    }}
-                                    className="product-card__title"
-                                >
-                                    {product?.seoTitle}
-                                </Paragraph>
-                                {product?.type == undefined ? (
-                                    <>
-                                        <span
-                                            style={{
-                                                color: 'red',
-                                                fontSize: 12,
-                                                fontWeight: 500,
-                                                marginRight: 5,
-                                                display: '',
-                                            }}
-                                        >
-                                            <p>{ChangeCurrence(product?.priceBeforeDiscount)}</p>
-                                        </span>
-                                    </>
-                                ) : (
-                                    <div className="product-card__price-search">
-                                        <span className="text-[12px] sm:text-[16px] text-red mr-[3px]">
+                <div className='rounded p-2 bg-[#fafafa]'>
+                    <div className="flex items-center gap-3">
+                        <div className='w-[70px]'>
+                            <img
+                                className='w-full h-auto'
+                                src={baseUrl + product?.urlThumbnailImage}
+                            />
+                        </div>
+                        <div className='max-w-[250px]'>
+                            <Paragraph
+                                ellipsis={{
+                                    rows: 2,
+                                }}
+                                className="product-card__title"
+                            >
+                                {product?.seoTitle}
+                            </Paragraph>
+                            {product?.type == undefined ? (
+                                <div className="text-[14px] sm:text-[16px] text-red-500 font-medium mr-[5px]">
+                                    <span>{ChangeCurrence(product?.price)}</span>
+                                </div>
+                            ) : (
+                                <div className="flex">
+                                    <div>
+                                        <span className="text-[14px] sm:text-[16px] text-red-500 font-medium mr-[5px]">
                                             {ChangeCurrence(product?.price)}
                                         </span>
-                                        <span className="text-red mr-[2px] text-[#6D6E72] line-through">
+                                    </div>
+                                    <div>
+                                        <span className="text-[10px] sm:text-[12px] text-[#6D6E72] font-medium mr-[5px] line-through">
                                             {ChangeCurrence(product?.priceBeforeDiscount)}
                                         </span>
-                                        <span className="pro-percent"> -{product.valuePromotion}%</span>
+                                        {product.type === 'fixed' ? (
+                                            <span className="pro-percent"> -{product.valuePromotion}</span>
+                                        ) : (
+                                            <span className="text-[#E30019] text-[10px] sm:text-[12px] text-center rounded border-[1px] border-[#E30019] px-1">
+                                                -{product.valuePromotion}%
+                                            </span>
+                                        )}
                                     </div>
-                                )}
-                            </div>
-                        </Space>
-                    </Card>
-                </>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
             )}
         </Link>
     );
