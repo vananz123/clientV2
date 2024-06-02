@@ -21,28 +21,24 @@ function PromotionList() {
             key: 'id',
         },
         {
-            title: 'Name',
+            title: 'Loại Khuyến mãi',
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: 'Title',
-            dataIndex: 'seoTitle',
-            key: 'name',
-        },
-        {
-            title: 'Discount Rate',
+            title: 'Phần Trăm Giảm',
             dataIndex: 'discountRate',
             key: 'name',
+            render: (_, record) => <p>{record.value}%</p>,
         },
         {
-            title: 'Start Date',
+            title: 'Ngày Bắt Đầu',
             dataIndex: 'startDate',
             key: 'name',
             render: (_, record) => <p>{new Date(record.startDate).toUTCString()}</p>,
         },
         {
-            title: 'End Date',
+            title: 'Ngày Kết Thúc',
             dataIndex: 'endDate',
             key: 'name',
             render: (_, record) => <p>{new Date(record.endDate).toUTCString()}</p>,
@@ -59,7 +55,7 @@ function PromotionList() {
         },
     ];
     const showModalDel = (id: number, name: string) => {
-        setModalText(`Do you want category ${name}!`);
+        setModalText(`Bạn muốn xóa ${name}!`);
         setCurrentId(id);
         setOpen(true);
     };
@@ -93,7 +89,7 @@ function PromotionList() {
                 <Flex justify="space-between">
                     <Link to={'/admin/promotion-add'}>
                         <Button type="primary" icon={<PlusOutlined />} size="large">
-                            Add
+                            Thêm
                         </Button>
                     </Link>
                     {/* <SearchC typeSearch={2} onSetState={setData} /> */}

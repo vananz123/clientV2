@@ -6,6 +6,8 @@ import dayjs from 'dayjs';
 import { StatusForm } from '@/type';
 import { Promotion } from '@/api/ResType';
 import { FORM_ITEM_LAYOUT, TAIL_FORM_ITEM_LAYOUT, OPTIONS_PROMOTION_TYPE } from '@/common/common';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 const { RangePicker } = DatePicker;
 const PromotionForm: React.FC<{
     promotion: Promotion | undefined;
@@ -56,9 +58,21 @@ const PromotionForm: React.FC<{
     const onFinishFailed: FormProps<Promotion>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
+    const navigate = useNavigate();
 
     return (
         <>
+            <Button
+                type="text"
+                icon={<ArrowLeftOutlined />}
+                size="small"
+                style={{ marginBottom: '10px' }}
+                onClick={() => {
+                    navigate(-1);
+                }}
+            >
+                Quay lại
+            </Button>
             <Form
                 {...FORM_ITEM_LAYOUT}
                 form={form}
@@ -70,7 +84,7 @@ const PromotionForm: React.FC<{
             >
                 <Form.Item<Promotion>
                     name="name"
-                    label="Name"
+                    label="Tên"
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.name}
@@ -90,7 +104,7 @@ const PromotionForm: React.FC<{
                 </Form.Item>
                 <Form.Item<Promotion>
                     name="value"
-                    label="Value Promotion"
+                    label="Giá trị"
                     tooltip="What do you want others to call you?"
                     dependencies={['type']}
                     hasFeedback
@@ -115,7 +129,7 @@ const PromotionForm: React.FC<{
                 </Form.Item>
                 <Form.Item<Promotion>
                     name="type"
-                    label="Type Discount"
+                    label="Loại KM"
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     initialValue={'fixed'}
@@ -131,7 +145,7 @@ const PromotionForm: React.FC<{
                 </Form.Item>
                 <Form.Item
                     name={'arrDate'}
-                    label="Date"
+                    label="Ngày"
                     //initialValue={promotion?.arrDate}
                     rules={[{ required: true, message: 'Please input category name!' }]}
                 >
