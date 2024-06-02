@@ -28,7 +28,6 @@ const SearchC: React.FC = memo(() => {
     const onChangeInput: SearchProps['onChange'] = (value) => {
         setSearchValue(value.target.value);
     };
-    console.log('dsdf')
     useEffect(() => {
         const Search = async () => {
             if (debounce != '') {
@@ -55,10 +54,10 @@ const SearchC: React.FC = memo(() => {
                             {data && data.length > 1 ? (
                                 <>
                                     {data.map((e: Product) => (
-                                       <React.Fragment key={e.id}>
+                                        <React.Fragment key={e.id}>
                                             <ProductCard product={e} type='forList' height={70}/>
                                             <hr/>
-                                       </React.Fragment>
+                                        </React.Fragment>
                                     ))}
                                     <div style={{ textAlign: 'center' }}>
                                         <Link to={`/product/${searchValue}`}>Hiển thị tất cả</Link>

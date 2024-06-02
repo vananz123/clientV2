@@ -139,7 +139,7 @@ const ProductForm: React.FC<{
                     navigate(-1);
                 }}
             >
-                Go back
+                Quay lại
             </Button>
             <Row gutter={16}>
                 <Col xs={24} xl={12}>

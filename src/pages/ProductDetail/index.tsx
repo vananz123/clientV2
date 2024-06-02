@@ -6,7 +6,7 @@ import * as productServices from '@/api/productServices';
 import * as cartServices from '@/api/cartServices';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
-import { Col,Badge, Row, Image, Space, Button, notification, Flex, Divider, Segmented } from 'antd';
+import { Col,Badge, Typography, Row, Image, Space, Button, notification, Flex, Divider, Segmented } from 'antd';
 import {ArrowLeftOutlined } from '@ant-design/icons';
 type NotificationType = 'success' | 'error';
 import { useNavigate } from 'react-router-dom';
@@ -18,11 +18,13 @@ import InputQuatity from '@/conponents/InputQuatity';
 const ProductDetailReview =lazy(()=> import('./ProductDetailReview'));
 const ProductDetailSimilarProduct =lazy(()=> import('./ProductDetailSimilarProduct'))
 const ProductDetailInfo =lazy(()=> import('./ProductDetailInfo'));
+
 interface OptionSize {
     label: string;
     value: number;
     disabled?: boolean;
 }
+const { Paragraph } = Typography;
 function ProductDetail() {
     const Navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -157,7 +159,7 @@ function ProductDetail() {
                                         </Space>
                                     </Col>
                                     <Col xs={24} sm={24} md={24} lg={10} xl={10} className="gutter-row">
-                                        <h2>{data.seoTitle}</h2>
+                                        <Paragraph style={{fontWeight:500}} copyable>{data.seoTitle}</Paragraph>
                                         {typeof currentProductItem !== 'undefined' && (
                                             <>
                                                 <div style={{ marginBottom: 15 }}>
@@ -173,35 +175,32 @@ function ProductDetail() {
                                                                 }}
                                                             >
                                                                 {ChangeCurrence(
-                                                                    currentProductItem?.priceBeforeDiscount,
+                                                                    currentProductItem?.priceBeforeDiscount
                                                                 )}
                                                             </span>
                                                         </>
                                                     ) : (
                                                         <div>
                                                             <span
-                                                                style={{
-                                                                    color: 'red',
-                                                                    fontSize: 18,
-                                                                    fontWeight: 500,
-                                                                    marginRight: 5,
-                                                                }}
+                                                                className='text-[red] text-lg font-medium mr-[5px]'
                                                             >
                                                                 {ChangeCurrence(currentProductItem?.price)}
                                                             </span>
-                                                            <span style={{ textDecorationLine: 'line-through' }}>
+                                                            <span
+                                                                className='line-through text-[#6D6E72] font-medium'
+                                                            >
                                                                 {ChangeCurrence(
                                                                     currentProductItem?.priceBeforeDiscount,
                                                                 )}
                                                             </span>
+                                                            <span className='pro-percent'> -{currentProductItem.valuePromotion}%</span>
                                                         </div>
                                                     )}
-
                                                     {typeof data.items !== 'undefined' && (
                                                         <>
                                                             {data.items.length > 1 && (
                                                                 <div>
-                                                                    <p>Size</p>
+                                                                    <p className='text-[#595959] font-medium'>Kích thước</p>
                                                                     <Segmented
                                                                         options={optionSize}
                                                                         value={currentProductItem.id}
@@ -211,8 +210,8 @@ function ProductDetail() {
                                                                 </div>
                                                             )}
                                                             <Flex justify="space-between">
-                                                                <p>Số Tồn: {currentProductItem.stock}</p>
-                                                                <p>Lượt xem: {currentProductItem.viewCount}</p>
+                                                                <p className='text-[#595959] font-medium'>Số Tồn: {currentProductItem.stock}</p>
+                                                                <p className='text-[#595959] font-medium'>Lượt xem: {currentProductItem.viewCount}</p>
                                                             </Flex>
                                                         </>
                                                     )}

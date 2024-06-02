@@ -1,6 +1,7 @@
 import { Order, OrderDetail, OrderStatus, Review } from '@/api/ResType';
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import * as orderServices from '@/api/orderServices';
 import {
     Descriptions,
@@ -92,6 +93,7 @@ function OrderConfirm() {
             children: `${order?.user.phoneNumber}`,
         },
     ];
+    const navigate = useNavigate();
     const [openConfrim, setOpenConfrim] = React.useState(false);
     const [openCancel, setOpenCancel] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
@@ -213,6 +215,17 @@ function OrderConfirm() {
     ];
     return (
         <div>
+            <Button
+                type="text"
+                icon={<ArrowLeftOutlined />}
+                size="small"
+                style={{ marginBottom: '10px' }}
+                onClick={() => {
+                    navigate(-1);
+                }}
+            >
+                Quay lại
+            </Button>
             {contextHolder}
             <Descriptions
                 title="Thông Tin Khách Hàng"

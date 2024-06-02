@@ -82,6 +82,10 @@ body {
     background-color: #fafafa;
     width: '100%';
     max-width: '270px';
+    height: 100%;
+    &__model{
+        width: 10px;
+    }
     &__title {
         font-size: 12px;
         font-weight: 400;
@@ -100,6 +104,14 @@ body {
         font-size: 12px;
         @include Responsive(SM) {
             font-size: 16px;
+        }
+    }
+    &__price-search{
+        color: #f5222d;
+        font-weight: 500;
+        font-size: 10px;
+        @include Responsive(SM) {
+            font-size: 12px;
         }
     }
 }
@@ -182,10 +194,10 @@ body {
 }
 .popover-search {
     height: 350px;
-    width: 240px;
+    width: 350px;
     overflow-x: hidden;
     @include Responsive(SM) {
-        width: 275px;
+        width: 375px;
     }
 }
 .skeleton {
@@ -198,3 +210,27 @@ body {
 .carouselHome{
     height: auto;
 }
+
+.pro-percent{
+    display: inline-block;
+    font-size: 14px;
+    padding: 2px 5px;
+    margin-left: 5px;
+    color: #E30019;
+    border: 1px solid #E30019;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+.review{
+    display:none;
+    @include Responsive(SM) {
+        display: block;
+    }
+}
+.review__moblie{
+    display: block;
+    @include Responsive(SM) {
+        display: none;
+    }
+}
+
