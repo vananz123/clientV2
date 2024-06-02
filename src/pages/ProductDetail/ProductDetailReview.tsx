@@ -1,8 +1,6 @@
 import { Review } from '@/api/ResType';
-import { UserOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
-import { Avatar, Card, Empty, Rate, Space } from 'antd';
-import Meta from 'antd/es/card/Meta';
+import { Card, Pagination, Rate } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
 import * as reviewServices from '@/api/reviewServices';
@@ -11,66 +9,76 @@ interface Props {
     productId: number;
 }
 const ProductDetailReview: React.FC<Props> = React.memo(({ productId }) => {
-    const { data: listReview } = useQuery({
-        queryKey: [`product-detail-review-${productId}`],
-        queryFn: () => reviewServices.getReivewByProductId(productId, 1).then((data) => data?.items),
+    const [page, setPage] = React.useState<number>(1);
+    const { data: pagingReview } = useQuery({
+        queryKey: [`product-detail-review-${productId}-${page}`],
+        queryFn: () => reviewServices.getReivewByProductId(productId, page),
     });
+    const onChange = (currentPage: number) => {
+        setPage(currentPage);
+    };
     return (
-
         <section>
-            <Container>
-                <div className='flex justify-start'>
-                    <p className='text-base'>Bình luận từ khách hàng</p>
+            <Container className="mt-5 mb-0">
+                <div className="flex justify-start">
+                    <p className="text-[18px] font-bold">Bình luận từ khách hàng</p>
                 </div>
             </Container>
-            <Container className="mt-5 mb-5 max-w-[800px]">
-                <div>
-                    {listReview && listReview.length > 0 ? (
+            <Container className='mb-5 mt-0'>
+                <div className="flex flex-col gap-5 sm:p-5">
+                    {pagingReview && pagingReview.items.length > 0 ? (
                         <>
-                            {listReview.map((e: Review) => (
-                                <Card key={e.id} style={{ width: '100%', marginTop: 16 }}>
-                                    <Meta
-                                        avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />}
-                                        title={e.user.userName}
-                                        description={
-                                            <>
-                                                <Space align="baseline" direction="vertical">
-                                                    <Rate value={e.rate} disabled />
-                                                    <p>{e.comment}</p>
-                                                    <p>{dayjs(e.createAt).format('YYYY-MM-DD')}</p>
-                                                </Space>
-                                            </>
-                                        }
-                                    />
+                            <p>{pagingReview?.totalRecords} đánh giá</p>
+                            {pagingReview.items.map((e: Review) => (
+                                <div key={e.id} className="rounded w-full p-5 bg-[#fafafa]">
+                                    <div className="flex flex-col gap-3">
+                                        <div className="flex justify-between">
+                                            <p className="font-bold text-base">{e.user.userName}</p>
+                                            <p>{dayjs(e.createAt).format('YYYY-MM-DD')}</p>
+                                        </div>
+                                        <Rate value={e.rate} disabled />
+                                        <p>{e.comment}</p>
+                                    </div>
                                     {e.feelback !== null && (
                                         <>
+                                            <p className="mt-8">Phản hồi</p>
                                             <Card key={e.id} type="inner" style={{ width: '100%', marginTop: 16 }}>
-                                                <Meta
-                                                    avatar={<Avatar icon={<UserOutlined />} />}
-                                                    title={'Feedback of admin'}
-                                                    description={
-                                                        <>
-                                                            <Space align="baseline" direction="vertical">
-                                                                <p>{e.feelback}</p>
-                                                                <p>{dayjs(e.feelbackAt).format('YYYY-MM-DD')}</p>
-                                                            </Space>
-                                                        </>
-                                                    }
-                                                />
+                                                <div className="flex flex-col gap-3">
+                                                    <div className="flex justify-between">
+                                                        <p className="font-bold text-base">LA Store</p>
+                                                        <p>{dayjs(e.feelbackAt).format('YYYY-MM-DD')}</p>
+                                                    </div>
+                                                    <p>{e.feelback}</p>
+                                                </div>
                                             </Card>
                                         </>
                                     )}
-                                </Card>
+                                </div>
                             ))}
                         </>
                     ) : (
-                        <Empty
-                            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                            imageStyle={{ height: 60 }}
-                            description={<span>Chưa có bình luận nào</span>}
-                        ></Empty>
+                        <>
+                            <div className="rounded w-full p-5 bg-[#fafafa]">
+                                <div className="mb-4">
+                                    <Rate disabled={true} />
+                                </div>
+                                <p className="font-bold text-base">Chưa có đánh giá</p>
+                            </div>
+                        </>
                     )}
                 </div>
+                {pagingReview && pagingReview.pageCount > 1 && (
+                    <>
+                        <div className="text-center mt-5">
+                            <Pagination
+                                onChange={onChange}
+                                current={page}
+                                pageSize={3}
+                                total={pagingReview?.totalRecords}
+                            />
+                        </div>
+                    </>
+                )}
             </Container>
         </section>
     );

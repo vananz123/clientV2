@@ -6,6 +6,8 @@ import * as guarantyServieces from '@/api/guarantyServices';
 import { FORM_ITEM_LAYOUT, TAIL_FORM_ITEM_LAYOUT, OPTIONS_STATUS, editorConfiguration } from '@/common/common';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import { ClassicEditor } from '@ckeditor/ckeditor5-editor-classic';
+import { ArrowLeftOutlined  } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 interface Props {
     guaranty: Guaranty | undefined;
     onSetState: SetStateAction<any> | undefined;
@@ -57,9 +59,20 @@ const GuarantyForm: React.FC<Props> = ({ guaranty, onSetState, onSetStatus }) =>
     const onFinishFailed: FormProps<Guaranty>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
-
+    const navigate = useNavigate();
     return (
         <>
+            <Button
+                type="text"
+                icon={<ArrowLeftOutlined />}
+                size="small"
+                style={{ marginBottom: '10px' }}
+                onClick={() => {
+                    navigate(-1);
+                }}
+            >
+                Quay lại
+            </Button>
             <Form
                 {...FORM_ITEM_LAYOUT}
                 form={form}
@@ -71,7 +84,7 @@ const GuarantyForm: React.FC<Props> = ({ guaranty, onSetState, onSetStatus }) =>
             >
                 <Form.Item<Guaranty>
                     name="name"
-                    label="Name"
+                    label="Tên bảo hành"
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.name}
@@ -81,7 +94,7 @@ const GuarantyForm: React.FC<Props> = ({ guaranty, onSetState, onSetStatus }) =>
                 </Form.Item>
                 <Form.Item<Guaranty>
                     name="sku"
-                    label="Seo sku"
+                    label="Loại bảo hành"
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.seoTitle}
@@ -91,7 +104,7 @@ const GuarantyForm: React.FC<Props> = ({ guaranty, onSetState, onSetStatus }) =>
                 </Form.Item>
                 <Form.Item<Guaranty>
                     name="period"
-                    label="Period"
+                    label="Thời hạn"
                     tooltip="What do you want others to call you?"
                     //valuePropName='name'
                     //initialValue={promotion?.seoTitle}
@@ -99,7 +112,7 @@ const GuarantyForm: React.FC<Props> = ({ guaranty, onSetState, onSetStatus }) =>
                 >
                     <InputNumber max={36} min={0} type="number" />
                 </Form.Item>
-                <Form.Item label="Description" tooltip="What do you want others to call you?">
+                <Form.Item label="Thông tin" tooltip="What do you want others to call you?">
                     <CKEditor
                         editor={ClassicEditor}
                         config={editorConfiguration}
@@ -121,7 +134,7 @@ const GuarantyForm: React.FC<Props> = ({ guaranty, onSetState, onSetStatus }) =>
                 </Form.Item>
                 <Form.Item<Guaranty>
                     name="status"
-                    label="Status"
+                    label="Trạng thái"
                     initialValue={0}
                     rules={[{ required: true, message: 'Please select Status!' }]}
                 >
