@@ -20,7 +20,7 @@ interface Props {
     type?: ResponsiveType;
     closeDrawer?: SetStateAction<any>;
 }
-const NavC: React.FC<Props> =memo( ({ type = 'forDesktop', closeDrawer }) => {
+const NavC: React.FC<Props> = memo(({ type = 'forDesktop', closeDrawer }) => {
     const loca = useLocation();
     const arr = [loca.pathname];
     const Navigate = useNavigate();
@@ -73,15 +73,15 @@ const NavC: React.FC<Props> =memo( ({ type = 'forDesktop', closeDrawer }) => {
     return (
         <>
             {data && (
-                    <Menu
-                        theme={'light'}
-                        mode={type === 'forDesktop' ? 'horizontal' : 'inline'}
-                        selectedKeys={arr}
-                        items={item}
-                        style={{  flex: 1, minWidth: 0 ,marginLeft:0}}
-                        onClick={handleClick}
-                    />
-                )}
+                <Menu
+                    theme={'light'}
+                    mode={type === 'forDesktop' ? 'horizontal' : 'inline'}
+                    selectedKeys={arr}
+                    items={item}
+                    style={{ flex: 1, minWidth: 0, marginLeft: 0 }}
+                    onClick={handleClick}
+                />
+            )}
         </>
     );
 });
