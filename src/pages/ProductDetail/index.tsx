@@ -1,22 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from 'react-router';
 import { ProductItem } from '@/type';
-import React, { useEffect } from 'react';
+import React, { lazy, useEffect } from 'react';
 import * as productServices from '@/api/productServices';
 import * as cartServices from '@/api/cartServices';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
-import { Col,Badge, Row, Image, Space, InputNumber, Button, notification, Flex, Divider, Segmented } from 'antd';
-import { MinusOutlined, PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { Col,Badge, Row, Image, Space, Button, notification, Flex, Divider, Segmented } from 'antd';
+import {ArrowLeftOutlined } from '@ant-design/icons';
 type NotificationType = 'success' | 'error';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import ProductDetailLoading from './ProductDetailLoading';
 import { loadCartDetail } from '@/app/feature/cart/action';
 import Container from '@/conponents/Container';
-import ProductDetailReview from './ProductDetailReview';
-import ProductDetailSimilarProduct from './ProductDetailSimilarProduct';
-import ProductDetailInfo from './ProductDetailInfo';
+import InputQuatity from '@/conponents/InputQuatity';
+const ProductDetailReview =lazy(()=> import('./ProductDetailReview'));
+const ProductDetailSimilarProduct =lazy(()=> import('./ProductDetailSimilarProduct'))
+const ProductDetailInfo =lazy(()=> import('./ProductDetailInfo'));
 interface OptionSize {
     label: string;
     value: number;
@@ -59,19 +60,6 @@ function ProductDetail() {
             message: 'Notification Title',
             description: mess,
         });
-    };
-    const increase = () => {
-        const quan = quantity + 1;
-        if (currentProductItem != undefined && quan <= currentProductItem?.stock) {
-            setQuantity(quan);
-        }
-    };
-    const decline = () => {
-        let newCount = quantity - 1;
-        if (newCount < 1) {
-            newCount = 1;
-        }
-        setQuantity(newCount);
     };
     useEffect(() => {
         if (data && data.items && data.items.length > 0) setCurrentProductItem(data.items[0]);
@@ -230,27 +218,7 @@ function ProductDetail() {
                                                     )}
                                                 </div>
                                                 <Flex justify="space-between">
-                                                    <Space.Compact>
-                                                        <Button
-                                                            onClick={() => {
-                                                                decline();
-                                                            }}
-                                                            icon={<MinusOutlined />}
-                                                        />
-                                                        <InputNumber
-                                                            style={{ width: '70px' }}
-                                                            min={1}
-                                                            max={currentProductItem?.stock}
-                                                            value={quantity}
-                                                        />
-
-                                                        <Button
-                                                            onClick={() => {
-                                                                increase();
-                                                            }}
-                                                            icon={<PlusOutlined />}
-                                                        />
-                                                    </Space.Compact>
+                                                    <InputQuatity stock={currentProductItem.stock} setQuantity={setQuantity} quantity={quantity}/>
                                                     <Button
                                                         type="primary"
                                                         onClick={() => {

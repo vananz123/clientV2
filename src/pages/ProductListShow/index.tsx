@@ -5,7 +5,7 @@ import React, { useCallback, useEffect } from 'react';
 import { Product, Filter, Sort } from '@/type';
 import { useAppSelector } from '@/app/hooks';
 import { selectCategories } from '@/app/feature/category/reducer';
-import { Button, Col, Flex, Result, Row, Select, Switch, Pagination, PaginationProps, Space, Tooltip } from 'antd';
+import { Button, Col, Flex, Result, Row, Select, Pagination, PaginationProps, Space, Tooltip, Checkbox } from 'antd';
 import ProductCard from '@/conponents/ProductCard';
 import { OPTIONS_PRICE, OPTIONS_MATERIAL, OPTIONS_SORT } from '@/common/common';
 import SkeletonCard from '@/conponents/SkeletonCard';
@@ -160,6 +160,8 @@ function ProductListShow() {
                             mode="multiple"
                             style={{ width: 150 }}
                             options={OPTIONS_PRICE}
+                            autoFocus={false}
+                            showSearch={false}
                             onChange={onChangeOpPrice}
                             placeholder="Price"
                             maxTagCount="responsive"
@@ -172,6 +174,8 @@ function ProductListShow() {
                         <Select
                             mode="multiple"
                             style={{ width: 150 }}
+                            autoFocus={false}
+                            showSearch={false}
                             options={OPTIONS_MATERIAL}
                             onChange={onChangeOpSize}
                             placeholder="Brand"
@@ -182,15 +186,13 @@ function ProductListShow() {
                                 </Tooltip>
                             )}
                         />
-                        <Switch
-                            checkedChildren="Khuyến mãi"
-                            unCheckedChildren="Mặc định"
-                            disabled={id === 'promotion'}
+                        <Checkbox
                             checked={isPromotion}
-                            onChange={() => {
-                                setIsPromotion(!isPromotion);
-                            }}
-                        />
+                            style={{ width: 120 }}
+                            disabled={id === 'promotion'}
+                            onChange={()=> setIsPromotion(!isPromotion)}
+                            
+                        >Có khuyến mãi</Checkbox>
                     </Space>
                     <Select
                         value={sortOder}

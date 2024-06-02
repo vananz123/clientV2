@@ -8,7 +8,6 @@ import {
     Alert,
     Avatar,
     Button,
-    Card,
     Col,
     Descriptions,
     Empty,
@@ -17,7 +16,6 @@ import {
     Row,
     Space,
     Spin,
-    Flex,
 } from 'antd';
 import React from 'react';
 const { Paragraph } = Typography;
@@ -73,88 +71,60 @@ function Cart() {
     };
     return (
         <Container>
-            { (
-                data && (
-                    <>
-                        <Spin spinning={isLoading}>
-                            {data.items.length == 0 ? (
-                                <>
-                                    <Empty imageStyle={{ height: 60 }}>
-                                        <Link to={'/'}>
-                                            <Button type="primary">Mua Hàng Ngay!</Button>
-                                        </Link>
-                                    </Empty>
-                                </>
-                            ) : (
-                                <>
-                                    <Row gutter={24}>
-                                        <Col className="gutter-row" xs={24} md={24} lg={16} xl={16}>
-                                            {data.items.map((e) => (
-                                                <Card
-                                                    key={e.id}
-                                                    size="small"
-                                                    style={{ width: '100%', marginBottom: 10 }}
-                                                >
-                                                    <Row gutter={[0, 8]}>
-                                                        <Col className="gutter-row" xs={8} lg={6}>
-                                                            <img
-                                                                src={`${baseUrl + e.urlThumbnailImage}`}
-                                                                style={{ width: '100%' }}
-                                                            />
-                                                        </Col>
-                                                        <Col className="gutter-row" xs={16} lg={18}>
-                                                            <Flex justify="space-between" align="center">
-                                                                <Paragraph
-                                                                    ellipsis={{
-                                                                        rows: 1,
-                                                                    }}
-                                                                >
-                                                                    <Link to={`/product/detail/${e.productId}`}>
-                                                                        {e.seoTitle}
-                                                                    </Link>
-                                                                </Paragraph>
-                                                                <div>
-                                                                    <Avatar
-                                                                        onClick={() => {
-                                                                            showModal(e);
-                                                                        }}
-                                                                        style={{
-                                                                            cursor: 'pointer',
-                                                                            backgroundColor: 'red',
-                                                                        }}
-                                                                        shape="square"
-                                                                        icon={<DeleteOutlined />}
-                                                                    ></Avatar>
-                                                                </div>
-                                                            </Flex>
-                                                            <Flex
-                                                                justify="space-between"
-                                                                align="center"
-                                                                wrap="wrap-reverse"
-                                                            >
-                                                                <div>
-                                                                    <Space.Compact size="small">
-                                                                        <Button
-                                                                            onClick={() => {
-                                                                                decline(e);
-                                                                            }}
-                                                                            icon={<MinusOutlined />}
-                                                                        />
-                                                                        <InputNumber
-                                                                            min={1}
-                                                                            max={e?.stock}
-                                                                            style={{ width: 50 }}
-                                                                            value={e.quantity}
-                                                                        />
-
-                                                                        <Button
-                                                                            onClick={() => {
-                                                                                increase(e);
-                                                                            }}
-                                                                            icon={<PlusOutlined />}
-                                                                        />
-                                                                    </Space.Compact>
-                                                                </div>
+            {data && (
+                <>
+                    <Spin spinning={isLoading}>
+                        {data.items.length == 0 ? (
+                            <>
+                                <Empty imageStyle={{ height: 60 }}>
+                                    <Link to={'/'}>
+                                        <Button type="primary">Mua Hàng Ngay!</Button>
+                                    </Link>
+                                </Empty>
+                            </>
+                        ) : (
+                            <>
+                                <Row gutter={24}>
+                                    <Col className="gutter-row" xs={24} md={24} lg={16} xl={16}>
+                                        {data.items.map((e) => (
+                                            <div className="rounded bg-[#fafafa] p-2 md:p-5">
+                                                <div className='flex justify-between'>
+                                                    <div className='w-[300px] md:w-full'>
+                                                        <Paragraph
+                                                            ellipsis={{
+                                                                rows: 1,
+                                                            }}
+                                                        >
+                                                            <Link to={`/product/detail/${e.productId}`}>
+                                                                {e.seoTitle}
+                                                            </Link>
+                                                        </Paragraph>
+                                                    </div>
+                                                    <div>
+                                                        <Avatar
+                                                            onClick={() => {
+                                                                showModal(e);
+                                                            }}
+                                                            style={{
+                                                                cursor: 'pointer',
+                                                                backgroundColor: 'red',
+                                                            }}
+                                                            shape="square"
+                                                            icon={<DeleteOutlined />}
+                                                        ></Avatar>
+                                                    </div>
+                                                </div>
+                                                <Row gutter={[0, 8]}>
+                                                    <Col className="gutter-row" xs={6} lg={4}>
+                                                        <img
+                                                            src={`${baseUrl + e.urlThumbnailImage}`}
+                                                            style={{ width: '100%' }}
+                                                        />
+                                                    </Col>
+                                                    <Col className="gutter-row" xs={18} lg={20}>
+                                                        <div className='flex justify-between h-full'>
+                                                            
+                                                            <div className='flex flex-col justify-evenly'>
                                                                 <p>
                                                                     {e?.name}: {e?.value}
                                                                 </p>
@@ -184,6 +154,8 @@ function Cart() {
                                                                         </>
                                                                     </Space>
                                                                 </div>
+                                                            </div>
+                                                            <>
                                                                 {e.stock == 0 && (
                                                                     <Alert
                                                                         type="error"
@@ -193,54 +165,77 @@ function Cart() {
                                                                 {e.stock < e.quantity && (
                                                                     <Alert type="error" message="Product kh đủ!" />
                                                                 )}
-                                                            </Flex>
-                                                        </Col>
-                                                    </Row>
-                                                </Card>
-                                            ))}
-                                        </Col>
-                                        <Col className="gutter-row" xs={24} md={24} lg={8} xl={8}>
-                                            <Descriptions title="Thông Tin Sản Phẩm" bordered column={1}>
-                                                <Descriptions.Item label="Giá Sản Phẩm ">
-                                                    {ChangeCurrence(data.totalPriceBeforeDiscount)}
-                                                </Descriptions.Item>
-                                                <Descriptions.Item label="Giá Giảm">
-                                                    {ChangeCurrence(data.totalDiscount)}
-                                                </Descriptions.Item>
-                                                <Descriptions.Item style={{ color: 'red' }} label="Giá Thanh Toán">
-                                                    {ChangeCurrence(data.totalPrice)}
-                                                </Descriptions.Item>
-                                            </Descriptions>
-                                            <Link to={`/purchase`}>
-                                                <Button
-                                                    size="large"
-                                                    block
-                                                    type="primary"
-                                                    disabled={
-                                                        data.items.length <= 0 ||
-                                                        data.items.some((s) => s.stock == 0 || s.stock < s.quantity)
-                                                    }
-                                                    style={{ marginTop: 10 }}
-                                                >
-                                                    Thanh Toán Ngay
-                                                </Button>
-                                            </Link>
-                                        </Col>
-                                    </Row>
-                                </>
-                            )}
-                        </Spin>
-                        <Modal
-                            title="Notification"
-                            open={open}
-                            onOk={handleOk}
-                            confirmLoading={confirmLoading}
-                            onCancel={handleCancel}
-                        >
-                            Do you want to detele!
-                        </Modal>
-                    </>
-                )
+                                                            </>
+                                                            <div>
+                                                                    <Space.Compact size="small">
+                                                                        <Button
+                                                                            onClick={() => {
+                                                                                decline(e);
+                                                                            }}
+                                                                            icon={<MinusOutlined />}
+                                                                        />
+                                                                        <InputNumber
+                                                                            min={1}
+                                                                            max={e?.stock}
+                                                                            style={{ width: 50 }}
+                                                                            value={e.quantity}
+                                                                        />
+    
+                                                                        <Button
+                                                                            onClick={() => {
+                                                                                increase(e);
+                                                                            }}
+                                                                            icon={<PlusOutlined />}
+                                                                        />
+                                                                    </Space.Compact>
+                                                                </div>
+                                                        </div>
+                                                    </Col>
+                                                </Row>
+                                            </div>
+                                        ))}
+                                    </Col>
+                                    <Col className="gutter-row" xs={24} md={24} lg={8} xl={8}>
+                                        <Descriptions title="Thông Tin Sản Phẩm" bordered column={1}>
+                                            <Descriptions.Item label="Giá Sản Phẩm ">
+                                                {ChangeCurrence(data.totalPriceBeforeDiscount)}
+                                            </Descriptions.Item>
+                                            <Descriptions.Item label="Giá Giảm">
+                                                {ChangeCurrence(data.totalDiscount)}
+                                            </Descriptions.Item>
+                                            <Descriptions.Item style={{ color: 'red' }} label="Giá Thanh Toán">
+                                                {ChangeCurrence(data.totalPrice)}
+                                            </Descriptions.Item>
+                                        </Descriptions>
+                                        <Link to={`/purchase`}>
+                                            <Button
+                                                size="large"
+                                                block
+                                                type="primary"
+                                                disabled={
+                                                    data.items.length <= 0 ||
+                                                    data.items.some((s) => s.stock == 0 || s.stock < s.quantity)
+                                                }
+                                                style={{ marginTop: 10 }}
+                                            >
+                                                Thanh Toán Ngay
+                                            </Button>
+                                        </Link>
+                                    </Col>
+                                </Row>
+                            </>
+                        )}
+                    </Spin>
+                    <Modal
+                        title="Notification"
+                        open={open}
+                        onOk={handleOk}
+                        confirmLoading={confirmLoading}
+                        onCancel={handleCancel}
+                    >
+                        Do you want to detele!
+                    </Modal>
+                </>
             )}
         </Container>
     );

@@ -99,7 +99,7 @@ export interface Filter{
     page:number,
     pageSize:number,
     optionMaterial?:string[],
-    sortOder:string,
+    sortOder:Sort,
     isPromotion?:boolean,
     productStatus?:number
 }
