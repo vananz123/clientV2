@@ -30,50 +30,43 @@ const ProductCard: React.FC<Props> = ({ product, type = 'forCard', height = 100 
                         size="small"
                         cover={<img alt={product?.name} src={`${baseUrl + product?.urlThumbnailImage}`} />}
                     >
-                        <Paragraph
-                            ellipsis={{
-                                rows: 2,
-                            }}
-                            className="product-card__title"
-                        >
-                            {product?.seoTitle}
-                        </Paragraph>
-                        {product?.type == undefined ? (
-                            <>
-                                <span
-                                    className="text-[18px] sm:text-[16px] text-[red] mr-[3px]"
-                                    style={{
-                                        color: 'red',
-                                        fontSize: 18,
-                                        fontWeight: 500,
-                                        marginRight: 5,
-                                        display: '',
+                        <div className="flex flex-col text-center justify-between h-full w-full">
+                            <div className='h-[48px]'>
+                                <Paragraph
+                                    ellipsis={{
+                                        rows: 2,
                                     }}
+                                    className="product-card__title"
                                 >
-                                    <p className="product-card__price">
-                                        {ChangeCurrence(product?.priceBeforeDiscount)}
-                                    </p>
-                                </span>
-                            </>
-                        ) : (
-                            <div className="flex justify-center text-center flex-col md:flex-row">
-                                <div>
-                                    <span
-                                        className='text-[14px] sm:text-[17px] text-red-500 font-medium mr-[5px]'
-                                    >
-                                        {ChangeCurrence(product?.price)}
-                                    </span>
-                                </div>
-                                <div>
-                                    <span
-                                        className='text-[10px] sm:text-[12px] text-[#6D6E72] font-medium mr-[5px] line-through'
-                                    >
-                                        {ChangeCurrence(product?.priceBeforeDiscount)}
-                                    </span>
-                                    <span className="pro-percent"> -{product.valuePromotion}%</span>
-                                </div>
+                                    {product?.seoTitle}
+                                </Paragraph>
                             </div>
-                        )}
+                            {product?.type == undefined ? (
+                                <div className="text-[14px] sm:text-[16px] text-center text-red-500 font-medium mr-[5px]">
+                                    <span>{ChangeCurrence(product?.priceBeforeDiscount)}</span>
+                                </div>
+                            ) : (
+                                <div className="flex justify-center items-end text-center flex-col md:flex-row">
+                                    <div>
+                                        <span className="text-[14px] sm:text-[16px] text-red-500 font-medium mr-[5px]">
+                                            {ChangeCurrence(product?.price)}
+                                        </span>
+                                    </div>
+                                    <div >
+                                        <span className="text-[10px] sm:text-[12px] text-[#6D6E72] font-medium mr-[5px] line-through">
+                                            {ChangeCurrence(product?.priceBeforeDiscount)}
+                                        </span>
+                                        {product.type === 'fixed' ? (
+                                            <span className="pro-percent"> -{product.valuePromotion}</span>
+                                        ) : (
+                                            <span className="text-[#E30019] text-[10px] sm:text-[12px] text-center rounded border-[1px] border-[#E30019] px-1">
+                                                -{product.valuePromotion}%
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                         <span style={{ position: 'absolute', top: '5px', right: '5px' }}>
                             {product?.status == 2 ? (
                                 <Badge.Ribbon text="New" style={{ display: '' }} color="red"></Badge.Ribbon>
@@ -145,7 +138,6 @@ const ChangeCurrence = (number: number | undefined) => {
         const formattedNumber = number.toLocaleString('vi-VN', {
             style: 'currency',
             currency: 'VND',
-            currencyDisplay: 'code',
         });
         return formattedNumber;
     }

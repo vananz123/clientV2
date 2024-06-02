@@ -6,7 +6,7 @@ export interface PagingReview extends PagingResult {
 }
 export const getReivewByProductId = async (id: number,page:number) => {
     try {
-        const res = await request.get(`/review/product/${encodeURIComponent(id)}?PageIndex=${encodeURIComponent(page)}&PageSize=5`);
+        const res = await request.get(`/review/product/${encodeURIComponent(id)}?PageIndex=${encodeURIComponent(page)}&PageSize=3`);
         const paging: PagingReview = {
             items: res.resultObj.items,
             pageIndex : res.resultObj.pageIndex,
