@@ -1,11 +1,20 @@
 import { Guaranty, Product, Variation } from '@/type';
-import { Collapse, CollapseProps, Space } from 'antd';
-import React from 'react';
+import { Button, Collapse, CollapseProps, Space, Modal } from 'antd';
+import { Suspense } from 'react';
+import React, {  createContext } from 'react';
+// const DescriptionForm = lazy(() => import('@/conponents/DescrtiptionForm'));
+const ReachableContext = createContext<string | null>(null);
+const UnreachableContext = createContext<string | null>(null);
 interface Props {
     product: Product | undefined;
     guaranty: Guaranty | undefined;
 }
-const ProductDetailInfo: React.FC<Props> = React.memo( ({ product, guaranty }) => {
+export type TypeFormAddress = 'ADD' | 'EDIT';
+const ProductDetailInfo: React.FC<Props> = React.memo(({ product, guaranty }) => {
+    const [open, setOpen] = React.useState(false);
+    const handleCancel = () => {
+        setOpen(false);
+    };
     const items: CollapseProps['items'] = [
         {
             key: '1',
@@ -20,6 +29,14 @@ const ProductDetailInfo: React.FC<Props> = React.memo( ({ product, guaranty }) =
                                 </p>
                             ))}
                             <p dangerouslySetInnerHTML={{ __html: product.seoDescription }}></p>
+                            <Button
+                                type="primary"
+                                onClick={() => {
+                                    setOpen(true);
+                                }}
+                            >
+                                Xem chi tiết
+                            </Button>
                         </>
                     )}
                 </Space>
@@ -55,6 +72,27 @@ const ProductDetailInfo: React.FC<Props> = React.memo( ({ product, guaranty }) =
     return (
         <div>
             <Collapse items={items} defaultActiveKey={['1']} onChange={handleChangeColl} />
+            <Modal title="Notification" open={open} onCancel={handleCancel} footer={''}>
+                <Suspense>
+                    <ReachableContext.Provider value="Light">
+                        <Space className="block">
+                            {product?.variation !== undefined && (
+                                <>
+                                    {product?.variation.map((e: Variation) => (
+                                        <div>
+                                            <p>
+                                                {e.name} {e.value}
+                                            </p>
+                                        </div>
+                                    ))}
+                                    <p dangerouslySetInnerHTML={{ __html: product.seoDescription }}></p>
+                                </>
+                            )}
+                        </Space>
+                        <UnreachableContext.Provider value="Bamboo" />
+                    </ReachableContext.Provider>
+                </Suspense>
+            </Modal>
         </div>
     );
 });
