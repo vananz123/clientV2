@@ -194,7 +194,7 @@ body {
 }
 .popover-search {
     height: 350px;
-    width: 350px;
+    width:calc( 100vw - 30px);
     overflow-x: hidden;
     @include Responsive(SM) {
         width: 375px;

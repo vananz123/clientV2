@@ -1,8 +1,9 @@
 import { Col, Layout, Row, Space } from 'antd';
 import { Flex, Tag } from 'antd';
 import Container from '@/conponents/Container';
+import React from 'react';
 const { Footer } = Layout;
-function FooterC() {
+const FooterC = React.memo( ()=> {
     return (
         <Container>
             <Footer className='text-center border-t-[1px] border-[#858585] p-2 md:p-5' >
@@ -212,6 +213,6 @@ function FooterC() {
             </Footer>
         </Container>
     );
-}
+})
 
 export default FooterC;
