@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDebounce } from '@/hooks';
-import { Input, Popover } from 'antd';
+import { Button, Input, Popover } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
 import * as productServices from '@/api/productServices';
 import type { InputRef } from 'antd';
@@ -58,8 +58,10 @@ const SearchC: React.FC = memo(() => {
                                             <ProductCard product={e} type='forList'/>
                                         </div>
                                     ))}
-                                    <div style={{ textAlign: 'center' }}>
-                                        <Link to={`/product/${searchValue}`}>Hiển thị tất cả</Link>
+                                    <div className='w-full text-center'>
+                                        <Button>
+                                            <Link to={`/product/${searchValue}`}>Hiển thị tất cả</Link>
+                                        </Button>
                                     </div>
                                 </>
                             ) : (
@@ -71,12 +73,12 @@ const SearchC: React.FC = memo(() => {
                     trigger={'click'}
                     placement='bottom'
                 >
-                    <div className='search'>
+                    <div className='mt-1 w-auto'>
                         <Search
                             placeholder="Tên sản phẩm"
-                            style={{ display: 'block' }}
+                            className='block'
                             allowClear
-                            //enterButton="Search"
+                            autoFocus={false}
                             ref={inputRef}
                             size="middle"
                             onSearch={onSearch}

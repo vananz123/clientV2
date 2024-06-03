@@ -1,10 +1,9 @@
-import { Guaranty, Product, Variation } from '@/type';
-import { Card, Space, Modal, Typography } from 'antd';
+import { Product, Variation } from '@/type';
+import { Space, Modal, Typography } from 'antd';
 const { Paragraph } = Typography;
 import React from 'react';
 interface Props {
     product: Product | undefined;
-    guaranty: Guaranty | undefined;
 }
 const ProductDetailInfo: React.FC<Props> = React.memo(({ product }) => {
     const [open, setOpenInfo] = React.useState(false);
@@ -13,23 +12,21 @@ const ProductDetailInfo: React.FC<Props> = React.memo(({ product }) => {
     };
     return (
         <div>
-            <Card
-                bordered={true}
-                className="border-gray-900"
-                title="Thông số"
-                extra={
-                    <a
+            <div className='border-[2px] border-[#fafafa] rounded'>
+                <div className='flex justify-between p-3 bg-[#fafafa] rounded'>
+                    <p className='text-base font-bold'>Thông số</p>
+                    <p
                         onClick={() => {
                             setOpenInfo(true);
                         }}
+                        className="underline cursor-pointer"
                     >
                         Xem chi tiết
-                    </a>
-                }
-            >
+                    </p>
+                </div>
+                <div className='p-3 rounded'>
                 {product?.variation !== undefined && (
-                    <>
-                        {product?.variation.map((e: Variation) => (
+                        <>
                             <div>
                                 <Paragraph
                                     ellipsis={{
@@ -37,27 +34,35 @@ const ProductDetailInfo: React.FC<Props> = React.memo(({ product }) => {
                                     }}
                                     className="product-card__title"
                                 >
-                                    {e.name} {e.value}
+                                    {product?.variation.map((e: Variation) => (
+                                        <p>
+                                            {e.name} {e.value}
+                                        </p>
+                                    ))}
                                 </Paragraph>
                             </div>
-                        ))}
-                    </>
-                )}
-            </Card>
+                            <div className="h-[40px]">
+                                <Paragraph
+                                    ellipsis={{
+                                        rows: 2,
+                                    }}
+                                >
+                                    <p dangerouslySetInnerHTML={{ __html: product.seoDescription }}></p>
+                                </Paragraph>
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
             <Modal title="Thông số chi tiết" open={open} onCancel={handleCancel} footer={''}>
-                <Space className="block">
+                <Space direction="vertical">
                     {product?.variation !== undefined && (
                         <>
                             {product?.variation.map((e: Variation) => (
                                 <div>
-                                    <Paragraph
-                                        ellipsis={{
-                                            rows: 2,
-                                        }}
-                                        className="product-card__title"
-                                    >
+                                    <p className="product-card__title">
                                         {e.name} {e.value}
-                                    </Paragraph>
+                                    </p>
                                 </div>
                             ))}
                             <p dangerouslySetInnerHTML={{ __html: product.seoDescription }}></p>

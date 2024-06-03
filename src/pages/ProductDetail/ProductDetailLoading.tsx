@@ -9,11 +9,11 @@ function ProductDetailLoading() {
                 <Row gutter={[8, 8]}>
                     <Col xs={24} sm={24} md={24} lg={24} xl={14} className="gutter-row">
                         <Flex justify="space-between" gap={5}>
-                            <SkeletonCard style={{ width: 400, height: 400 }} />
-                            <Space direction="vertical">
-                                <SkeletonCard style={{ width: 150, height: 150 }} />
-                                <SkeletonCard style={{ width: 150, height: 150 }} />
-                            </Space>
+                            <SkeletonCard className="w-full h-[250px] md:h-[550px]" />
+                            <div className="flex flex-col w-[150px] md:w-[250px] gap-3">
+                                <SkeletonCard className="w-full h-[120px]  md:h-[200px]" />
+                                <SkeletonCard className="w-full h-[120px]  md:h-[200px]" />
+                            </div>
                         </Flex>
                     </Col>
                     <Col xs={24} sm={24} md={24} lg={24} xl={10} className="gutter-row">
@@ -30,7 +30,9 @@ function ProductDetailLoading() {
                 </Row>
             </Container>
             <Container>
-                <div className='w-full flex justify-center md:p-5'><SkeletonCard className="w-full h-[200px]" /></div>
+                <div className="w-full flex justify-center md:p-5">
+                    <SkeletonCard className="w-full h-[200px]" />
+                </div>
             </Container>
             <Container>
                 <Row gutter={[24, 24]}>
@@ -45,7 +47,7 @@ function ProductDetailLoading() {
                             xl={6}
                             className="gutter-row"
                         >
-                            <SkeletonCard style={{ width: '100%', height: 350 }} />
+                            <SkeletonCard className="w-full h-[300px] md:h-[400px]" />
                         </Col>
                     ))}
                 </Row>

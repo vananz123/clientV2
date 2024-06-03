@@ -165,9 +165,14 @@ export const getOrderAdminByOrderId = async(id:number)=>{
         return resError
     }
 }
-export const getOrderByUserId = async(id:string)=>{
+export const getOrderByUserId = async(id:string ,statusName:string | undefined)=>{
     try{
-        const res = await request.get(`/order/user/${encodeURIComponent(id)}?PageIndex=1&PageSize=100`)
+        const params = {
+            statusName:statusName,
+            pageIndex : 1,
+            pageSize : 100,
+        }
+        const res = await request.get(`/order/user/${encodeURIComponent(id)}`, {params})
         const resultObj :Order[] = res.resultObj.items
         // const paging: PagingResult = {
         //     items: resultObj,

@@ -177,18 +177,6 @@ body {
         align-items: center;
     }
 }
-.search {
-    width: 185px;
-    @include Responsive(XS) {
-        width: 200px;
-    }
-    @include Responsive(SM) {
-        width: 170px;
-    }
-    @include Responsive(MD) {
-        width: 290px;
-    }
-}
 .list-card {
     padding: 5px;
 }
@@ -220,17 +208,5 @@ body {
     border: 1px solid #E30019;
     border-radius: 4px;
     white-space: nowrap;
-}
-.review{
-    display:none;
-    @include Responsive(SM) {
-        display: block;
-    }
-}
-.review__moblie{
-    display: block;
-    @include Responsive(SM) {
-        display: none;
-    }
 }
 

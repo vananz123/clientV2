@@ -1,10 +1,9 @@
 import { Guaranty } from '@/type';
-import { Card, Modal, Space } from 'antd';
+import { Modal, Space } from 'antd';
 import React from 'react';
 interface Props {
     guaranty: Guaranty | undefined;
 }
-
 const ProductDetailGuaranty: React.FC<Props> = React.memo(({ guaranty }) => {
     const [OpenGuaranty, setOpenGuaranty] = React.useState(false);
     const handleCancel = () => {
@@ -12,21 +11,19 @@ const ProductDetailGuaranty: React.FC<Props> = React.memo(({ guaranty }) => {
     };
     return (
         <div>
-            <div className="flex flex-col gap-2">
-                <Card
-                    bordered={true}
-                    className="border-gray-900"
-                    title="Bảo Hành"
-                    extra={
-                        <a
-                            onClick={() => {
-                                setOpenGuaranty(true);
-                            }}
-                        >
-                            Xem chi tiết
-                        </a>
-                    }
-                >
+            <div className="border-[2px] border-[#fafafa] rounded">
+                <div className='flex justify-between p-3 bg-[#fafafa] rounded'>
+                    <p className='text-base font-bold'>Bảo Hành</p>
+                    <p
+                        onClick={() => {
+                            setOpenGuaranty(true);
+                        }}
+                        className="underline cursor-pointer"
+                    >
+                        Xem chi tiết
+                    </p>
+                </div>
+                <div className='p-3'>
                     {guaranty !== undefined && (
                         <>
                             {guaranty && (
@@ -38,7 +35,7 @@ const ProductDetailGuaranty: React.FC<Props> = React.memo(({ guaranty }) => {
                             )}
                         </>
                     )}
-                </Card>
+                </div>
                 <Modal title="Thông số chi tiết" open={OpenGuaranty} onCancel={handleCancel} footer={''}>
                     <Space className="block">
                         {guaranty !== undefined && (

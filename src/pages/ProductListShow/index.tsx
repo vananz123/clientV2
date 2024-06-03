@@ -196,6 +196,7 @@ function ProductListShow() {
                     </Space>
                     <Select
                         value={sortOder}
+                        autoFocus = {false}
                         style={{ width: 125 }}
                         onChange={handleChangeSort}
                         options={OPTIONS_SORT}

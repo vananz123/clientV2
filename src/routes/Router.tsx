@@ -20,6 +20,7 @@ import Checkout from '@/pages/Pay/Checkout';
 import CheckoutVnpay from '@/pages/Pay/CheckoutVnpay';
 import { OrderConfirm, OrderList } from '@/pages/Admin/Order';
 const UserOrderDetail = lazy(()=>import('@/pages/UserOrderDetail'));
+const UserOrderList = lazy(()=> import('@/pages/UserOrderList'))
 import { PromotionAdd, PromotionEdit, PromotionList } from '@/pages/Admin/Promotion';
 const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
 import UserList from '@/pages/Admin/User/UserList';
@@ -134,9 +135,18 @@ const Router: React.FC = () => {
                             </RoleGuard>
                         </AuthGuard>
                     ),
+                },{
+                    path: 'order',
+                    element: (
+                        <AuthGuard>
+                            <RoleGuard role={['customer']}>
+                               <Suspense> <UserOrderList /></Suspense>
+                            </RoleGuard>
+                        </AuthGuard>
+                    ),
                 },
                 {
-                    path: 'profile/order-detail/:id',
+                    path: 'order/detail/:id',
                     element: (
                         <AuthGuard>
                             <RoleGuard role={['customer']}>
