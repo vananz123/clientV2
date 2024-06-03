@@ -2,11 +2,12 @@
 import { Carousel, Col, Row } from 'antd';
 import { Product } from '@/type';
 import ProductCard from '@/conponents/ProductCard';
-import React, { useEffect } from 'react';
+import React, { lazy, useEffect } from 'react';
 import * as productServices from '@/api/productServices';
 import { Filter } from '@/type';
 import { Link } from 'react-router-dom';
 import Container from '@/conponents/Container';
+const HomeLoadingListCard = lazy(()=> import('./HomeLoadingListCard'));
 const contentStyle: React.CSSProperties = {
     margin: 0,
     height: 'auto',
@@ -146,7 +147,7 @@ function Home() {
                             <Link to={'/product/new'}className='underline'>Xem thêm</Link>
                         </div>
                     </div>
-                    {typeof productsNew !== 'undefined' && (
+                    {typeof productsNew !== 'undefined' ? (
                         <Row gutter={[16, 16]}>
                             {productsNew.map((e: Product) => (
                                 <Col
@@ -163,7 +164,7 @@ function Home() {
                                 </Col>
                             ))}
                         </Row>
-                    )}
+                    ) : <HomeLoadingListCard/>}
                 </div>
             </Container>
             <div style={contentStyle}>
@@ -177,7 +178,7 @@ function Home() {
                             <Link to={'/product/2'} className='underline'>Xem thêm</Link>
                         </div>
                     </div>
-                    {typeof products !== 'undefined' && (
+                    {typeof products !== 'undefined' ? (
                         <Row gutter={[16, 16]}>
                             {products.map((e: Product) => (
                                 <Col
@@ -194,7 +195,7 @@ function Home() {
                                 </Col>
                             ))}
                         </Row>
-                    )}
+                    ): <HomeLoadingListCard/>}
                 </div>
                 <div>
                     <div className="flex justify-between my-5 items-center">
@@ -203,7 +204,7 @@ function Home() {
                             <Link to={'/product/hot'} className='underline'>Xem thêm</Link>
                         </div>
                     </div>
-                    {typeof productsHot !== 'undefined' && (
+                    {typeof productsHot !== 'undefined' ? (
                         <Row gutter={[16, 16]}>
                             {productsHot.map((e: Product) => (
                                 <Col
@@ -220,7 +221,7 @@ function Home() {
                                 </Col>
                             ))}
                         </Row>
-                    )}
+                    ) : <HomeLoadingListCard/>}
                 </div>
             </Container>
         </div>

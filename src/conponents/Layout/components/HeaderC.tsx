@@ -38,10 +38,26 @@ const HeaderC = memo(()=> {
                     }}
                     to={'/profile'}
                 >
-                    Profile
+                    Cài đặt
                 </Link>
             ),
             key: '0',
+        },
+        {
+            type: 'divider',
+        },
+        {
+            label: (
+                <Link
+                    onClick={() => {
+                        onClose();
+                    }}
+                    to={'/order'}
+                >
+                    Đơn mua
+                </Link>
+            ),
+            key: '1',
         },
         {
             type: 'divider',
@@ -53,7 +69,7 @@ const HeaderC = memo(()=> {
                         Logout();
                     }}
                 >
-                    Logout
+                    Đăng xuất
                 </a>
             ),
             key: '3',
