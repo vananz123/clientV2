@@ -17,7 +17,7 @@ import React, { useEffect } from 'react';
 import { selectCartDetail } from '@/app/feature/cart/reducer';
 import { loadCartDetail } from '@/app/feature/cart/action';
 import { loadUser } from '@/app/feature/user/action';
-const HeaderC = memo(()=> {
+const HeaderC = memo(() => {
     const Navigate = useNavigate();
     const { data } = useAppSelector(selectUser);
     const user = data;
@@ -27,7 +27,7 @@ const HeaderC = memo(()=> {
         if (user) dispatch(loadCartDetail({ userId: user?.id as string }));
     }, [dispatch, user]);
     const {
-        token: {  colorBgContainer},
+        token: { colorBgContainer },
     } = theme.useToken();
     const items: MenuProps['items'] = [
         {
@@ -87,14 +87,14 @@ const HeaderC = memo(()=> {
 
     const showDrawer = useCallback(() => {
         setOpen(true);
-    },[]);
+    }, []);
     const onClose = () => {
         setOpen(false);
     };
     return (
         <>
-            <div className='sticky top-0 z-10'>
-                <Header style={{background:colorBgContainer, padding: 0}}>
+            <div className="sticky top-0 z-10 shadow">
+                <Header style={{ background: colorBgContainer, padding: 0 }}>
                     <div className="header-container">
                         <div className="header-container__nav">
                             <NavC />
@@ -102,7 +102,7 @@ const HeaderC = memo(()=> {
                         <div className="header-container__logo">
                             <div className="menu-right">
                                 <div className="menu-right__bars" onClick={() => showDrawer()}>
-                                    <BarsOutlined/>
+                                    <BarsOutlined />
                                 </div>
                                 <Link className="menu-right__logo" style={{ width: 64, height: 64 }} to="/">
                                     <img style={{ width: '100%', height: '100%' }} alt="al store" src={Logo2} />
@@ -117,27 +117,26 @@ const HeaderC = memo(()=> {
                             {typeof user !== 'undefined' ? (
                                 <>
                                     <Space align="center">
-                                        <Dropdown
-                                            className="header-container__user"
-                                            menu={{ items }}
-                                            trigger={['click']}
-                                        >
+                                        <Dropdown className="hidden lg:block" menu={{ items }} trigger={['click']}>
                                             <strong onClick={(e) => e.preventDefault()} style={{ cursor: 'pointer' }}>
                                                 <Space>
-                                                    <Avatar icon={<UserOutlined />} />
+                                                    <Avatar style={{ background: '#4096ff' }} icon={<UserOutlined />} />
                                                     <div>{user?.userName}</div>
                                                 </Space>
                                             </strong>
                                         </Dropdown>
                                         <Link to={`/cart`} style={{ marginLeft: 5, marginBottom: 5 }}>
                                             <Badge count={cart.items.length} showZero>
-                                                <Avatar icon={<ShoppingCartOutlined />} />
+                                                <Avatar
+                                                    style={{ background: '#4096ff' }}
+                                                    icon={<ShoppingCartOutlined />}
+                                                />
                                             </Badge>
                                         </Link>
                                     </Space>
                                 </>
                             ) : (
-                                <div>
+                                <div className="w-[70px]">
                                     <Link style={{ color: 'black' }} to={'/auth/login'}>
                                         <p>
                                             Login <LoginOutlined />
@@ -164,7 +163,7 @@ const HeaderC = memo(()=> {
                                     style={{ color: 'black', cursor: 'pointer' }}
                                 >
                                     <Space>
-                                        <Avatar icon={<UserOutlined />} />
+                                        <Avatar style={{ background: '#4096ff' }} icon={<UserOutlined />} />
                                         <div>{user?.userName}</div>
                                     </Space>
                                 </div>
@@ -181,7 +180,6 @@ const HeaderC = memo(()=> {
                                 right: 10,
                             }}
                         >
-                            
                             {user && (
                                 <Button
                                     icon={<LogoutOutlined />}
@@ -190,7 +188,7 @@ const HeaderC = memo(()=> {
                                         Logout();
                                     }}
                                 >
-                                    Logout
+                                    Đăng xuất
                                 </Button>
                             )}
                         </div>
@@ -199,6 +197,6 @@ const HeaderC = memo(()=> {
             </div>
         </>
     );
-})
+});
 
 export default HeaderC;

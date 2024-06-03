@@ -200,7 +200,7 @@ function UserOrderDetail() {
                                         (s) =>
                                             s.name === 'Đã hủy' ||
                                             s.name === 'Đang xủ lý' ||
-                                            s.name === 'Đã hoàng thành',
+                                            s.name === 'Đã hoàn thành',
                                     )}
                                     style={{ marginTop: 10 }}
                                     type="primary"
@@ -234,7 +234,7 @@ function UserOrderDetail() {
                                 <Button
                                     disabled={order.status?.some(
                                         (s) =>
-                                            s.name === 'Đã hủy' || s.name === 'Trả hàng' || s.name === 'Đã hoàng thành',
+                                            s.name === 'Đã hủy' || s.name === 'Trả hàng' || s.name === 'Đã hoàn thành',
                                     )}
                                     style={{ marginTop: 10 }}
                                     type="primary"
@@ -281,7 +281,7 @@ function UserOrderDetail() {
                                                                     {e.value != undefined && (
                                                                         <p>Size: {e.value + ' ' + e.sku}</p>
                                                                     )}
-                                                                    <p>Thành tiền:{ChangeCurrence(e.total)}</p>
+                                                                    <p>Thành tiền: {ChangeCurrence(e.total)}</p>
                                                                 </div>
                                                                 <div className="hidden sm:block">
                                                                     <Button
@@ -289,7 +289,7 @@ function UserOrderDetail() {
                                                                         size="middle"
                                                                         disabled={
                                                                             order?.status?.some(
-                                                                                (s) => s.name === 'Đã hoàng thành',
+                                                                                (s) => s.name === 'Đã hoàn thành',
                                                                             ) === false
                                                                         }
                                                                         onClick={() => {
@@ -311,7 +311,7 @@ function UserOrderDetail() {
                                                                     block
                                                                     disabled={
                                                                         order?.status?.some(
-                                                                            (s) => s.name === 'Đã hoàng thành',
+                                                                            (s) => s.name === 'Đã hoàn thành',
                                                                         ) === false
                                                                     }
                                                                     onClick={() => {

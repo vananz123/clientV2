@@ -6,7 +6,7 @@ import * as productServices from '@/api/productServices';
 import * as cartServices from '@/api/cartServices';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
-import { Col, Badge, Typography, Row, Image, Button, notification, Flex, Divider, Segmented } from 'antd';
+import { Col, Badge, Typography, Row, Image, Button, notification, Flex, Segmented } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 type NotificationType = 'success' | 'error';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ import ProductDetailLoading from './ProductDetailLoading';
 import { loadCartDetail } from '@/app/feature/cart/action';
 import Container from '@/conponents/Container';
 import InputQuatity from '@/conponents/InputQuatity';
+import ProductDetailGuaranty from './ProductDetailGuaranty';
 const ProductDetailImage = lazy(()=> import('./ProductDetailImage'));
 const ProductDetailReview = lazy(() => import('./ProductDetailReview'));
 const ProductDetailSimilarProduct = lazy(() => import('./ProductDetailSimilarProduct'));
@@ -118,7 +119,7 @@ function ProductDetail() {
                                 Go back
                             </Button>
                             <div>
-                                <Row gutter={[8, 8]}>
+                                <Row gutter={[12, 12]}>
                                     <Col
                                         style={{ position: 'relative' }}
                                         xs={16}
@@ -126,9 +127,9 @@ function ProductDetail() {
                                         md={16}
                                         lg={10}
                                         xl={10}
-                                        className="gutter-row bg-[#fafafa] rounded"
+                                        className="gutter-row "
                                     >
-                                        <div>
+                                        <div className='bg-[#fafafa] rounded'>
                                             <Image width={'100%'} src={`${baseUrl + data.urlThumbnailImage}`} />
                                         </div>
                                         <span style={{ position: 'absolute', top: '5px', right: '5px' }}>
@@ -243,11 +244,10 @@ function ProductDetail() {
                                                         Add to cart
                                                     </Button>
                                                 </Flex>
-                                                <Divider dashed />
-                                                <ProductDetailInfo
-                                                    product={data}
-                                                    guaranty={currentProductItem.guaranty}
-                                                />
+                                                <br/>
+                                                <ProductDetailInfo product={data}/>
+                                                <br/>
+                                                <ProductDetailGuaranty guaranty={currentProductItem.guaranty} />
                                             </>
                                         )}
                                     </Col>

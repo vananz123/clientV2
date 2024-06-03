@@ -5,7 +5,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Badge, Button, Col, Divider, Result, Row, Space, Tabs } from 'antd';
 import * as orderServices from '@/api/orderServices';
 import dayjs from 'dayjs';
-import React, { lazy } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
@@ -63,11 +63,11 @@ function UserOrderList() {
             >
                 Go back
             </Button>
+            <Tabs activeKey={statusName} items={items} onChange={onChange} />
             {isLoading ? (
-                <UserOrderListLoading />
+               <Suspense> <UserOrderListLoading /></Suspense>
             ) : (
                 <>
-                    <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
                     {data && data.length > 0 ? (
                         data.map((e: Order) => (
                             <>

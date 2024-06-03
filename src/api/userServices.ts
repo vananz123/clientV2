@@ -102,6 +102,22 @@ export const Register = async (data: RegisterUser) => {
         return resError;
     }
 };
+export const update = async (data: ResponseUser) => {
+    try {
+        const user = {
+            id:data.id,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            phoneNumber: data.phoneNumber,
+            userName: data.userName
+        };
+        const res = await request.put(`/user`, user);
+        const resultObj: ResponseUser = res.resultObj;
+        return resultObj;
+    } catch (error: any) {
+        return undefined;
+    }
+};
 export const getAddressByUserId = async (id: string) => {
     try {
         const res = await request.get(`/address/user/${encodeURIComponent(id)}`);
