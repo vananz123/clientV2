@@ -239,7 +239,7 @@ function ProductListShow() {
                                 xl={6}
                                 className="gutter-row"
                             >
-                                <SkeletonCard style={{ width: '100%', height: 350 }} />
+                                <SkeletonCard className='w-full h-[260px] md:h-[350px]' />
                             </Col>
                         ))}
                     </Row>
