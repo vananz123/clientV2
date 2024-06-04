@@ -116,10 +116,10 @@ export const returned = async(id:number)=>{
         return resError
     }
 }
-export const getOrderAdmin = async(statusName:string | undefined)=>{
+export const getOrderAdmin = async(statusName:string)=>{
     try{ 
         let res;
-        if(statusName == undefined){
+        if(statusName == "All"){
             res = await request.get(`/order/admin?PageIndex=1&PageSize=100`)
         }else{
             res = await request.get(`order/admin?StatusName=${encodeURIComponent(statusName)}&PageIndex=1&PageSize=100`)
@@ -133,18 +133,18 @@ export const getOrderAdmin = async(statusName:string | undefined)=>{
             pageSize:res.resultObj.pageSize,
             totalRecords:res.resultObj.totalRecords
         }
-        const resp: Result ={
-            error :'',
-            isSuccessed:res.isSuccessed,
-            message:res.message,
-            statusCode:200,
-            resultObj : paging,
-        }
-        return resp
+        // const resp: Result ={
+        //     error :'',
+        //     isSuccessed:res.isSuccessed,
+        //     message:res.message,
+        //     statusCode:200,
+        //     resultObj : paging,
+        // }
+        return paging
     }catch(error:any){
-        console.log(error.response.data)
-        const resError: Result =error.response.data
-        return resError
+        // console.log(error.response.data)
+        // const resError: Result =error.response.data
+        return undefined
     }
 }
 export const getOrderAdminByOrderId = async(id:number)=>{

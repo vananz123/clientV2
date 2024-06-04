@@ -16,7 +16,7 @@ import { loadCartDetail } from '@/app/feature/cart/action';
 import Container from '@/conponents/Container';
 import InputQuatity from '@/conponents/InputQuatity';
 import ProductDetailGuaranty from './ProductDetailGuaranty';
-const ProductDetailImage = lazy(()=> import('./ProductDetailImage'));
+const ProductDetailImage = lazy(() => import('./ProductDetailImage'));
 const ProductDetailReview = lazy(() => import('./ProductDetailReview'));
 const ProductDetailSimilarProduct = lazy(() => import('./ProductDetailSimilarProduct'));
 const ProductDetailInfo = lazy(() => import('./ProductDetailInfo'));
@@ -48,7 +48,7 @@ function ProductDetail() {
         if (data.items && data.items.length > 0) {
             data.items.forEach((element: ProductItem) => {
                 const option: OptionSize = {
-                    label: element.value,
+                    label: element.value + " " + (element.sku !=='size' ? element.sku : ''),
                     value: element.id,
                 };
                 if (element.status == 2) {
@@ -61,7 +61,7 @@ function ProductDetail() {
     const [api, contextHolder] = notification.useNotification();
     const openNotificationWithIcon = (type: NotificationType, mess: string) => {
         api[type]({
-            message: 'Notification Title',
+            message: 'Thông báo',
             description: mess,
         });
     };
@@ -129,40 +129,26 @@ function ProductDetail() {
                                         xl={10}
                                         className="gutter-row "
                                     >
-                                        <div className='bg-[#fafafa] rounded'>
+                                        <div className="bg-[#fafafa] rounded">
                                             <Image width={'100%'} src={`${baseUrl + data.urlThumbnailImage}`} />
                                         </div>
                                         <span style={{ position: 'absolute', top: '5px', right: '5px' }}>
-                                            {data?.status == 2 ? (
-                                                <Badge.Ribbon
-                                                    text="New"
-                                                    style={{ display: '' }}
-                                                    color="red"
-                                                ></Badge.Ribbon>
-                                            ) : (
-                                                <>
-                                                    {data?.status == 3 && (
-                                                        <Badge.Ribbon
-                                                            text="Hot"
-                                                            style={{ display: '' }}
-                                                            color="yellow"
-                                                        ></Badge.Ribbon>
-                                                    )
-                                                    }
-                                                </>
+                                            {data?.status === 2 && <Badge.Ribbon text="New" color="red"></Badge.Ribbon>}
+                                            {data?.status === 3 && (
+                                                <Badge.Ribbon text="Hot" color="yellow"></Badge.Ribbon>
                                             )}
                                         </span>
                                     </Col>
                                     <Col xs={8} sm={8} md={8} lg={4} xl={4}>
-                                        <ProductDetailImage listImage={listImage} seo={data.seoTitle}/>
+                                        <ProductDetailImage listImage={listImage} seo={data.seoTitle} />
                                     </Col>
                                     <Col xs={24} sm={24} md={24} lg={10} xl={10} className="gutter-row">
-                                        <Paragraph style={{ fontWeight: 500,fontSize:18 }} copyable>
+                                        <Paragraph style={{ fontWeight: 500, fontSize: 18 }} copyable>
                                             {data.seoTitle}
                                         </Paragraph>
                                         {typeof currentProductItem !== 'undefined' && (
                                             <>
-                                                <div className='mb-5'>
+                                                <div className="mb-5">
                                                     {currentProductItem.type == undefined ? (
                                                         <>
                                                             <span
@@ -238,15 +224,15 @@ function ProductDetail() {
                                                         onClick={() => {
                                                             handleAddToCart();
                                                         }}
-                                                        disabled={currentProductItem?.status == 2}
+                                                        disabled={currentProductItem.status == 2 || currentProductItem.stock <=0}
                                                         style={{ width: '200px' }}
                                                     >
                                                         Add to cart
                                                     </Button>
                                                 </Flex>
-                                                <br/>
-                                                <ProductDetailInfo product={data}/>
-                                                <br/>
+                                                <br />
+                                                <ProductDetailInfo product={data} />
+                                                <br />
                                                 <ProductDetailGuaranty guaranty={currentProductItem.guaranty} />
                                             </>
                                         )}

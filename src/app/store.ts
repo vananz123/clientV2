@@ -10,6 +10,7 @@ import cartReducer from "./feature/cart/reducer";
 import cateReducer from "./feature/category/reducer";
 import userReducer from "./feature/user/reducer";
 import themeReducer from "./feature/theme/reducer";
+import orderStatusReducer from "./feature/order-status/reducer";
 const persistConfig = {
   key: "la-store-website",
   storage,
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
   cart:cartReducer,
   categories:cateReducer,
   user:userReducer,
-  theme:themeReducer
+  theme:themeReducer,
+  orderStatus:orderStatusReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

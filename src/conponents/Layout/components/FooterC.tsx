@@ -3,6 +3,7 @@ import { Flex, Tag } from 'antd';
 import Container from '@/conponents/Container';
 import React from 'react';
 const { Footer } = Layout;
+import Logo2 from '/logo.png';
 const FooterC = React.memo( ()=> {
     return (
         <Container>
@@ -12,8 +13,8 @@ const FooterC = React.memo( ()=> {
                         <div className='text-left w-full lg:w-[80%] text-stone-500'>
                             <img
                                 style={{ width: '100px', marginLeft: '0px', opacity: 1 }}
-                                srcSet="/public/logo.png"
-                                alt="logo"
+                                src={Logo2}
+                                alt="la store"
                             />
                             <p className='p-0 m-[4px] text-stone-500'>
                                 © 2017 Công Ty Cổ Phần Vàng Bạc Đá Quý Phú Nhuận

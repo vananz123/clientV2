@@ -195,57 +195,50 @@ function UserOrderDetail() {
                                     items={desOrder}
                                     bordered
                                 />
-                                <Button
-                                    disabled={order.status?.some(
-                                        (s) =>
-                                            s.name === 'Đã hủy' ||
-                                            s.name === 'Đang xủ lý' ||
-                                            s.name === 'Đã hoàn thành',
-                                    )}
-                                    style={{ marginTop: 10 }}
-                                    type="primary"
-                                    danger
-                                    block
-                                    onClick={() => {
-                                        setConfirm('SUCCESSED');
-                                        setOpenModal(true);
-                                    }}
-                                >
-                                    Đã nhận hàng
-                                </Button>
-                                <Button
-                                    disabled={order.status?.some(
-                                        (s) =>
-                                            s.name === 'Đã hủy' ||
-                                            s.name === 'Đã tiếp nhận' ||
-                                            s.name === 'Đã hoàng thành',
-                                    )}
-                                    style={{ marginTop: 10 }}
-                                    type="primary"
-                                    danger
-                                    block
-                                    onClick={() => {
-                                        setConfirm('CANCELED');
-                                        setOpenModal(true);
-                                    }}
-                                >
-                                    Hủy
-                                </Button>
-                                <Button
-                                    disabled={order.status?.some(
-                                        (s) =>
-                                            s.name === 'Đã hủy' || s.name === 'Trả hàng' || s.name === 'Đã hoàn thành',
-                                    )}
-                                    style={{ marginTop: 10 }}
-                                    type="primary"
-                                    block
-                                    onClick={() => {
-                                        setConfirm('RETURNED');
-                                        setOpenModal(true);
-                                    }}
-                                >
-                                    Yêu cầu trả hàng/hoàn tiền
-                                </Button>
+                                {order.status && (
+                                    <>
+                                        {order.isSuccsessedButton && (
+                                            <Button
+                                                style={{ marginTop: 10 }}
+                                                type="primary"
+                                                block
+                                                onClick={() => {
+                                                    setConfirm('SUCCESSED');
+                                                    setOpenModal(true);
+                                                }}
+                                            >
+                                                Đã nhận hàng
+                                            </Button>
+                                        )}
+                                        {order.isCanceledButton && (
+                                            <Button
+                                                style={{ marginTop: 10 }}
+                                                type="primary"
+                                                danger
+                                                block
+                                                onClick={() => {
+                                                    setConfirm('CANCELED');
+                                                    setOpenModal(true);
+                                                }}
+                                            >
+                                                Hủy
+                                            </Button>
+                                        )}
+                                        {order.isReturnedButton && (
+                                            <Button
+                                                style={{ marginTop: 10 }}
+                                                type="primary"
+                                                block
+                                                onClick={() => {
+                                                    setConfirm('RETURNED');
+                                                    setOpenModal(true);
+                                                }}
+                                            >
+                                                Yêu cầu trả hàng/hoàn tiền
+                                            </Button>
+                                        )}
+                                    </>
+                                )}
                             </Col>
                             <Col span={16} xs={24} md={24} lg={16} xl={16}>
                                 <Card title="Danh sách sản phẩm" bordered={false}>

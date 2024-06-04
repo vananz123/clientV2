@@ -67,15 +67,11 @@ const ProductCard: React.FC<Props> = ({ product, type = 'forCard'}) => {
                             )}
                         </div>
                         <span style={{ position: 'absolute', top: '5px', right: '5px' }}>
-                            {product?.status == 2 ? (
-                                <Badge.Ribbon text="New" style={{ display: '' }} color="red"></Badge.Ribbon>
-                            ) : (
-                                <Badge.Ribbon text="New" style={{ display: 'none' }}></Badge.Ribbon>
+                            {product?.status === 2 && (
+                                <Badge.Ribbon text="New" color="red"></Badge.Ribbon>
                             )}
-                            {product?.status == 3 ? (
-                                <Badge.Ribbon text="Hot" style={{ display: '' }} color="yellow"></Badge.Ribbon>
-                            ) : (
-                                <Badge.Ribbon text="New" style={{ display: 'none' }}></Badge.Ribbon>
+                            {product?.status === 3 && (
+                                <Badge.Ribbon text="Hot" color="yellow"></Badge.Ribbon>
                             )}
                         </span>
                     </Card>

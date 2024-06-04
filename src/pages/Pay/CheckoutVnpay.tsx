@@ -7,6 +7,7 @@ import { loadCartDetail } from '@/app/feature/cart/action';
 import { selectUser } from '@/app/feature/user/reducer';
 import { useMutation } from '@tanstack/react-query';
 import Container from '@/conponents/Container';
+import { useNavigate } from 'react-router-dom';
 function CheckoutVnpay() {
     const user = useAppSelector(selectUser).data
     const [content,setContent] = React.useState<string>('')
@@ -31,7 +32,7 @@ function CheckoutVnpay() {
     useEffect(()=>{
         if(user) dispatch(loadCartDetail({userId:user.id}))
     },[dispatch,user])
-    
+    const navigate = useNavigate()
     useMemo(()=>{
         if (p != undefined) {
             if (p.vnp_TransactionStatus == '00') {
@@ -56,10 +57,10 @@ function CheckoutVnpay() {
                 title="Thông tin đơn hàng!"
                 subTitle={content}
                 extra={[
-                    <Button type="primary" key="console">
-                        Go Console
-                    </Button>,
-                    <Button key="buy">Buy Again</Button>,
+                    <Button type="primary" key="console" onClick={()=>{navigate('/order')}}>
+                    Order detail
+                </Button>,
+                <Button key="buy" onClick={()=>{navigate('/home')}}>Buy Again</Button>,
                 ]}
             />
         </Container>

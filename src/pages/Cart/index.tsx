@@ -162,9 +162,13 @@ function Cart() {
                                                                     )}
                                                                 </div>
                                                                 <div className="flex justify-start gap-4">
-                                                                    <p>
-                                                                        {e?.name}: {e?.value} {e.sku}
-                                                                    </p>
+                                                                    {e.name && (
+                                                                        <>
+                                                                            <p>
+                                                                                {e?.name}: {e?.value} {e.sku}
+                                                                            </p>
+                                                                        </>
+                                                                    )}
                                                                     <div>
                                                                         <Space.Compact size="small">
                                                                             <Button
@@ -189,7 +193,11 @@ function Cart() {
                                                                         </Space.Compact>
                                                                     </div>
                                                                 </div>
-                                                                <div><p className='font-bold' >Tổng: {ChangeCurrence(e?.total)} </p></div>
+                                                                <div>
+                                                                    <p className="font-bold">
+                                                                        Tổng: {ChangeCurrence(e?.total)}{' '}
+                                                                    </p>
+                                                                </div>
                                                             </div>
                                                             <>
                                                                 {e.stock == 0 && (
