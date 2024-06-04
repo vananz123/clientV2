@@ -163,11 +163,6 @@ function ProductList() {
             key: 'id',
         },
         {
-            title: 'Tên',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
             title: 'Tiêu Đề',
             dataIndex: 'seoTitle',
             key: 'seoTitle',

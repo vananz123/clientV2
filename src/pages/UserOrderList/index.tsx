@@ -5,50 +5,25 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Badge, Button, Col, Divider, Result, Row, Space, Tabs } from 'antd';
 import * as orderServices from '@/api/orderServices';
 import dayjs from 'dayjs';
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAppSelector } from '@/app/hooks';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
+import { selectOrderStatus ,changeOrderStatus} from '@/app/feature/order-status/reducer';
+import { STATUS_ORDER } from '@/common/common';
 const UserOrderListLoading = lazy(() => import('./UserOrderListLoading'));
 function UserOrderList() {
     const Navigate = useNavigate();
+    const dispatch  = useAppDispatch()
+    const {name:statusName} = useAppSelector(selectOrderStatus);
     const { data: user } = useAppSelector(selectUser);
-    const items = [
-        {
-            key: 'Đang xử lý',
-            label: 'Đang xử lý',
-            children: <></>,
-        },
-        {
-            key: 'Đã tiếp nhận',
-            label: 'Đã tiếp nhận',
-            children: <></>,
-        },
-        {
-            key: 'Đã hoàn thành',
-            label: 'Đã hoàn thành',
-            children: <></>,
-        },
-        {
-            key: 'Đã hủy',
-            label: 'Đã hủy',
-            children: <></>,
-        },
-        {
-            key: 'Trả hàng',
-            label: 'Trả hàng',
-            children: <></>,
-        }
-    ];
-    const [statusName, setStatusName] = React.useState<string>('Đang xử lý' );
     const { data, isLoading } = useQuery({
         queryKey: [`load-user-order-list-${statusName}`],
         queryFn: () => orderServices.getOrderByUserId(user ? user.id : '', statusName),
-        enabled:!!statusName,
+        enabled: !!statusName,
     });
-    console.log(data);
     const onChange = (key: string | undefined) => {
-        if (key)  setStatusName(key);
+        if (key) dispatch(changeOrderStatus(key));
     };
     return (
         <Container>
@@ -63,9 +38,12 @@ function UserOrderList() {
             >
                 Go back
             </Button>
-            <Tabs activeKey={statusName} items={items} onChange={onChange} />
+            <Tabs activeKey={statusName} items={STATUS_ORDER} onChange={onChange} />
             {isLoading ? (
-               <Suspense> <UserOrderListLoading /></Suspense>
+                <Suspense>
+                    {' '}
+                    <UserOrderListLoading />
+                </Suspense>
             ) : (
                 <>
                     {data && data.length > 0 ? (
@@ -101,7 +79,7 @@ function UserOrderList() {
                                     type="primary"
                                     key="console"
                                     onClick={() => {
-                                        Navigate('/product/1');
+                                        Navigate('/');
                                     }}
                                 >
                                     Go Purchase

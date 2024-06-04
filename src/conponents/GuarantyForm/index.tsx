@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { SetStateAction, useEffect } from 'react';
-import { Button, type FormProps, Form, Input, Select, InputNumber } from 'antd';
+import { Button, type FormProps, Form, Input, Select, InputNumber  } from 'antd';
 import { Guaranty, StatusForm } from '@/type';
 import * as guarantyServieces from '@/api/guarantyServices';
 import { FORM_ITEM_LAYOUT, TAIL_FORM_ITEM_LAYOUT, OPTIONS_STATUS, editorConfiguration } from '@/common/common';

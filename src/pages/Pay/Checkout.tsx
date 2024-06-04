@@ -26,7 +26,7 @@ function Checkout() {
         title="Thông tin đơn hàng!"
         subTitle={content}
         extra={[
-            <Button type="primary" key="console" onClick={()=>{navigate('/profile')}}>
+            <Button type="primary" key="console" onClick={()=>{navigate('/order')}}>
                 Order detail
             </Button>,
             <Button key="buy" onClick={()=>{navigate('/home')}}>Buy Again</Button>,

@@ -186,3 +186,25 @@ export const OPTIONS_SKU: SelectProps['options'] = [
     },
 ];
 export const OPTIONS_PROMOTION_TYPE = [{ label: 'percentage', value: 'percentage' },{ label: 'fixed', value: 'fixed' }];
+export const STATUS_ORDER = [
+    {
+        key: 'Đang xử lý',
+        label: 'Đang xử lý',
+    },
+    {
+        key: 'Đã tiếp nhận',
+        label: 'Đã tiếp nhận',
+    },
+    {
+        key: 'Đã hoàn thành',
+        label: 'Đã hoàn thành',
+    },
+    {
+        key: 'Đã hủy',
+        label: 'Đã hủy',
+    },
+    {
+        key: 'Trả hàng',
+        label: 'Trả hàng',
+    },
+];

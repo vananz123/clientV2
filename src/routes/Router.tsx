@@ -26,6 +26,7 @@ const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
 import UserList from '@/pages/Admin/User/UserList';
 import { GuarantiesAdd, GuarantiesList, GuarantiesEdit } from '@/pages/Admin/Guaranty';
 const Page404 = lazy(() => import('@/pages/Page404/Page404'));
+const ProfileAdmin = lazy(()=> import('@/pages/Admin/Profile'))
 import LoginAdmin from '@/pages/Admin/LoginAdmin';
 const Router: React.FC = () => {
     return useRoutes([
@@ -181,6 +182,15 @@ const Router: React.FC = () => {
                         <AuthGuard>
                             <RoleGuard role={['admin']}>
                                <Suspense> <Dashboard /></Suspense>
+                            </RoleGuard>
+                        </AuthGuard>
+                    ),
+                },{
+                    path: 'profile',
+                    element: (
+                        <AuthGuard>
+                            <RoleGuard role={['admin', 'sale']}>
+                                <Suspense><ProfileAdmin /></Suspense>
                             </RoleGuard>
                         </AuthGuard>
                     ),

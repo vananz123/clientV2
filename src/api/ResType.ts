@@ -132,6 +132,9 @@ export type OrderPayment = {
 export type Order={
     id:number;
     userId:string;
+    isSuccsessedButton: boolean,
+    isCanceledButton: boolean,
+    isReturnedButton: boolean,
     user:ResponseUser
     orderDate:string;
     orderTotal:number,

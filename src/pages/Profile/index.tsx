@@ -7,7 +7,7 @@ import { selectUser } from '@/app/feature/user/reducer';
 import ProfileLoading from './ProfileLoading';
 import Container from '@/conponents/Container';
 const ProfileAddress = lazy(()=> import('./ProfileAddress'));
-const ProductIInfo  =lazy(()=> import('./ProductIInfo'));
+const ProfileInfo  =lazy(()=> import('./ProfileInfo'));
 function Profile() {
     const Navigate = useNavigate();
     const {data:user,isLoading} = useAppSelector(selectUser);
@@ -41,7 +41,7 @@ function Profile() {
                     <>
                         <Row gutter={[24, 8]}>
                             <Col xs={24} lg={14}>
-                               <ProductIInfo user={user}/>
+                               <ProfileInfo user={user}/>
                             </Col>
                             <Col xs={24} lg={10}>
                                 <ProfileAddress user={user}/>

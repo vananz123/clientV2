@@ -9,7 +9,7 @@ import React, { useCallback, useEffect } from 'react';
 interface Props {
     user: ResponseUser;
 }
-const ProductIInfo: React.FC<Props> = React.memo( ({ user }) => {
+const ProfileInfo: React.FC<Props> = React.memo( ({ user }) => {
     const [open, setOpen] = React.useState<boolean>(false);
     const [statusForm , setStatusForm] = React.useState<StatusForm>('loading')
     const [api, contextHolder] = notification.useNotification();
@@ -74,4 +74,4 @@ const ProductIInfo: React.FC<Props> = React.memo( ({ user }) => {
     );
 });
 
-export default ProductIInfo;
+export default ProfileInfo;

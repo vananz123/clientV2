@@ -6,7 +6,7 @@ import { useAppSelector, useAppDispatch } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
 import type { MenuProps } from 'antd';
 const { Header } = Layout;
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './style.scss';
 import { loadUser } from '@/app/feature/user/action';
 import { useSkin } from '@/hooks';
@@ -17,7 +17,7 @@ function HeaderA() {
     const dispatch = useAppDispatch();
     const items: MenuProps['items'] = [
         {
-            label: <a href="https://www.antgroup.com">Setting</a>,
+            label: <Link to={'/admin/profile'}>Setting</Link>,
             key: '0',
         },
         {
