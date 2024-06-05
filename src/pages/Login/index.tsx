@@ -26,7 +26,9 @@ function Login() {
         onSuccess:(data)=>{
             if(data.isSuccessed === true){
                 setAccessToken(data.resultObj.accessToken)
-                Navigate(-1)
+                setTimeout(()=>{
+                    Navigate(-1)
+                },200)
             }else{
                 setError(data);
             }
