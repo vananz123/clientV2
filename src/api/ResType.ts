@@ -17,13 +17,13 @@ export type ResponseUser = {
     userName: string;
     phoneNumber: string;
 };
-export type Result = {
+export interface Result {
     error: string;
     isSuccessed: boolean;
     message: string;
     statusCode: number;
     resultObj: any;
-};
+}
 export interface PagingResult {
     items: any;
     pageIndex: number;
@@ -168,4 +168,14 @@ export interface addressGHTK {
     alias: string;
     is_picked: number;
     is_delivered: number;
+}
+export interface Warranty{
+    id: number,
+    orderDetailId: number,
+    description: string,
+    dateCreated: string,
+    dateModify?: string | null,
+    status: number,
+    isSuccessedButton: boolean,
+    isCanceledButton: boolean
 }

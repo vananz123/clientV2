@@ -3,19 +3,11 @@ import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import * as orderServices from '@/api/orderServices';
-import {
-    Descriptions,
-    Timeline,
-    notification,
-    Space,
-    Popconfirm,
-    Button,
-    Table,
-    TableColumnsType,
-} from 'antd';
+import { Descriptions, Timeline, notification, Space, Popconfirm, Button, Table, TableColumnsType } from 'antd';
 import { DescriptionsProps } from 'antd';
 import dayjs from 'dayjs';
 import ModalFeedback from '@/view/order/ModalFeedback';
+import OrderWarranty from './OrderWarranty';
 type NotificationType = 'success' | 'error';
 type TimeLineProps = {
     label?: string;
@@ -24,16 +16,16 @@ type TimeLineProps = {
 function OrderConfirm() {
     const { id } = useParams();
     const baseUrl = import.meta.env.VITE_BASE_URL;
+    const [openModalFb, setOpenModalFb] = React.useState<boolean>(false);
+    const [review, setReview] = React.useState<Review>();
     const [api, contextHolder] = notification.useNotification();
-    const [openModalFb,setOpenModalFb] = React.useState<boolean>(false)
-    const [review,setReview] = React.useState<Review>()
     const openNotificationWithIcon = (type: NotificationType, mess: string) => {
         api[type]({
             message: 'Notification Title',
             description: mess,
         });
     };
-    
+
     const [order, setOrder] = React.useState<Order>();
     const [statusTimeLine, setStatusTimeLine] = React.useState<TimeLineProps[]>([]);
     const desOrder: DescriptionsProps['items'] = [
@@ -96,6 +88,8 @@ function OrderConfirm() {
     ];
     const navigate = useNavigate();
     const [openConfrim, setOpenConfrim] = React.useState(false);
+    const [openWarranty, setOpenWarranty] = React.useState(false);
+    const [orderDetail, setOrderDetail] = React.useState<OrderDetail>();
     const [openCancel, setOpenCancel] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const showPopconfirmCancel = () => {
@@ -104,7 +98,7 @@ function OrderConfirm() {
     const showPopconfirm = () => {
         setOpenConfrim(true);
     };
-    const handleOkCancel = async() => {
+    const handleOkCancel = async () => {
         setConfirmLoading(true);
         if (typeof order != 'undefined') {
             const res = await orderServices.canceled(order.id);
@@ -118,7 +112,7 @@ function OrderConfirm() {
         setOpenConfrim(false);
         setConfirmLoading(false);
     };
-    const handleOk = async() => {
+    const handleOk = async () => {
         setConfirmLoading(true);
         if (typeof order != 'undefined') {
             const res = await orderServices.comfirm(order.id);
@@ -156,35 +150,29 @@ function OrderConfirm() {
             title: 'Id',
             dataIndex: 'id',
             key: 'id',
-        },{
+        },
+        {
             title: 'seoTitle',
             dataIndex: 'seoTitle',
             key: 'seoTitle',
-        },{
+        },
+        {
             title: 'Image',
             dataIndex: 'urlThumbnailImage',
             key: 'urlThumbnailImage',
-            render: (_, record) => (
-                <img style={{width:70}} src={baseUrl+ record.urlThumbnailImage}/>
-            ),
+            render: (_, record) => <img style={{ width: 70 }} src={baseUrl + record.urlThumbnailImage} />,
         },
         {
             title: 'Size',
             dataIndex: 'value',
             key: 'value',
-            render: (_, record) => (
-                <p>{record.value === null ? 'not' : `${record.value} ${record.sku}`}</p>
-            ),
+            render: (_, record) => <p>{record.value === null ? 'not' : `${record.value} ${record.sku}`}</p>,
         },
         {
             title: 'price',
             dataIndex: 'price',
             key: 'price',
-            render: (_, record) => (
-                <p>
-                    {ChangeCurrence(record.price)}
-                </p>
-            ),
+            render: (_, record) => <p>{ChangeCurrence(record.price)}</p>,
         },
         {
             title: 'Bảo hành',
@@ -193,7 +181,7 @@ function OrderConfirm() {
             render: (_, record) => (
                 <div>
                     <p>{record.guaranty.name}</p>
-                    <p>{record.guaranty.period + ' '+ record.guaranty.sku}</p>
+                    <p>{record.guaranty.period + ' ' + record.guaranty.sku}</p>
                     <p>{dayjs(record.guaranty.datePeriod).format('MM/DD/YYYY')}</p>
                 </div>
             ),
@@ -203,14 +191,27 @@ function OrderConfirm() {
             dataIndex: 'review',
             key: 'review',
             render: (_, record) => (
-                <Button 
-                disabled={record.review == null}
-                 onClick={()=>{
-                    setReview(record.review)
-                    setOpenModalFb(true)
-                }}>
-                    Đánh giá
-                </Button>
+                <>
+                    <Space direction='vertical'>
+                        <Button
+                            disabled={record.review == null}
+                            onClick={() => {
+                                setReview(record.review);
+                                setOpenModalFb(true);
+                            }}
+                        >
+                            Phản hồi
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                setOrderDetail(record);
+                                setOpenWarranty(true);
+                            }}
+                        >
+                            Bảo hành
+                        </Button>
+                    </Space>
+                </>
             ),
         },
     ];
@@ -281,15 +282,14 @@ function OrderConfirm() {
             <Descriptions title="Thông Tin Đơn Hàng" column={2} size="middle" items={desOrder} bordered />
 
             <Table
-                title={() => (
-                    <p>Order detail</p>
-                )}
+                title={() => <p>Order detail</p>}
                 pagination={{ position: ['none'] }}
                 columns={columns}
                 dataSource={order?.orderDetail}
                 rowKey={(record) => record.id}
             />
-            <ModalFeedback openModalFb={openModalFb} review={review} setOpenModalFb={setOpenModalFb}/>
+            <ModalFeedback openModalFb={openModalFb} review={review} setOpenModalFb={setOpenModalFb} />
+            <OrderWarranty orderDetail={orderDetail} open={openWarranty} setOpen={setOpenWarranty} />
         </div>
     );
 }

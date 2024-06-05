@@ -1,5 +1,5 @@
 import queryString from 'query-string';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import * as orderServices from '@/api/orderServices';
 import { Button, Result } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
@@ -33,23 +33,21 @@ function CheckoutVnpay() {
         if(user) dispatch(loadCartDetail({userId:user.id}))
     },[dispatch,user])
     const navigate = useNavigate()
-    useMemo(()=>{
-        if (p != undefined) {
-            if (p.vnp_TransactionStatus == '00') {
-                const orderInfo = p.vnp_OrderInfo;
-                if (typeof orderInfo === 'string') {
-                    const list = orderInfo.split(' ');
-                    mutationPaided.mutate(Number(list[0]))
-                }
-            } else {
-                const orderInfo = p.vnp_OrderInfo;
-                if (typeof orderInfo === 'string') {
-                    const list = orderInfo.split(' ');
-                    mutationCanceled.mutate(Number(list[0]))
-                }
+    if (p != undefined) {
+        if (p.vnp_TransactionStatus == '00') {
+            const orderInfo = p.vnp_OrderInfo;
+            if (typeof orderInfo === 'string') {
+                const list = orderInfo.split(' ');
+                mutationPaided.mutate(Number(list[0]))
+            }
+        } else {
+            const orderInfo = p.vnp_OrderInfo;
+            if (typeof orderInfo === 'string') {
+                const list = orderInfo.split(' ');
+                mutationCanceled.mutate(Number(list[0]))
             }
         }
-    },[p,mutationCanceled,mutationPaided])
+    }
     return (
         <Container>
             <Result

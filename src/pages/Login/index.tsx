@@ -15,7 +15,7 @@ export type LoginType = {
 function Login() {
     const [error, setError] = React.useState<Result>();
     const Navigate = useNavigate();
-    const {isAuth, setAccessToken} = useAuthStore()
+    const { setAccessToken} = useAuthStore()
     const [open, setOpen] = React.useState(false);
     const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
     const [messageApi, contextHolder] = message.useMessage();
@@ -24,9 +24,7 @@ function Login() {
             const resuft = await loginServices.login(values);
             if (resuft.isSuccessed  === true) {
                 setAccessToken(resuft.resultObj.accessToken)
-                if (isAuth === true) {
-                    Navigate(-1);
-                }
+                Navigate(-1);
             } else if (resuft) {
                 setError(resuft);
             }

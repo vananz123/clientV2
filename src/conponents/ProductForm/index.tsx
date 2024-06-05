@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { SetStateAction, useCallback, useEffect } from 'react';
+import React, { SetStateAction, lazy, useCallback, useEffect } from 'react';
 import { Button, type FormProps, Form, Input, Upload, Select, Space, Drawer, Col, Row } from 'antd';
 import { notification } from 'antd';
 type NotificationType = 'success' | 'error';
@@ -10,12 +10,13 @@ import * as productServices from '@/api/productServices';
 import type { SelectProps } from 'antd';
 import { StatusForm } from '@/type';
 import * as categoryServices from '@/api/categoryServices';
-import ProductItemConfig from '../ProductItemConfig';
+const ProductItemConfig = lazy(()=> import('../ProductItemConfig'));
 import { FORM_ITEM_LAYOUT, TAIL_FORM_ITEM_LAYOUT, OPTIONS_PRODUCT_STATUS, editorConfiguration } from '@/common/common';
-import UploadImages from '@/view/product/UploadImages';
+const UploadImages  =lazy(()=> import('@/view/product/UploadImages'));
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import { ClassicEditor } from '@ckeditor/ckeditor5-editor-classic';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
 const normFile = (e: any) => {
     if (Array.isArray(e)) {
         return e;
@@ -34,7 +35,6 @@ const ProductForm: React.FC<{
         form.setFieldsValue(product);
     }, [form, product]);
     const [value, setValue] = React.useState<string>('<p></p>');
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [options, setOptions] = React.useState<SelectProps['options']>([]);
     const [openVariaton, setOpenVariaton] = React.useState(false);
     const [openUploadImage, setUploadImage] = React.useState(false);
@@ -79,44 +79,47 @@ const ProductForm: React.FC<{
     useEffect(() => {
         getAllCate();
     }, [getAllCate]);
+    const createProduct = useMutation({
+        mutationKey: ['ceate-product'],
+        mutationFn: (body: Product) => productServices.addProduct(body),
+        onSuccess: (res) => {
+            if (res.isSuccessed === true) {
+                openNotificationWithIcon('error', "Thêm thành công");
+                navigate(`/admin/product-edit/${res.resultObj.id}`);
+            } else {
+                openNotificationWithIcon('error', res.message);
+            }
+        },
+    });
+    const updateProduct = useMutation({
+        mutationKey: ['update-product'],
+        mutationFn: (body: Product) => productServices.updateProduct(body),
+        onSuccess: (res) => {
+            if (res.isSuccessed === true) {
+                const status: StatusForm = 'success';
+               // onSetState(res.resultObj);
+                onSetStatus(status);
+                openNotificationWithIcon('success', 'Edit Product success');
+            } else {
+                const status: StatusForm = 'error';
+                onSetStatus(status);
+                openNotificationWithIcon('error', res.message);
+            }
+        },
+    });
     const onFinish: FormProps<Product>['onFinish'] = async (values) => {
-        setIsLoading(true);
         if (product != undefined) {
             values.seoDescription = value;
-            const res = await productServices.updateProduct(product.id, values);
-            if (res.statusCode == 200) {
-                if (values.file != undefined) {
-                    await productServices.uploadThumbnailImage(res.resultObj.id, values.file[0].originFileObj);
-                }
-                const status: StatusForm = 'success';
-                onSetState(res.resultObj);
-                onSetStatus(status);
-                openNotificationWithIcon('success', 'Add Product success');
-            } else {
-                const status: StatusForm = 'error';
-                onSetStatus(status);
-                openNotificationWithIcon('error', 'Add Product error');
-            }
-            setIsLoading(false);
+            values.id = product.id
+            updateProduct.mutateAsync(values)
         } else {
             values.seoDescription = value;
-            const res = await productServices.addProduct(values);
-            if (res.statusCode == 201) {
-                if (values.file != undefined) {
-                    await productServices.uploadThumbnailImage(res.resultObj.id, values.file[0].originFileObj);
-                }
-                const status: StatusForm = 'success';
-                onSetState(res.resultObj);
-                onSetStatus(status);
-            } else {
-                const status: StatusForm = 'error';
-                onSetStatus(status);
-            }
-            setIsLoading(false);
+            createProduct.mutateAsync(values);
         }
     };
     const onFinishVariation = async (values: any) => {
         if (product != undefined) {
+            console.log(values)
             const res = await productServices.addVariation(product.id, values.variations);
             if (res.isSuccessed === true) {
                 onSetState(res.resultObj);
@@ -156,8 +159,6 @@ const ProductForm: React.FC<{
                             name="name"
                             label="Tên sản phẩm"
                             tooltip="What do you want others to call you?"
-                            //valuePropName='name'
-                            //initialValue={product?.name}
                             rules={[{ required: true, message: 'Please input product name!', whitespace: true }]}
                         >
                             <Input />
@@ -172,7 +173,6 @@ const ProductForm: React.FC<{
                         </Form.Item>
                         <Form.Item<Product> label="Mô Tả">
                             <CKEditor
-                        
                                 editor={ClassicEditor}
                                 config={editorConfiguration}
                                 data={value || '<p></p>'}
@@ -221,16 +221,23 @@ const ProductForm: React.FC<{
                                 options={OPTIONS_PRODUCT_STATUS}
                             />
                         </Form.Item>
-
-                        <Form.Item {...TAIL_FORM_ITEM_LAYOUT}>
-                            <Button type="primary" htmlType="submit" loading={isLoading}>
-                                Save
-                            </Button>
-                        </Form.Item>
+                        {product ? (
+                            <Form.Item {...TAIL_FORM_ITEM_LAYOUT}>
+                                <Button type="primary" htmlType="submit" loading={updateProduct.isPending}>
+                                    Save
+                                </Button>
+                            </Form.Item>
+                        ) : (
+                            <Form.Item {...TAIL_FORM_ITEM_LAYOUT}>
+                                <Button type="primary" htmlType="submit" loading={createProduct.isPending}>
+                                    Save
+                                </Button>
+                            </Form.Item>
+                        )}
                     </Form>
                 </Col>
                 <Col xs={24} xl={12}>
-                    <ProductItemConfig product={product} productItem={product?.items} onSetState={onSetState} />
+                    {product && (<ProductItemConfig product={product} productItem={product?.items} onSetState={onSetState} />)}
                 </Col>
             </Row>
 
@@ -264,7 +271,7 @@ const ProductForm: React.FC<{
                         {(fields, { add, remove }) => (
                             <>
                                 {fields.map(({ key, name, ...restField }) => (
-                                    <Space key={key} style={{ display: 'flex', marginBottom: 8}} align="baseline">
+                                    <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
                                         <Form.Item
                                             {...restField}
                                             name={[name, 'name']}
