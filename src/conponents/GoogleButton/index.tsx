@@ -3,23 +3,31 @@ import { GoogleLogin } from '@react-oauth/google';
 import * as loginServices from "@/api/loginServices"
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/hooks';
+import { useMutation } from '@tanstack/react-query';
 const GoogleButton = () => {
     //const clientId = import.meta.env.VITE_PUBLIC_GOOGLE_CLIENT_ID;
     const Navigate = useNavigate()
     const { setAccessToken} = useAuthStore()
-    const login = async(credentialResponse:any)=>{
-      const res = await loginServices.loginGoogle(credentialResponse.credential)
-      if(res.isSuccessed === true){
-        setAccessToken(res.resultObj.accessToken)
-        Navigate(-1);
+    const login = useMutation({
+      mutationKey:['login'],
+      mutationFn:(body:any)=> loginServices.loginGoogle(body),
+      onSuccess:(data)=>{
+          if(data.isSuccessed === true){
+              setAccessToken(data.resultObj.accessToken)
+              Navigate(-1)
+          }
       }
+  })
+    const loginE =(credentialResponse:any)=>{
+      login.mutateAsync(credentialResponse.credential)
     };
     return (
       <GoogleLogin
       width={350}
       shape='pill'
-      onSuccess={async (credentialResponse) => {
-        login(credentialResponse)
+      onSuccess={async(credentialResponse) => {
+        console.log(credentialResponse)
+        loginE(credentialResponse)
       }}
       onError={() => {
           console.log('Login Failed');

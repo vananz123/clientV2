@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Logo from '/logo.png'
 import GoogleButton from '@/conponents/GoogleButton';
 import { useAuthStore } from '@/hooks';
+import { useMutation } from '@tanstack/react-query';
 export type LoginType = {
     email?: string;
     password?: string;
@@ -19,17 +20,20 @@ function Login() {
     const [open, setOpen] = React.useState(false);
     const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
     const [messageApi, contextHolder] = message.useMessage();
-    const onFinish: FormProps<LoginType>['onFinish'] = (values) => {
-        const login = async () => {
-            const resuft = await loginServices.login(values);
-            if (resuft.isSuccessed  === true) {
-                setAccessToken(resuft.resultObj.accessToken)
-                Navigate(-1);
-            } else if (resuft) {
-                setError(resuft);
+    const login = useMutation({
+        mutationKey:['login'],
+        mutationFn:(body:LoginType)=> loginServices.login(body),
+        onSuccess:(data)=>{
+            if(data.isSuccessed === true){
+                setAccessToken(data.resultObj.accessToken)
+                Navigate(-1)
+            }else{
+                setError(data);
             }
-        };
-        login();
+        }
+    })
+    const onFinish: FormProps<LoginType>['onFinish'] = (values) => {
+        login.mutateAsync(values);
     };
     const onFinishForgot: FormProps<LoginType>['onFinish'] = async (values) => {
         setLoadingSubmit(true);

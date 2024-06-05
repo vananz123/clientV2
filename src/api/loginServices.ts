@@ -6,21 +6,16 @@ export type ResponseLoginType ={
     accessToken:string,
     refreshToken:string
 }
+export interface ResultLogin extends Result{
+    resultObj:ResponseLoginType
+}
 export const loginGoogle = async(accessToken:string)=>{
     try{
-       
         const res = await request.post(`/authentication/login-google`,{accessToken:accessToken,provider:"google"})
-        const resultObj : ResponseLoginType = res.resultObj
-        const resp: Result ={
-            error :'',
-            isSuccessed:res.isSuccessed,
-            message:res.message,
-            statusCode:200,
-            resultObj : resultObj
-        }
-        return resp
+        const resultObj : ResultLogin = res
+        return resultObj
     }catch(error:any){
-        const resError: Result =error.response.data
+        const resError: ResultLogin =error.response.data
         return resError
     }
 }
@@ -32,17 +27,10 @@ export const login = async(user:LoginType)=>{
             rememberMe:true
           }
         const res = await request.post(`/authentication/login`,login)
-        const resultObj : ResponseLoginType = res.resultObj
-        const resp: Result ={
-            error :'',
-            isSuccessed:res.isSuccessed,
-            message:res.message,
-            statusCode:200,
-            resultObj : resultObj
-        }
-        return resp
+        const resultObj : ResultLogin = res
+          return resultObj
     }catch(error:any){
-        const resError: Result =error.response.data
+        const resError: ResultLogin =error.response.data
         return resError
     }
 }
