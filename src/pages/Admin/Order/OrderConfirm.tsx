@@ -203,6 +203,7 @@ function OrderConfirm() {
                             Phản hồi
                         </Button>
                         <Button
+                            disabled={order?.status?.some(s => s.name === "Đã hoàn thành") ===false}
                             onClick={() => {
                                 setOrderDetail(record);
                                 setOpenWarranty(true);

@@ -31,20 +31,22 @@ function CheckoutVnpay() {
     })
     useEffect(()=>{
         if(user) dispatch(loadCartDetail({userId:user.id}))
-    },[dispatch,user])
+    },[])
     const navigate = useNavigate()
-    if (p != undefined) {
-        if (p.vnp_TransactionStatus == '00') {
+    if (p != undefined ) {
+        console.log(p)
+        if (p.vnp_TransactionStatus === '00') {
             const orderInfo = p.vnp_OrderInfo;
             if (typeof orderInfo === 'string') {
                 const list = orderInfo.split(' ');
-                mutationPaided.mutate(Number(list[0]))
+                console.log(list)
+                mutationPaided.mutateAsync(Number(list[0]))  
             }
         } else {
             const orderInfo = p.vnp_OrderInfo;
             if (typeof orderInfo === 'string') {
                 const list = orderInfo.split(' ');
-                mutationCanceled.mutate(Number(list[0]))
+                mutationCanceled.mutateAsync(Number(list[0]))
             }
         }
     }
