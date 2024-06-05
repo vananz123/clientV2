@@ -7,7 +7,7 @@ const AuthGuard: React.FC<{children:JSX.Element}> = ({children})=>{
     const {isAuthenticated, isInitialized,isLoading} = useAppSelector(selectUser)
     console.log(isInitialized,isAuthenticated , isLoading)
     if (isLoading === true)  return <Loading/>
-    if(isAuthenticated === false && isInitialized ===false && isLoading === false) return <Navigate to={'/auth/login'} replace/>
+    if(isAuthenticated === false && isInitialized ===false && isLoading === false) return <Navigate to={'/auth/login'}/>
     return <>{children}</>
 }
 export default AuthGuard

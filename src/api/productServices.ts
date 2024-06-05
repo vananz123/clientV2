@@ -7,6 +7,9 @@ import { UploadFile } from 'antd'
 export interface PagingProduct extends PagingResult{
     items:Product[]
 }
+export interface ResultProduct extends Result{
+    resultObj: Product
+}
 export const getAllProduct = async()=>{
     try{
         const res = await request.get(`/product`)
@@ -67,7 +70,6 @@ export const getProductPagingByFilter = async(filter:Filter)=>{
 }
 export const addProduct = async(data:Product)=>{
     try{
-
         const pro ={
             name: data.name,
             seoDescription: data.seoDescription,
@@ -75,25 +77,20 @@ export const addProduct = async(data:Product)=>{
             categoryId: data.categoryId,
         }
         const res= await request.post(`/product`,pro)
-        const resultObj :Product  = res.resultObj
-        const resp: Result ={
-            error :'',
-            isSuccessed:res.isSuccessed,
-            message:res.message,
-            statusCode:201,
-            resultObj : resultObj
+        const resultObj :ResultProduct  = res
+        if(data.file){
+            await uploadThumbnailImage(resultObj.resultObj.id, data.file[0].originFileObj)
         }
-        return resp
+        return resultObj
     }catch(error:any){
-        console.log(error.response.data)
-        const resError: Result =error.response.data
+        const resError: ResultProduct =error.response.data
         return resError
     }
 }
-export const updateProduct = async(id:number, data:Product)=>{
+export const updateProduct = async(data:Product)=>{
     try{ 
         const pro ={
-            id:id,
+            id:data.id,
             name: data.name,
             seoDescription: data.seoDescription,
             seoTitle: data.seoTitle,
@@ -101,18 +98,13 @@ export const updateProduct = async(id:number, data:Product)=>{
             categoryId: data.categoryId
         }
         const res= await request.put(`/product`,pro)
-        const resultObj:Product   = res.resultObj
-        const resp: Result ={
-            error :'',
-            isSuccessed:res.isSuccessed,
-            message:res.message,
-            statusCode:200,
-            resultObj : resultObj
+        const resultObj:ResultProduct   = res
+        if(data.file){
+            await uploadThumbnailImage(resultObj.resultObj.id, data.file[0].originFileObj)
         }
-        return resp
+        return resultObj
     }catch(error:any){
-        console.log(error.response.data)
-        const resError: Result =error.response.data
+        const resError: ResultProduct =error.response.data
         return resError
     }
 }
