@@ -16,7 +16,7 @@ export type LoginType = {
 function Login() {
     const [error, setError] = React.useState<Result>();
     const Navigate = useNavigate();
-    const {isAuth, setAccessToken} = useAuthStore()
+    const { setAccessToken} = useAuthStore()
     const [open, setOpen] = React.useState(false);
     const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
     const [messageApi, contextHolder] = message.useMessage();
@@ -26,13 +26,13 @@ function Login() {
         onSuccess:(data)=>{
             if(data.isSuccessed === true){
                 setAccessToken(data.resultObj.accessToken)
-                if(isAuth === true)  Navigate(-1)
+                Navigate(-1)
             }else{
                 setError(data);
             }
         }
     })
-    const onFinish: FormProps<LoginType>['onFinish'] = (values) => {
+    const onFinish: FormProps<LoginType>['onFinish'] =async (values) => {
         login.mutateAsync(values);
     };
     const onFinishForgot: FormProps<LoginType>['onFinish'] = async (values) => {

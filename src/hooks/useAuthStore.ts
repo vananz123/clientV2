@@ -10,6 +10,8 @@ const useAuthStore =()=> {
         localStorage.setItem('accessToken',accessToken);
         dispatch(loadUser());
     }
+    const accessToken = localStorage.getItem('accessToken')
+    const isToken = accessToken == null ? false : true
     // useEffect(()=>{
 
     //     if(accessToken && accessToken != ''){
@@ -19,7 +21,7 @@ const useAuthStore =()=> {
     //         }
     //     }
     // },[dispatch,accessToken ,data])
-    return {isAuth:isAuthenticated ,setAccessToken};
+    return {isAuth:isAuthenticated, isToken:isToken ,setAccessToken};
 }
 
 export default useAuthStore;

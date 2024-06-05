@@ -7,20 +7,18 @@ import { useMutation } from '@tanstack/react-query';
 const GoogleButton = () => {
     //const clientId = import.meta.env.VITE_PUBLIC_GOOGLE_CLIENT_ID;
     const Navigate = useNavigate()
-    const {isAuth, setAccessToken} = useAuthStore()
+    const { setAccessToken} = useAuthStore()
     const login = useMutation({
       mutationKey:['login'],
       mutationFn:(body:any)=> loginServices.loginGoogle(body),
       onSuccess:(data)=>{
           if(data.isSuccessed === true){
               setAccessToken(data.resultObj.accessToken)
-              if(isAuth){
-                Navigate(-1)
-              }
+              Navigate(-1)
           }
       }
   })
-    const loginE =(credentialResponse:any)=>{
+    const loginE =async (credentialResponse:any)=>{
       login.mutateAsync(credentialResponse.credential)
     };
     return (
