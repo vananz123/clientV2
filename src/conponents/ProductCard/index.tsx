@@ -5,6 +5,7 @@ import { Badge } from 'antd';
 import * as productServices from '@/api/productServices';
 import { Card, Typography } from 'antd';
 import React from 'react';
+import useProductViewerStore from '@/hooks/useProductViewerStore';
 const { Paragraph } = Typography;
 type ProductCardType = 'forCard' | 'forList';
 interface Props {
@@ -13,10 +14,27 @@ interface Props {
 }
 const ProductCard: React.FC<Props> = ({ product, type = 'forCard'}) => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
+    const {setProductViewer} = useProductViewerStore()
     const viewConut = async () => {
-        if (typeof product !== 'undefined') {
-            await productServices.productViewCount(product?.id);
-        }
+        if(product) setProductViewer(product)
+        
+        // const arrOld = localStorage.getItem('viewer')
+        // if(arrOld != null && arrOld != ''){
+        //     //localStorage.removeItem('viewer')
+        //     const arrPa:string[] = JSON.parse(arrOld)
+        //     const item = JSON.stringify(product).toString()
+        //     arrPa.push(item)
+        //     console.log(arrPa)
+        //     localStorage.setItem('viewer',JSON.stringify(arrPa))
+        // }else{
+        //     const arr : string[] = []
+        //     const item = JSON.stringify(product).toString()
+        //     arr.push(item)
+        //     localStorage.setItem('viewer',JSON.stringify(arr))
+        // }
+        // if (typeof product !== 'undefined') {
+        //     await productServices.productViewCount(product?.id);
+        // }
     };
     return (
         <Link to={`/product/detail/${product?.id}`} onClick={() => viewConut()}>

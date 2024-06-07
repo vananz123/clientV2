@@ -16,6 +16,7 @@ import { loadCartDetail } from '@/app/feature/cart/action';
 import Container from '@/conponents/Container';
 import InputQuatity from '@/conponents/InputQuatity';
 import ProductDetailGuaranty from './ProductDetailGuaranty';
+import ProductDetailViewer from './ProductDetailViewer';
 const ProductDetailImage = lazy(() => import('./ProductDetailImage'));
 const ProductDetailReview = lazy(() => import('./ProductDetailReview'));
 const ProductDetailSimilarProduct = lazy(() => import('./ProductDetailSimilarProduct'));
@@ -242,6 +243,7 @@ function ProductDetail() {
                         </Container>
                         <ProductDetailReview productId={data.id} />
                         <ProductDetailSimilarProduct similarProduct={data.similarProduct} />
+                        <ProductDetailViewer/>
                     </>
                 )
             )}

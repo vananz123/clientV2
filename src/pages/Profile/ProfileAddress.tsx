@@ -1,6 +1,6 @@
 import { ResponseUser } from '@/api/ResType';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Flex, Modal, Space } from 'antd';
+import { Button, Modal, Space } from 'antd';
 import React, { useEffect } from 'react';
 import * as userServices from '@/api/userServices';
 import { Address } from '@/api/ResType';
@@ -48,16 +48,16 @@ const ProfileAddress: React.FC<Props> = ({ user }) => {
     return (
         <div>
             <div>
-            <p className='font-bold text-base mb-3'>Thông tin địa chỉ</p>
-                <div className= 'p-4 rounded bg-[#fafafa] mb-3'>
+                <p className="font-bold text-base mb-3">Thông tin địa chỉ</p>
+                <div className="p-4 rounded bg-[#fafafa] mb-3">
                     {addresses &&
                         addresses.map((e: Address) => (
                             <>
-                                <Flex key={e.id} align="center" justify="space-between">
-                                    <Space className='mr-[3px]'>
+                                <div key={e.id} className='flex justify-between mb-3'>
+                                    <Space className="mr-[3px]">
                                         <div>
-                                            <p className='text-[14px] md:text-base'>{e?.phoneNumber}</p>
-                                            <p className='text-[14px] md:text-base'>
+                                            <p className="text-[14px] md:text-base">{e?.phoneNumber}</p>
+                                            <p className="text-[14px] md:text-base">
                                                 {e?.streetNumber +
                                                     ', ' +
                                                     e?.wardCommune +
@@ -85,7 +85,7 @@ const ProfileAddress: React.FC<Props> = ({ user }) => {
                                             }}
                                         ></Button>
                                     </Space>
-                                </Flex>
+                                </div>
                             </>
                         ))}
                 </div>
