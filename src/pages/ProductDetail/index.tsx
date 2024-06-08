@@ -243,7 +243,7 @@ function ProductDetail() {
                         </Container>
                         <ProductDetailReview productId={data.id} />
                         <ProductDetailSimilarProduct similarProduct={data.similarProduct} />
-                        <ProductDetailViewer/>
+                        <ProductDetailViewer  />
                     </>
                 )
             )}

@@ -24,7 +24,7 @@ import * as paymentServices from '@/api/paymentServices';
 import { useNavigate } from 'react-router-dom';
 const AddressForm = lazy(() => import('@/conponents/AddressForm'));
 import { StatusForm } from '@/type';
-import { EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { selectCartDetail } from '@/app/feature/cart/reducer';
 import { selectUser } from '@/app/feature/user/reducer';
 import { useQuery } from '@tanstack/react-query';
@@ -116,6 +116,17 @@ function Purchase() {
     }
     return (
         <Container>
+            <Button
+                type="text"
+                icon={<ArrowLeftOutlined />}
+                size="small"
+                style={{ marginBottom: '10px' }}
+                onClick={() => {
+                    navigate(-1);
+                }}
+            >
+                Trở lại
+            </Button>
             <Row gutter={[24, 24]} style={{ marginBottom: 24 }}>
                 <Col className="gutter-row" xs={24} lg={14} xl={14}>
                     <Title level={4}>Phương Thức Thanh Toán</Title>

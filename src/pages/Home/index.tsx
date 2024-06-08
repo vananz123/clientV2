@@ -4,6 +4,7 @@ import { Product } from '@/type';
 import ProductCard from '@/conponents/ProductCard';
 import React, { lazy, useEffect } from 'react';
 import * as productServices from '@/api/productServices';
+import ProductDetailViewer from '../ProductDetail/ProductDetailViewer';
 import { Filter } from '@/type';
 import { Link } from 'react-router-dom';
 import Container from '@/conponents/Container';
@@ -92,6 +93,9 @@ function Home() {
             </div>
             <Container>
                 <div>
+                    <div>
+                        <ProductDetailViewer  />
+                    </div>
                     <div className="flex justify-start my-3">
                         <p className="text-[18px] font-bold">Xu hướng</p>
                     </div>
