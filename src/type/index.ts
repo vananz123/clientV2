@@ -82,6 +82,17 @@ export interface Guaranty {
     status: number;
     arrDate: any[];
 }
+export interface Department{
+    id: number;
+    phoneNumber: string;
+    name: string;
+    description: string;
+    address:string;
+    urbanDistrict: string;
+    status: number;
+    province: string;
+    
+}
 
 export interface OptionPrice{
     label: string;

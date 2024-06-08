@@ -2,7 +2,7 @@ import type { Cart } from '@/api/ResType';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { loadCartDetail } from '@/app/feature/cart/action';
 import { selectCartDetail } from '@/app/feature/cart/reducer';
-import { DeleteOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, MinusOutlined, PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import {
     Typography,
     Alert,
@@ -23,6 +23,7 @@ import * as cartServices from '@/api/cartServices';
 import { Link } from 'react-router-dom';
 import { selectUser } from '@/app/feature/user/reducer';
 import Container from '@/conponents/Container';
+import { useNavigate } from 'react-router-dom';
 const baseUrl = import.meta.env.VITE_BASE_URL;
 function Cart() {
     const dispatch = useAppDispatch();
@@ -32,6 +33,7 @@ function Cart() {
     const [open, setOpen] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     console.log(data);
+    const Navigate = useNavigate();
     const showModal = (cart: Cart) => {
         setOpen(true);
         setCurrentCart(cart);
@@ -72,6 +74,17 @@ function Cart() {
     };
     return (
         <Container>
+            <Button
+                type="text"
+                icon={<ArrowLeftOutlined />}
+                size="small"
+                style={{ marginBottom: '10px' }}
+                onClick={() => {
+                    Navigate(-1);
+                }}
+            >
+                Mua thêm sảm phẩm
+            </Button>
             {data && (
                 <>
                     <Spin spinning={isLoading}>
