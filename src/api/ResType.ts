@@ -1,4 +1,4 @@
-import { Guaranty } from "@/type";
+import { Department, Guaranty } from "@/type";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type Role = 'admin' | 'customer' | 'sale' | undefined;
@@ -31,7 +31,7 @@ export interface PagingResult {
     pageCount: number;
     totalRecords: number;
 }
-export type Cart = {
+export interface Cart {
     id: number;
     seoTitle: string;
     urlThumbnailImage: string;
@@ -48,6 +48,17 @@ export type Cart = {
     totalDiscount: number;
     name?: string;
     value?: string;
+    inventories: Inventory[]
+};
+export interface Shipping {
+    id: number,
+    name: string,
+    description:string
+}
+export interface Inventory extends Department {
+    productItemId: number,
+    departmentId: number,
+    stock:number
 };
 export type CartResult = {
     totalPrice: number;
@@ -144,7 +155,8 @@ export type Order={
     address?:Address,
     paymentMethod?:OrderPayment,
     orderDetail?:OrderDetail[],
-    
+    shippingName:string,
+    department:Department
 }
 export interface Promotion {
     id: number;

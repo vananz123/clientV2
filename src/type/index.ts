@@ -91,7 +91,11 @@ export interface Department{
     urbanDistrict: string;
     status: number;
     province: string;
-    
+    linkGoogleMap:string;
+}
+export interface OptionTime{
+    label: string;
+    value:number;
 }
 
 export interface OptionPrice{

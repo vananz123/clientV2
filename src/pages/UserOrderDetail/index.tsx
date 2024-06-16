@@ -153,6 +153,11 @@ function UserOrderDetail() {
             children: `${order?.paymentMethod?.paymentType}`,
         },
         {
+            key: 'department',
+            label: 'Địa Chỉ Nhận Hàng',
+            children: `${order?.department}`,
+        },
+        {
             key: 'orderTotal',
             label: 'Tổng Tiền',
             children: `${ChangeCurrence(order?.orderTotal)}`,
@@ -160,11 +165,7 @@ function UserOrderDetail() {
         {
             key: 'status',
             label: 'Tình Trạng',
-            children: (
-                <div>
-                    <Timeline mode={'left'} items={statusTimeLine} />
-                </div>
-            ),
+            children: <Timeline items={statusTimeLine} />,
         },
     ];
     return (
@@ -184,10 +185,10 @@ function UserOrderDetail() {
                                 navigate(-1);
                             }}
                         >
-                            Go back
+                            Trở Lại
                         </Button>
                         <Row gutter={16}>
-                            <Col span={8} xs={24} md={24} lg={8} xl={8}>
+                            <Col span={8} xs={24} md={24} lg={12} xl={12}>
                                 <Descriptions
                                     title="Thông Tin Đơn Hàng"
                                     column={1}
@@ -240,7 +241,7 @@ function UserOrderDetail() {
                                     </>
                                 )}
                             </Col>
-                            <Col span={16} xs={24} md={24} lg={16} xl={16}>
+                            <Col span={16} xs={24} md={24} lg={12} xl={12}>
                                 <Card title="Danh sách sản phẩm" bordered={false}>
                                     <div>
                                         {order.orderDetail?.map((e: OrderDetail) => (
@@ -270,7 +271,7 @@ function UserOrderDetail() {
                                                             <Flex justify={'space-between'} wrap="wrap">
                                                                 <div>
                                                                     <span>Số lượng: {e.quantity}</span>
-                                                                    <p>Giá: {e.price}</p>
+                                                                    <p>Giá: {ChangeCurrence(e.price)}</p>
                                                                     {e.value != undefined && (
                                                                         <p>Size: {e.value + ' ' + e.sku}</p>
                                                                     )}

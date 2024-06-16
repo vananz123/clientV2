@@ -1,4 +1,4 @@
-import { OptionPrice ,OptionBase,OptionSort} from "@/type";
+import { OptionPrice ,OptionBase,OptionSort, OptionTime} from "@/type";
 import { SelectProps } from "antd";
 export const FORM_ITEM_LAYOUT = {
     labelCol: {
@@ -110,6 +110,16 @@ export const OPTIONS_SORT : OptionSort[]=[
     {
         value: 'descending',
         label: 'Giá giảm dần',
+    }
+]
+export const OPTIONS_TIME : OptionTime[] = [
+    {
+        value:9,
+        label:'from'
+    },
+    {
+        value:21,
+        label:'to'
     }
 ]
 
