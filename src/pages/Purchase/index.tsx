@@ -1,4 +1,4 @@
-import type { Address, PaymentMethod } from '@/api/ResType';
+import type { Address, Cart, PaymentMethod, Shipping } from '@/api/ResType';
 import { useAppSelector } from '@/app/hooks';
 import {
     Button,
@@ -21,10 +21,11 @@ import type { DescriptionsProps } from 'antd';
 import * as userServices from '@/api/userServices';
 import * as orderServices from '@/api/orderServices';
 import * as paymentServices from '@/api/paymentServices';
+import * as departmentServices from '@/api/departmentServices';
 import { useNavigate } from 'react-router-dom';
 const AddressForm = lazy(() => import('@/conponents/AddressForm'));
-import { StatusForm } from '@/type';
-import { EditOutlined, PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { Department, StatusForm } from '@/type';
+import { EditOutlined, PlusOutlined, ArrowLeftOutlined, GoogleOutlined } from '@ant-design/icons';
 import { selectCartDetail } from '@/app/feature/cart/reducer';
 import { selectUser } from '@/app/feature/user/reducer';
 import { useQuery } from '@tanstack/react-query';
@@ -38,9 +39,13 @@ function Purchase() {
     const cart = useAppSelector(selectCartDetail).data;
     const [status, setStatus] = React.useState<StatusForm>('loading');
     const options: SelectProps['options'] = [];
+    const optionsShipping: SelectProps['options'] = [];
+    const optionsDepartment: SelectProps['options'] = [];
     const [currentAddress, setCurrentAddress] = React.useState<Address>();
     const [currentAddressForm, setCurrentAddressForm] = React.useState<Address>();
     const [type, setType] = React.useState<string>('Chọn phương thức thanh toán');
+    const [typeShipping, setTypeShipping] = React.useState<string>('Chọn phương thức nhận hàng');
+    const [currentDepartmentId, setCurrentDepartmentId] = React.useState<string>();
     const [open, setOpen] = React.useState(false);
     const [openDrawAddress, setOpenDrawAddress] = React.useState(false);
     const [typeFormAddress, setTypeFormAddress] = React.useState<TypeFormAddress>('EDIT');
@@ -54,6 +59,14 @@ function Purchase() {
         queryFn: () => userServices.getAddressByUserId(user !== undefined ? user.id : ''),
         enabled: !!user,
     });
+    const { data: listShippingMethod } = useQuery({
+        queryKey: [`list-shipping`],
+        queryFn: () => orderServices.shippingGetAll(),
+    });
+    const { data: listDepartment } = useQuery({
+        queryKey: [`list-department`],
+        queryFn: () => departmentServices.getAllDepartment(),
+    });
     if (listPaymentMethod) {
         listPaymentMethod.map((e: PaymentMethod) => {
             options.push({
@@ -62,6 +75,40 @@ function Purchase() {
             });
         });
     }
+    if (listShippingMethod) {
+        listShippingMethod.map((e: Shipping) => {
+            optionsShipping.push({
+                value: e.id.toString(),
+                label: e.name,
+            });
+        });
+    }
+
+    if (listDepartment) {
+        listDepartment.map((e: Department) => {
+            optionsDepartment.push({
+                value: e.id.toString(),
+                label: e.name,
+            });
+        });
+    }
+    const checkStock = (id: number, inventory: Cart[] | undefined) => {
+        let a = true;
+        if (inventory) {
+            inventory.forEach((e: Cart) =>
+                e.inventories.forEach((element) => {
+                    if (element.departmentId === id) {
+                        if (Number(element.stock) >= Number(e.quantity)) {
+                            a = false;
+                        }
+                    }
+                }),
+            );
+        }
+        return a;
+    };
+    console.log(checkStock(1, cart.items));
+    console.log(cart.items);
     const showDrawerAddress = () => {
         setOpenDrawAddress(true);
     };
@@ -70,6 +117,9 @@ function Purchase() {
     };
     const handleChange = (value: string) => {
         setType(value);
+    };
+    const handleChangeShip = (value: string) => {
+        setTypeShipping(value);
     };
     useEffect(() => {
         if (status != 'loading') refetch();
@@ -87,9 +137,22 @@ function Purchase() {
             setCurrentAddress(addresses.find((x) => x.id == Number(e.target.value)));
         }
     };
+    const handleChangeDepartment = (e: RadioChangeEvent) => {
+        if (listDepartment !== undefined) {
+            setCurrentDepartmentId(e.target.value);
+        }
+    };
+    console.log(listDepartment);
+    console.log(currentDepartmentId);
     const createOrder = async () => {
         if (user != undefined && currentAddress != undefined && type != 'Chọn phương thức thanh toán') {
-            const res = await orderServices.create(user.id, currentAddress.id, Number(type));
+            const res = await orderServices.create(
+                user.id,
+                currentAddress.id,
+                Number(type),
+                Number(typeShipping),
+                Number(currentDepartmentId),
+            );
             if (res.isSuccessed === true) {
                 if (res.resultObj?.paymentTypeName === 'Thanh toán VNPAY') {
                     window.location.assign(res.resultObj.returnUrl);
@@ -99,6 +162,7 @@ function Purchase() {
             }
         }
     };
+    console.log(listDepartment);
     let items: DescriptionsProps['items'] = [
         {
             key: 'phoneNumber',
@@ -114,12 +178,13 @@ function Purchase() {
     if (typeof currentAddress === 'undefined') {
         items = [];
     }
+    let time = new Date();
     return (
         <Container>
             <Button
                 type="text"
                 icon={<ArrowLeftOutlined />}
-                size="small"
+                size="large"
                 style={{ marginBottom: '10px' }}
                 onClick={() => {
                     navigate(-1);
@@ -127,76 +192,81 @@ function Purchase() {
             >
                 Trở lại
             </Button>
-            <Row gutter={[24, 24]} style={{ marginBottom: 24 }}>
+            <Row gutter={[24, 24]} className="mb-5 p-5">
                 <Col className="gutter-row" xs={24} lg={14} xl={14}>
-                    <Title level={4}>Phương Thức Thanh Toán</Title>
-                    <Select
-                        size={'middle'}
-                        value={type}
-                        onChange={handleChange}
-                        style={{ width: '100%', marginBottom: 10 }}
-                        options={options}
-                    />
-                    <Descriptions
-                        title="Thông Tin Địa Chỉ"
-                        column={1}
-                        items={items}
-                        style={{ marginTop: 10 }}
-                        bordered
-                        extra={
-                            typeof currentAddress !== 'undefined' ? (
-                                <Button
-                                    type="primary"
-                                    icon={<EditOutlined />}
-                                    onClick={() => {
-                                        showDrawerAddress();
-                                    }}
-                                ></Button>
-                            ) : (
-                                <Button
-                                    type="primary"
-                                    onClick={() => {
-                                        setCurrentAddressForm(undefined);
-                                        setTypeFormAddress('ADD');
-                                        setOpen(true);
-                                    }}
-                                >
-                                    Thêm Địa Chỉ
-                                </Button>
-                            )
-                        }
-                    />
-                    <Descriptions title="Chi Tiết Đơn Hàng" bordered column={1}>
-                        <Descriptions.Item label="Giá Sản Phẩm">
-                            {ChangeCurrence(cart.totalPriceBeforeDiscount)}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Giá Giảm">{ChangeCurrence(cart.totalDiscount)}</Descriptions.Item>
-                        <Descriptions.Item style={{ color: 'red' }} label="Giá Thanh Toán">
-                            {ChangeCurrence(cart.totalPrice)}
-                        </Descriptions.Item>
-                    </Descriptions>
-                    <Button
-                        size="large"
-                        block
-                        type="primary"
-                        style={{ marginBottom: 10, marginTop: 10 }}
-                        disabled={
-                            cart.items.length <= 0 ||
-                            cart.items.some(
-                                (s) => s.stock == 0 || s.stock < s.quantity || currentAddress == undefined,
-                            ) ||
-                            type === 'Chọn phương thức thanh toán'
-                        }
-                        onClick={() => {
-                            createOrder();
-                        }}
-                    >
-                        Thanh Toán Ngay
-                    </Button>
+                    <Col className="gutter-row" xs={24} lg={20} xl={20}>
+                        <div className="mb-5">
+                            <Title level={4}>Phương Thức Nhận Hàng</Title>
+                            <Select
+                                size={'middle'}
+                                value={typeShipping}
+                                onChange={handleChangeShip}
+                                style={{ width: '100%', marginBottom: 10 }}
+                                options={optionsShipping}
+                            />
+                            <Radio.Group onChange={handleChangeDepartment}>
+                                {typeShipping &&
+                                    typeShipping === '2' &&
+                                    listDepartment &&
+                                    listDepartment.map((e) => (
+                                        <Radio value={e.id} disabled={checkStock(e.id, cart.items)}>
+                                            <div className="flex">
+                                                <div className="m-2">
+                                                    <p>{e.address}</p>
+                                                    <a className="text-blue-700" href={e.linkGoogleMap} target="_blank">
+                                                        <GoogleOutlined /> Chỉ đường
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </Radio>
+                                    ))}
+                            </Radio.Group>
+                        </div>
+                        <div>
+                            <Title level={4}>Phương Thức Thanh Toán</Title>
+                            <Select
+                                size={'middle'}
+                                value={type}
+                                onChange={handleChange}
+                                style={{ width: '100%', marginBottom: 10 }}
+                                options={options}
+                            />
+                            <Descriptions
+                                title="Thông Tin Địa Chỉ"
+                                column={1}
+                                items={items}
+                                style={{ marginTop: 10 }}
+                                bordered
+                                extra={
+                                    typeof currentAddress !== 'undefined' ? (
+                                        <Button
+                                            type="primary"
+                                            icon={<EditOutlined />}
+                                            onClick={() => {
+                                                showDrawerAddress();
+                                            }}
+                                        ></Button>
+                                    ) : (
+                                        <Button
+                                            type="primary"
+                                            onClick={() => {
+                                                setCurrentAddressForm(undefined);
+                                                setTypeFormAddress('ADD');
+                                                setOpen(true);
+                                            }}
+                                        >
+                                            Thêm Địa Chỉ
+                                        </Button>
+                                    )
+                                }
+                            />
+                        </div>
+                    </Col>
                 </Col>
-                <Col className="gutter-row" span={8} xs={24} lg={10} xl={10}>
-                {cart.items.map((e) => (
-                        <div className="rounded bg-[#fafafa] p-2 md:p-5 mb-3">
+                <Col className="gutter-row" span={8} xs={24} lg={8} xl={8}>
+                    {cart.items.map((e) => (
+                        <div className="rounded bg-[#fafafa] ">
+                            <Title level={5}>Sản phẩm trong đơn</Title>
                             <div className="flex justify-between">
                                 <div className="w-full">
                                     <Paragraph
@@ -246,17 +316,20 @@ function Purchase() {
                                                         </div>
                                                     </div>
                                                 )}
-                                            </div>
-                                            <div className="flex justify-start gap-4">
-                                                <p>
-                                                    {e?.name}: {e?.value} {e.sku}
-                                                </p>
-                                                <div>
-                                                    <InputNumber size='small' disabled style={{ width: 50 }} value={e.quantity} />
+                                                <div className="flex justify-start gap-4 mt-2">
+                                                    <p>{}</p>
+                                                    <p>
+                                                        {e?.name}: {e?.value} {e.sku}
+                                                    </p>
+                                                    <div>
+                                                        <InputNumber
+                                                            size="small"
+                                                            disabled
+                                                            style={{ width: 50 }}
+                                                            value={e.quantity}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div>
-                                                <p className="font-bold">Tổng: {ChangeCurrence(e?.total)} </p>
                                             </div>
                                         </div>
                                     </div>
@@ -264,7 +337,35 @@ function Purchase() {
                             </Row>
                         </div>
                     ))}
-                    
+                    <Descriptions title="Chi Tiết Đơn Hàng" bordered column={1}>
+                        <Descriptions.Item label="Giá Sản Phẩm">
+                            {ChangeCurrence(cart.totalPriceBeforeDiscount)}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Giá Giảm">{ChangeCurrence(cart.totalDiscount)}</Descriptions.Item>
+                        <Descriptions.Item style={{ color: 'red' }} label="Giá Thanh Toán">
+                            {ChangeCurrence(cart.totalPrice)}
+                        </Descriptions.Item>
+                    </Descriptions>
+                    <Button
+                        size="large"
+                        block
+                        type="primary"
+                        danger
+                        style={{ marginBottom: 10, marginTop: 10 }}
+                        disabled={
+                            cart.items.length <= 0 ||
+                            cart.items.some(
+                                (s) => s.stock == 0 || s.stock < s.quantity || currentAddress == undefined,
+                            ) ||
+                            type === 'Chọn phương thức thanh toán' ||
+                            typeShipping === 'Chọn phương thức nhận hàng'
+                        }
+                        onClick={() => {
+                            createOrder();
+                        }}
+                    >
+                        Thanh Toán Ngay
+                    </Button>
                 </Col>
             </Row>
             <Modal title="Notification" open={open} onCancel={handleCancel} footer={''}>
@@ -320,6 +421,50 @@ function Purchase() {
                     }}
                 ></Button>
             </Drawer>
+            <div className="p-5">
+                <div className="flex justify-start my-3">
+                    <p className="text-[18px] font-bold">Hệ thống cửa hàng</p>
+                </div>
+                {typeof listDepartment !== 'undefined' && (
+                    <Row gutter={[16, 16]}>
+                        {listDepartment.length > 0 && (
+                            <>
+                                {listDepartment.map((e) => (
+                                    <Col className="gutter-row" xs={24} lg={6} xl={6} key={e.id}>
+                                        <div className="mt-4 grid grid-cols-1 tablet:grid-cols-2 gap-2">
+                                            <div className="flex p-2">
+                                                <div className="m-2">
+                                                    <p className="font-medium mb-1">{e.province}</p>
+                                                    <p>{e.address}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-end justify-between">
+                                                <div className="ml-4">
+                                                    {time.getHours() >= 9 && time.getHours() <= 21 ? (
+                                                        <div>
+                                                            <span className="text-[#3bb346] font-medium">Mở cửa</span>
+                                                        </div>
+                                                    ) : (
+                                                        <div>
+                                                            <span className="text-[#f93920] font-medium">Đóng cửa</span>
+                                                        </div>
+                                                    )}
+                                                    <span>09:00-21:00</span>
+                                                </div>
+                                                <div className="font-semibold flex items-center">
+                                                    <a className="text-blue-700" href={e.linkGoogleMap} target="_blank">
+                                                        <GoogleOutlined /> Chỉ đường
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Col>
+                                ))}
+                            </>
+                        )}
+                    </Row>
+                )}
+            </div>
         </Container>
     );
 }

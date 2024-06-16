@@ -1,14 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as request from '../utils/request'
-import { Result, PurchaseResult, Order, PagingResult } from './ResType'
+import { Result, PurchaseResult, Order, PagingResult, Shipping } from './ResType'
 
-export const create = async(userId:string,addressId:number,paymentMethodId:number)=>{
+
+export const shippingGetAll = async()=>{
+    try{
+        const res = await request.get(`/shippings`)
+        const resultObj : Shipping[] = res.resultObj
+        return resultObj
+    }
+    catch{
+        return undefined
+    }
+}
+
+export const create = async(userId:string,addressId:number,paymentMethodId:number, shippingId:number,departmentId:number)=>{
     try{
         const order ={
             userId:userId,
-            shippingMethodId:1,
+            shippingMethodId:shippingId,
             addressId:addressId,
-            paymentMethodId:paymentMethodId
+            paymentMethodId:paymentMethodId,
+            departmentId:departmentId
         }
         const res = await request.post(`/order`,order)
         const resultObj : PurchaseResult = res.resultObj

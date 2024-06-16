@@ -174,7 +174,7 @@ function Cart() {
                                                                         </div>
                                                                     )}
                                                                 </div>
-                                                                <div className="flex justify-start gap-4">
+                                                                <div className="flex justify-start gap-4 pt-3">
                                                                     {e.name && (
                                                                         <>
                                                                             <p>
@@ -193,10 +193,9 @@ function Cart() {
                                                                             <InputNumber
                                                                                 min={1}
                                                                                 max={e?.stock}
-                                                                                style={{ width: 50 }}
+                                                                                style={{ width: 40 }}
                                                                                 value={e.quantity}
                                                                             />
-
                                                                             <Button
                                                                                 onClick={() => {
                                                                                     increase(e);
@@ -206,7 +205,7 @@ function Cart() {
                                                                         </Space.Compact>
                                                                     </div>
                                                                 </div>
-                                                                <div>
+                                                                <div className='pt-3'>
                                                                     <p className="font-bold">
                                                                         Tổng: {ChangeCurrence(e?.total)}{' '}
                                                                     </p>
@@ -246,13 +245,15 @@ function Cart() {
                                                 size="large"
                                                 block
                                                 type="primary"
+                                                danger
+                                                
                                                 disabled={
                                                     data.items.length <= 0 ||
                                                     data.items.some((s) => s.stock == 0 || s.stock < s.quantity)
                                                 }
-                                                style={{ marginTop: 10 }}
+                                                className='mt-4 font-medium'
                                             >
-                                                Thanh Toán Ngay
+                                                Đặt hàng
                                             </Button>
                                         </Link>
                                     </Col>
