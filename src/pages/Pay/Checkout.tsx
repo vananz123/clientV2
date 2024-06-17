@@ -15,7 +15,7 @@ function Checkout() {
     const dispatch = useAppDispatch()
     useEffect(() => {
         if(id != undefined && user){
-           dispatch(loadCartDetail({userId:user.id}))
+            dispatch(loadCartDetail({userId:user.id}))
             setStatus(true)
             setContent("Bạn đã đặt hàng thành công, vui lòng kiểm trả hàng trước khi thanh toán!")
         }
@@ -29,7 +29,7 @@ function Checkout() {
             <Button type="primary" key="console" onClick={()=>{navigate('/order')}}>
                 Chi tiết đơn hàng
             </Button>,
-            <Button key="buy" onClick={()=>{navigate('/home')}}>Trang chủ</Button>,
+            <Button key="buy" onClick={()=>{navigate('/')}}>Trang chủ</Button>,
         ]}
     /></Container>
     );

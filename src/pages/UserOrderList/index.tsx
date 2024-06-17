@@ -50,16 +50,22 @@ function UserOrderList() {
                         data.map((e: Order) => (
                             <>
                                 <Row key={e.id} align={'middle'} style={{ padding: 10 }}>
-                                    <Col style={{ fontSize: 17 }} xs={24} md={10} lg={10}>
+                                    <Col xs={24} md={8} lg={8}>
                                         <Space wrap>
                                             <p>Thành tiền: {ChangeCurrence(e.orderTotal)}</p>
                                             <em>{dayjs(e.orderDate).format('MM/DD/YYYY, HH:MM')}</em>
                                         </Space>
                                     </Col>
-                                    <Col style={{ fontSize: 18 }} xs={24} md={10} lg={10}>
+                                    <Col xs={24} md={6} lg={6}>
                                         <Space>
                                             <p>Tình trạng: </p>
                                             <Badge status="processing" text={getLateArray(e.status)} />
+                                        </Space>
+                                    </Col>
+                                    <Col xs={24} md={6} lg={6}>
+                                        <Space>
+                                            <p>Nhận Hàng: </p>
+                                            <Badge status="processing" text={e.shippingName} />
                                         </Space>
                                     </Col>
                                     <Col xs={24} md={10} lg={4}>

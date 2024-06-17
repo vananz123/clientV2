@@ -151,8 +151,9 @@ function Purchase() {
                 currentAddress.id,
                 Number(type),
                 Number(typeShipping),
-                Number(currentDepartmentId),
+                currentDepartmentId ? Number(currentDepartmentId) : 0,
             );
+            console.log(res)
             if (res.isSuccessed === true) {
                 if (res.resultObj?.paymentTypeName === 'Thanh toán VNPAY') {
                     window.location.assign(res.resultObj.returnUrl);

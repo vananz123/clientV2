@@ -14,7 +14,7 @@ export const shippingGetAll = async()=>{
     }
 }
 
-export const create = async(userId:string,addressId:number,paymentMethodId:number, shippingId:number,departmentId:number)=>{
+export const create = async(userId:string,addressId:number,paymentMethodId:number, shippingId:number,departmentId?:number)=>{
     try{
         const order ={
             userId:userId,
