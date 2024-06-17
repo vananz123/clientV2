@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Carousel, Col, Row } from 'antd';
+import { Col, Row } from 'antd';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import { Product } from '@/type';
 import ProductCard from '@/conponents/ProductCard';
 import React, { lazy, useEffect } from 'react';
@@ -12,12 +15,30 @@ import Container from '@/conponents/Container';
 import { GoogleOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 const HomeLoadingListCard = lazy(() => import('./HomeLoadingListCard'));
+function SampleNextArrowCustomer(props: any) {
+    const { className, style, onClick } = props;
+    return <div className={className} style={{ ...style, display: 'block', background: 'gray' }} onClick={onClick} />;
+}
+function SamplePrevArrow(props: any) {
+    const { className, style, onClick } = props;
+    return <div className={className} style={{ ...style, display: 'block', background: 'gray' }} onClick={onClick} />;
+}
+
+const settings = {
+    dots: true,
+    infinite: true,
+    slidesToShow: 5,
+    slidesToScroll: 2,
+    nextArrow: <SampleNextArrowCustomer />,
+    prevArrow: <SamplePrevArrow />,
+};
 const contentStyle: React.CSSProperties = {
     margin: 0,
     height: 'auto',
     color: '#fff',
     lineHeight: '160px',
     textAlign: 'center',
+    background: '#364d79',
 };
 const imgStyles: React.CSSProperties = {
     margin: 0,
@@ -61,20 +82,35 @@ function Home() {
         queryKey: [`list-department`],
         queryFn: () => departmentServices.getAllDepartment(),
     });
-
     useEffect(() => {
-        getProductPaging(2);
-        getProductPaging(3);
-        getProductPagingWatch(2);
+        const fetchData = async () => {
+            try {
+                getProductPaging(2);
+                getProductPaging(3);
+                getProductPagingWatch(2);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchData();
     }, []);
-    const onChange = (currentSlide: number) => {
-        console.log(currentSlide);
+    const handleScroll = () => {
+        if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight) {
+            getProductPaging(2);
+            getProductPaging(3);
+            getProductPagingWatch(2);
+        }
     };
-    let time = new Date()
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    let time = new Date();
     return (
         <div>
             <div className="carouselHome">
-                <Carousel afterChange={onChange}>
+                <Slider autoplay>
                     <div style={contentStyle}>
                         <img
                             style={imgStyles}
@@ -97,38 +133,73 @@ function Home() {
                             alt="Sở hữu trang sức yêu thích chỉ trong 3h"
                         />
                     </div>
-                </Carousel>
+                </Slider>
+            </div>
+            <div className="flex justify-center mt-2">
+                <div className="p-2">
+                    <a href="/product">
+                        <img src="/fixbanner_Family.jpg" alt="BST Family" />
+                    </a>
+                </div>
+                <div className="p-2">
+                    <a href="/product">
+                        <img src="/fixbanner-euphoria.jpg" alt="BST Family" />
+                    </a>
+                </div>
+                <div className="p-2">
+                    <a href="/product">
+                        <img src="/catalog-duyendang-494x247CTA.jpg" alt="BST Family" />
+                    </a>
+                </div>
             </div>
             <Container>
                 <div>
                     <div>
-                        <ProductDetailViewer />
+                        <div className="flex justify-between my-5 items-center">
+                            <p className="text-[18px] font-bold text-[#ea3131] font-serif">Có Thể Bạn Sẽ Thích</p>
+                            <div>
+                                <Link to={'/product/hot'} className="underline">
+                                    Xem thêm
+                                </Link>
+                            </div>
+                        </div>
+                        {typeof productsHot !== 'undefined' ? (
+                            <Row gutter={[16, 16]}>
+                                {productsHot.map((e: Product) => (
+                                    <Col
+                                        style={{ display: 'flex', justifyContent: 'center' }}
+                                        xs={12}
+                                        sm={8}
+                                        md={8}
+                                        lg={8}
+                                        xl={6}
+                                        className="gutter-row"
+                                        key={e.id}
+                                    >
+                                        <ProductCard product={e} />
+                                    </Col>
+                                ))}
+                            </Row>
+                        ) : (
+                            <HomeLoadingListCard />
+                        )}
                     </div>
                     <div className="flex justify-start my-3">
-                        <p className="text-[18px] font-bold">Xu hướng</p>
+                        <p className="text-[18px] text-[#003868] font-bold font-serif">Xu hướng</p>
                     </div>
-                    {typeof productsNew !== 'undefined' && (
-                        <Row gutter={[16, 16]}>
-                            {productsNew.map((e: Product) => (
-                                <Col
-                                    style={{ display: 'flex', justifyContent: 'center' }}
-                                    xs={12}
-                                    sm={8}
-                                    md={8}
-                                    lg={8}
-                                    xl={6}
-                                    className="gutter-row"
-                                    key={e.id}
-                                >
-                                    <ProductCard product={e} />
-                                </Col>
-                            ))}
-                        </Row>
-                    )}
+                    <div>
+                        <div className="container">
+                            <div>
+                                <Slider arrows className="gap-3" {...settings}>
+                                    {productsNew?.map((e: Product) => <ProductCard product={e} />)}
+                                </Slider>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <div className="flex justify-between my-5 items-center">
-                        <p className="text-[18px] font-bold">Sản phẩm bán chạy</p>
+                        <p className="text-[18px] font-bold text-[#003868] font-serif">Sản phẩm bán chạy</p>
                         <div>
                             <Link to={'/product/hot'} className="underline">
                                 Xem thêm
@@ -156,7 +227,7 @@ function Home() {
                 </div>
                 <div>
                     <div className="flex justify-between my-5 items-center">
-                        <p className="text-[18px] font-bold">Sản phẩm mới</p>
+                        <p className="text-[18px] font-bold text-[#003868] font-serif">Sản phẩm mới</p>
                         <div>
                             <Link to={'/product/new'} className="underline">
                                 Xem thêm
@@ -191,7 +262,7 @@ function Home() {
             <Container>
                 <div>
                     <div className="flex justify-between my-5 items-center">
-                        <p className="text-[18px] font-bold">Đồng hồ</p>
+                        <p className="text-[18px] font-bold text-[#003868] font-sans">Đồng Hồ</p>
                         <div>
                             <Link to={'/product/2'} className="underline">
                                 Xem thêm
@@ -220,41 +291,14 @@ function Home() {
                     )}
                 </div>
                 <div>
-                    <div className="flex justify-between my-5 items-center">
-                        <p className="text-[18px] font-bold">Có Thể Bạn Sẽ Thích</p>
-                        <div>
-                            <Link to={'/product/hot'} className="underline">
-                                Xem thêm
-                            </Link>
-                        </div>
-                    </div>
-                    {typeof productsHot !== 'undefined' ? (
-                        <Row gutter={[16, 16]}>
-                            {productsHot.map((e: Product) => (
-                                <Col
-                                    style={{ display: 'flex', justifyContent: 'center' }}
-                                    xs={12}
-                                    sm={8}
-                                    md={8}
-                                    lg={8}
-                                    xl={6}
-                                    className="gutter-row"
-                                    key={e.id}
-                                >
-                                    <ProductCard product={e} />
-                                </Col>
-                            ))}
-                        </Row>
-                    ) : (
-                        <HomeLoadingListCard />
-                    )}
+                    <ProductDetailViewer />
                 </div>
-                <div className="p-5">
+                <div>
                     <div className="flex justify-start my-3">
-                        <p className="text-[18px] font-bold">Hệ thống cửa hàng</p>
+                        <p className="text-[18px] font-bold text-[#003868] font-serif">Hệ thống cửa hàng</p>
                     </div>
                     {typeof listDepartment !== 'undefined' && (
-                        <Row gutter={[16, 16]}>
+                        <Row className='flex justify-around' gutter={[16, 16]}>
                             {listDepartment.length > 0 && (
                                 <>
                                     {listDepartment.map((e) => (

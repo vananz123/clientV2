@@ -4,10 +4,11 @@ import { ProductItem } from '@/type';
 import React, { lazy, useEffect } from 'react';
 import * as productServices from '@/api/productServices';
 import * as cartServices from '@/api/cartServices';
+import * as departmentServices from '@/api/departmentServices';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
 import { Col, Badge, Typography, Row, Image, Button, notification, Flex, Segmented } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, GoogleOutlined } from '@ant-design/icons';
 type NotificationType = 'success' | 'error';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -49,7 +50,7 @@ function ProductDetail() {
         if (data.items && data.items.length > 0) {
             data.items.forEach((element: ProductItem) => {
                 const option: OptionSize = {
-                    label: element.value + " " + (element.sku !=='size' ? element.sku : ''),
+                    label: element.value + ' ' + (element.sku !== 'size' ? element.sku : ''),
                     value: element.id,
                 };
                 if (element.status == 2) {
@@ -66,6 +67,11 @@ function ProductDetail() {
             description: mess,
         });
     };
+    const { data: listDepartment } = useQuery({
+        queryKey: [`list-department`],
+        queryFn: () => departmentServices.getAllDepartment(),
+    });
+    let time = new Date();
     useEffect(() => {
         if (data && data.items && data.items.length > 0) setCurrentProductItem(data.items[0]);
     }, [data]);
@@ -225,7 +231,10 @@ function ProductDetail() {
                                                         onClick={() => {
                                                             handleAddToCart();
                                                         }}
-                                                        disabled={currentProductItem.status == 2 || currentProductItem.stock <=0}
+                                                        disabled={
+                                                            currentProductItem.status == 2 ||
+                                                            currentProductItem.stock <= 0
+                                                        }
                                                         style={{ width: '200px' }}
                                                     >
                                                         Add to cart
@@ -242,8 +251,66 @@ function ProductDetail() {
                             </div>
                         </Container>
                         <ProductDetailReview productId={data.id} />
-                        <ProductDetailSimilarProduct similarProduct={data.similarProduct} />
-                        <ProductDetailViewer  />
+                        {data.similarProduct && data.similarProduct?.length > 0 ? (
+                            <ProductDetailSimilarProduct similarProduct={data.similarProduct} />
+                        ) : (
+                            ''
+                        )}
+                        <Container>
+                            <ProductDetailViewer />
+                            <div>
+                                <div className="flex justify-start my-3">
+                                    <p className="text-[18px] font-bold text-[#003868] font-serif">Hệ thống cửa hàng</p>
+                                </div>
+                                {typeof listDepartment !== 'undefined' && (
+                                    <Row className="flex justify-around" gutter={[16, 16]}>
+                                        {listDepartment.length > 0 && (
+                                            <>
+                                                {listDepartment.map((e) => (
+                                                    <Col className="gutter-row" xs={24} lg={6} xl={6} key={e.id}>
+                                                        <div className="mt-4 grid grid-cols-1 tablet:grid-cols-2 gap-2">
+                                                            <div className="flex p-2">
+                                                                <div className="m-2">
+                                                                    <p className="font-medium mb-1">{e.province}</p>
+                                                                    <p>{e.address}</p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-end justify-between">
+                                                                <div className="ml-4">
+                                                                    {time.getHours() >= 9 && time.getHours() <= 21 ? (
+                                                                        <div>
+                                                                            <span className="text-[#3bb346] font-medium">
+                                                                                Mở cửa
+                                                                            </span>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div>
+                                                                            <span className="text-[#f93920] font-medium">
+                                                                                Đóng cửa
+                                                                            </span>
+                                                                        </div>
+                                                                    )}
+                                                                    <span>09:00-21:00</span>
+                                                                </div>
+                                                                <div className="font-semibold flex items-center">
+                                                                    <a
+                                                                        className="text-blue-700"
+                                                                        href={e.linkGoogleMap}
+                                                                        target="_blank"
+                                                                    >
+                                                                        <GoogleOutlined /> Chỉ đường
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </Col>
+                                                ))}
+                                            </>
+                                        )}
+                                    </Row>
+                                )}
+                            </div>
+                        </Container>
                     </>
                 )
             )}

@@ -154,8 +154,8 @@ function UserOrderDetail() {
         },
         {
             key: 'department',
-            label: 'Địa Chỉ Nhận Hàng',
-            children: `${order?.department}`,
+            label: 'Phương thức nhận hàng',
+            children: `${order?.shippingName ==='Nhận hàng cửa hàng' ? order.department.address : order?.shippingName}`,
         },
         {
             key: 'orderTotal',

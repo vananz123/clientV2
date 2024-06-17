@@ -1,10 +1,11 @@
 import { Review } from '@/api/ResType';
 import { useQuery } from '@tanstack/react-query';
-import { Card, Pagination, Rate } from 'antd';
+import { Card, Pagination, Rate, Result } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
 import * as reviewServices from '@/api/reviewServices';
 import Container from '@/conponents/Container';
+import { SmileTwoTone } from '@ant-design/icons';
 interface Props {
     productId: number;
 }
@@ -24,7 +25,7 @@ const ProductDetailReview: React.FC<Props> = React.memo(({ productId }) => {
                     <p className="text-[18px] font-bold">Bình luận từ khách hàng</p>
                 </div>
             </Container>
-            <Container className='mb-5 mt-0'>
+            <Container className="mb-5 mt-0">
                 <div className="flex flex-col gap-5 sm:p-5">
                     {pagingReview && pagingReview.items.length > 0 ? (
                         <>
@@ -62,7 +63,11 @@ const ProductDetailReview: React.FC<Props> = React.memo(({ productId }) => {
                                 <div className="mb-4">
                                     <Rate disabled={true} />
                                 </div>
-                                <p className="font-bold text-base">Chưa có đánh giá</p>
+                                <Result
+                                className='m-0 p-0'
+                                    icon={<SmileTwoTone />}
+                                    title="Chưa có bình luận nào!"
+                                />
                             </div>
                         </>
                     )}
