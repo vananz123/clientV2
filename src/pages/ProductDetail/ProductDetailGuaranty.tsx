@@ -11,7 +11,7 @@ const ProductDetailGuaranty: React.FC<Props> = React.memo(({ guaranty }) => {
     };
     return (
         <div>
-            <div className="border-[2px] border-[#fafafa] rounded">
+            <div className="border-[1px] border-[#003468] rounded">
                 <div className='flex justify-between p-3 bg-[#fafafa] rounded'>
                     <p className='text-base font-bold'>Bảo Hành</p>
                     <p

@@ -1,7 +1,8 @@
-import { Product, Variation } from '@/type';
+import { Product, ProductItem, Variation } from '@/type';
+import { PhoneTwoTone } from '@ant-design/icons';
 import { Space, Modal, Typography } from 'antd';
 const { Paragraph } = Typography;
-import React from 'react';
+import React, { useEffect } from 'react';
 interface Props {
     product: Product | undefined;
 }
@@ -10,11 +11,20 @@ const ProductDetailInfo: React.FC<Props> = React.memo(({ product }) => {
     const handleCancel = () => {
         setOpenInfo(false);
     };
+    const [productItem, setCurrentProductItem] = React.useState<ProductItem>();
+    useEffect(() => {
+        if (product && product.items && product.items.length > 0) setCurrentProductItem(product.items[0]);
+    }, [product]);
     return (
         <div>
-            <div className='border-[2px] border-[#fafafa] rounded'>
-                <div className='flex justify-between p-3 bg-[#fafafa] rounded'>
-                    <p className='text-base font-bold'>Thông số</p>
+            {productItem && productItem.stock > 0 ? (
+                <p className="m-[6px] text-[#003468] text-1xl sm:text-1xl">Còn hàng - <span className='font-medium'>Gọi <span className='text-red-600'><PhoneTwoTone /> Hotline 1800545457 1800 5454 57 (Free)</span> Ưu đãi độc quyền</span></p>
+            ) : (
+                <p className="m-[6px] text-[#003468] text-1xl sm:text-1xl">Hết hàng - <span className='font-medium'>Gọi <span className='text-red-600'><PhoneTwoTone /> Hotline 1800545457 1800 5454 57 (Free)</span> Ưu đãi độc quyền</span></p>
+            )}
+            <div className="border-[1px] border-[#003468] rounded pb-2">
+                <div className="flex justify-between p-2 bg-[#fafafa] rounded">
+                    <p className="text-base font-bold">Thông số:</p>
                     <p
                         onClick={() => {
                             setOpenInfo(true);
@@ -24,8 +34,8 @@ const ProductDetailInfo: React.FC<Props> = React.memo(({ product }) => {
                         Xem chi tiết
                     </p>
                 </div>
-                <div className='p-3 rounded'>
-                {product?.variation !== undefined && (
+                <div className="p-3 rounded">
+                    {product?.variation !== undefined && (
                         <>
                             <div>
                                 <Paragraph

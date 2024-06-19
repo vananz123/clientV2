@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Col, Row } from 'antd';
+import { Carousel, Col, Row } from 'antd';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -12,7 +12,7 @@ import ProductDetailViewer from '../ProductDetail/ProductDetailViewer';
 import { Filter } from '@/type';
 import { Link } from 'react-router-dom';
 import Container from '@/conponents/Container';
-import { GoogleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, GoogleOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 const HomeLoadingListCard = lazy(() => import('./HomeLoadingListCard'));
 function SampleNextArrowCustomer(props: any) {
@@ -25,7 +25,7 @@ function SamplePrevArrow(props: any) {
 }
 
 const settings = {
-    dots: true,
+    dots: false,
     infinite: true,
     slidesToShow: 5,
     slidesToScroll: 2,
@@ -45,10 +45,34 @@ const imgStyles: React.CSSProperties = {
     width: '100%',
     height: '100%',
 };
+const styleQC: React.CSSProperties = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    zIndex:100,
+    display: 'flex',
+    justifyContent:'center',
+    alignItems:'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+}
 function Home() {
     const [productsNew, setProductsNew] = React.useState<Product[]>();
     const [productsHot, setProductsHot] = React.useState<Product[]>();
     const [products, setProducts] = React.useState<Product[]>();
+    const [showAd, setShowAd] = React.useState(true);
+    const handleCloseAd = () => {
+        setShowAd(false);
+    };
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowAd(false);
+        }, 5000);
+
+        return () => clearTimeout(timer); 
+    }, []);
+
     const getProductPaging = async (status: number) => {
         const filter: Filter = {
             page: 1,
@@ -83,34 +107,22 @@ function Home() {
         queryFn: () => departmentServices.getAllDepartment(),
     });
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                getProductPaging(2);
-                getProductPaging(3);
-                getProductPagingWatch(2);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        fetchData();
-    }, []);
-    const handleScroll = () => {
-        if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight) {
-            getProductPaging(2);
-            getProductPaging(3);
-            getProductPagingWatch(2);
-        }
-    };
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+        getProductPaging(2);
+        getProductPaging(3);
+        getProductPagingWatch(2);
+    });
 
     let time = new Date();
     return (
         <div>
+            {showAd && (
+                <div className="ad-container" style={styleQC}>
+                    <img className='max-w-[80%] xl:max-w-[30%] h-auto' src="https://st-media-template.antsomi.com/upload/2024/06/03/2a32c589-e58c-4128-8d66-4941cb4ffec7.png" alt="Bìa quảng cáo" />
+                    <button className='cursor-pointer fixed top-[170px] xl:top-[200px] right-[30px] xl:right-[650px]' onClick={handleCloseAd}><CloseCircleOutlined className='text-[25px] bg-orange-300 rounded-full opacity-45' /></button>
+                </div>
+            )}
             <div className="carouselHome">
-                <Slider autoplay>
+                <Carousel autoplay>
                     <div style={contentStyle}>
                         <img
                             style={imgStyles}
@@ -133,7 +145,7 @@ function Home() {
                             alt="Sở hữu trang sức yêu thích chỉ trong 3h"
                         />
                     </div>
-                </Slider>
+                </Carousel>
             </div>
             <div className="flex justify-center mt-2">
                 <div className="p-2">
@@ -298,7 +310,7 @@ function Home() {
                         <p className="text-[18px] font-bold text-[#003868] font-serif">Hệ thống cửa hàng</p>
                     </div>
                     {typeof listDepartment !== 'undefined' && (
-                        <Row className='flex justify-around' gutter={[16, 16]}>
+                        <Row className="flex justify-around" gutter={[16, 16]}>
                             {listDepartment.length > 0 && (
                                 <>
                                     {listDepartment.map((e) => (
