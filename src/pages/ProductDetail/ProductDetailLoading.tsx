@@ -36,7 +36,7 @@ function ProductDetailLoading() {
             </Container>
             <Container>
                 <Row gutter={[24, 24]}>
-                    {Array.from({ length: 4 }).map((_, index) => (
+                    {Array.from({ length: 8 }).map((_, index) => (
                         <Col
                             key={index}
                             style={{ display: 'flex', justifyContent: 'center' }}

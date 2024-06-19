@@ -1,37 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Carousel, Col, Row } from 'antd';
-import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { Product } from '@/type';
-import ProductCard from '@/conponents/ProductCard';
-import React, { lazy, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import * as productServices from '@/api/productServices';
-import * as departmentServices from '@/api/departmentServices';
 import ProductDetailViewer from '../ProductDetail/ProductDetailViewer';
 import { Filter } from '@/type';
-import { Link } from 'react-router-dom';
 import Container from '@/conponents/Container';
-import { CloseCircleOutlined, GoogleOutlined } from '@ant-design/icons';
+import SliderC from '@/conponents/SliderC';
+import { useAppSelector } from '@/app/hooks';
+import { selectUser } from '@/app/feature/user/reducer';
 import { useQuery } from '@tanstack/react-query';
-const HomeLoadingListCard = lazy(() => import('./HomeLoadingListCard'));
-function SampleNextArrowCustomer(props: any) {
-    const { className, style, onClick } = props;
-    return <div className={className} style={{ ...style, display: 'block', background: 'gray' }} onClick={onClick} />;
-}
-function SamplePrevArrow(props: any) {
-    const { className, style, onClick } = props;
-    return <div className={className} style={{ ...style, display: 'block', background: 'gray' }} onClick={onClick} />;
-}
-
-const settings = {
-    dots: false,
-    infinite: true,
-    slidesToShow: 5,
-    slidesToScroll: 2,
-    nextArrow: <SampleNextArrowCustomer />,
-    prevArrow: <SamplePrevArrow />,
-};
+import HomeProductListShow from './HomeProductListShow';
+import { Carousel } from 'antd';
+import { CloseCircleOutlined } from '@ant-design/icons';
 const contentStyle: React.CSSProperties = {
     margin: 0,
     height: 'auto',
@@ -58,6 +40,7 @@ const styleQC: React.CSSProperties = {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
 }
 function Home() {
+    const { data: user } = useAppSelector(selectUser);
     const [productsNew, setProductsNew] = React.useState<Product[]>();
     const [productsHot, setProductsHot] = React.useState<Product[]>();
     const [products, setProducts] = React.useState<Product[]>();
@@ -73,6 +56,11 @@ function Home() {
         return () => clearTimeout(timer); 
     }, []);
 
+    const { data: listProductByUser } = useQuery({
+        queryKey: ['load-list-product-by-user'],
+        queryFn: () => productServices.getAllProductByUser().then((data) => data.items),
+        enabled: !!user,
+    });
     const getProductPaging = async (status: number) => {
         const filter: Filter = {
             page: 1,
@@ -102,17 +90,29 @@ function Home() {
             setProducts(res.resultObj.items);
         }
     };
-    const { data: listDepartment } = useQuery({
-        queryKey: [`list-department`],
-        queryFn: () => departmentServices.getAllDepartment(),
-    });
     useEffect(() => {
-        getProductPaging(2);
-        getProductPaging(3);
-        getProductPagingWatch(2);
-    });
-
-    let time = new Date();
+        const fetchData = async () => {
+            try {
+                getProductPaging(2);
+                getProductPaging(3);
+                getProductPagingWatch(2);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchData();
+    }, []);
+    const handleScroll = useCallback(() => {
+        if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight) {
+            getProductPaging(2);
+            getProductPaging(3);
+            getProductPagingWatch(2);
+        }
+    },[]);
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [handleScroll]);
     return (
         <div>
             {showAd && (
@@ -121,7 +121,7 @@ function Home() {
                     <button className='cursor-pointer fixed top-[170px] xl:top-[200px] right-[30px] xl:right-[650px]' onClick={handleCloseAd}><CloseCircleOutlined className='text-[25px] bg-orange-300 rounded-full opacity-45' /></button>
                 </div>
             )}
-            <div className="carouselHome">
+            <div className="w-full overflow-hidden h-auto">
                 <Carousel autoplay>
                     <div style={contentStyle}>
                         <img
@@ -149,213 +149,41 @@ function Home() {
             </div>
             <div className="flex justify-center mt-2">
                 <div className="p-2">
-                    <a href="/product">
-                        <img src="/fixbanner_Family.jpg" alt="BST Family" />
+                    <a href="/product/2">
+                        <img src="/fixbanner_Family.webp" alt="BST Family" />
                     </a>
                 </div>
                 <div className="p-2">
-                    <a href="/product">
-                        <img src="/fixbanner-euphoria.jpg" alt="BST Family" />
+                    <a href="/product/2">
+                        <img src="/fixbanner-euphoria.webp" alt="BST Family" />
                     </a>
                 </div>
                 <div className="p-2">
-                    <a href="/product">
-                        <img src="/catalog-duyendang-494x247CTA.jpg" alt="BST Family" />
+                    <a href="/product/2">
+                        <img src="/catalog-duyendang-494x247CTA.webp" alt="BST Family" />
                     </a>
                 </div>
             </div>
             <Container>
-                <div>
-                    <div>
-                        <div className="flex justify-between my-5 items-center">
-                            <p className="text-[18px] font-bold text-[#ea3131] font-serif">Có Thể Bạn Sẽ Thích</p>
-                            <div>
-                                <Link to={'/product/hot'} className="underline">
-                                    Xem thêm
-                                </Link>
-                            </div>
-                        </div>
-                        {typeof productsHot !== 'undefined' ? (
-                            <Row gutter={[16, 16]}>
-                                {productsHot.map((e: Product) => (
-                                    <Col
-                                        style={{ display: 'flex', justifyContent: 'center' }}
-                                        xs={12}
-                                        sm={8}
-                                        md={8}
-                                        lg={8}
-                                        xl={6}
-                                        className="gutter-row"
-                                        key={e.id}
-                                    >
-                                        <ProductCard product={e} />
-                                    </Col>
-                                ))}
-                            </Row>
-                        ) : (
-                            <HomeLoadingListCard />
-                        )}
-                    </div>
-                    <div className="flex justify-start my-3">
-                        <p className="text-[18px] text-[#003868] font-bold font-serif">Xu hướng</p>
-                    </div>
-                    <div>
-                        <div className="container">
-                            <div>
-                                <Slider arrows className="gap-3" {...settings}>
-                                    {productsNew?.map((e: Product) => <ProductCard product={e} />)}
-                                </Slider>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div className="flex justify-between my-5 items-center">
-                        <p className="text-[18px] font-bold text-[#003868] font-serif">Sản phẩm bán chạy</p>
-                        <div>
-                            <Link to={'/product/hot'} className="underline">
-                                Xem thêm
-                            </Link>
-                        </div>
-                    </div>
-                    {typeof productsHot !== 'undefined' && (
-                        <Row gutter={[16, 16]}>
-                            {productsHot.map((e: Product) => (
-                                <Col
-                                    style={{ display: 'flex', justifyContent: 'center' }}
-                                    xs={12}
-                                    sm={8}
-                                    md={8}
-                                    lg={8}
-                                    xl={6}
-                                    className="gutter-row"
-                                    key={e.id}
-                                >
-                                    <ProductCard product={e} />
-                                </Col>
-                            ))}
-                        </Row>
-                    )}
-                </div>
-                <div>
-                    <div className="flex justify-between my-5 items-center">
-                        <p className="text-[18px] font-bold text-[#003868] font-serif">Sản phẩm mới</p>
-                        <div>
-                            <Link to={'/product/new'} className="underline">
-                                Xem thêm
-                            </Link>
-                        </div>
-                    </div>
-                    {typeof productsNew !== 'undefined' ? (
-                        <Row gutter={[16, 16]}>
-                            {productsNew.map((e: Product) => (
-                                <Col
-                                    style={{ display: 'flex', justifyContent: 'center' }}
-                                    xs={12}
-                                    sm={8}
-                                    md={8}
-                                    lg={8}
-                                    xl={6}
-                                    className="gutter-row"
-                                    key={e.id}
-                                >
-                                    <ProductCard product={e} />
-                                </Col>
-                            ))}
-                        </Row>
-                    ) : (
-                        <HomeLoadingListCard />
-                    )}
-                </div>
+                {user && listProductByUser && listProductByUser.length > 0 && (
+                    <SliderC title="Dành riêng cho bạn" products={listProductByUser} />
+                )}
+                {productsHot && (
+                    <HomeProductListShow products={productsHot} link="/product/hot" title="Có Thể Bạn Sẽ Thích" />
+                )}
+                {productsNew && <SliderC products={productsNew} title="Sản phẩm mới" />}
+                {productsHot && (
+                    <HomeProductListShow products={productsHot} link="/product/hot" title="Sản phẩm bán chạy" />
+                )}
+                {productsNew && <HomeProductListShow products={productsNew} link="/product/new" title="Sản phẩm mới" />}
             </Container>
             <div style={contentStyle}>
                 <img style={imgStyles} src="./watch-t5-24-1200x450CTA.webp" alt="" />
             </div>
             <Container>
-                <div>
-                    <div className="flex justify-between my-5 items-center">
-                        <p className="text-[18px] font-bold text-[#003868] font-sans">Đồng Hồ</p>
-                        <div>
-                            <Link to={'/product/2'} className="underline">
-                                Xem thêm
-                            </Link>
-                        </div>
-                    </div>
-                    {typeof products !== 'undefined' ? (
-                        <Row gutter={[16, 16]}>
-                            {products.map((e: Product) => (
-                                <Col
-                                    style={{ display: 'flex', justifyContent: 'center' }}
-                                    xs={12}
-                                    sm={8}
-                                    md={8}
-                                    lg={8}
-                                    xl={6}
-                                    className="gutter-row"
-                                    key={e.id}
-                                >
-                                    <ProductCard product={e} />
-                                </Col>
-                            ))}
-                        </Row>
-                    ) : (
-                        <HomeLoadingListCard />
-                    )}
-                </div>
+                {products && <HomeProductListShow products={products} link="/product/2" title="Đồng Hồ" />}
                 <div>
                     <ProductDetailViewer />
-                </div>
-                <div>
-                    <div className="flex justify-start my-3">
-                        <p className="text-[18px] font-bold text-[#003868] font-serif">Hệ thống cửa hàng</p>
-                    </div>
-                    {typeof listDepartment !== 'undefined' && (
-                        <Row className="flex justify-around" gutter={[16, 16]}>
-                            {listDepartment.length > 0 && (
-                                <>
-                                    {listDepartment.map((e) => (
-                                        <Col className="gutter-row" xs={24} lg={6} xl={6} key={e.id}>
-                                            <div className="mt-4 grid grid-cols-1 tablet:grid-cols-2 gap-2">
-                                                <div className="flex p-2">
-                                                    <div className="m-2">
-                                                        <p className="font-medium mb-1">{e.province}</p>
-                                                        <p>{e.address}</p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-end justify-between">
-                                                    <div className="ml-4">
-                                                        {time.getHours() >= 9 && time.getHours() <= 21 ? (
-                                                            <div>
-                                                                <span className="text-[#3bb346] font-medium">
-                                                                    Mở cửa
-                                                                </span>
-                                                            </div>
-                                                        ) : (
-                                                            <div>
-                                                                <span className="text-[#f93920] font-medium">
-                                                                    Đóng cửa
-                                                                </span>
-                                                            </div>
-                                                        )}
-                                                        <span>09:00-21:00</span>
-                                                    </div>
-                                                    <div className="font-semibold flex items-center">
-                                                        <a
-                                                            className="text-blue-700"
-                                                            href={e.linkGoogleMap}
-                                                            target="_blank"
-                                                        >
-                                                            <GoogleOutlined /> Chỉ đường
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Col>
-                                    ))}
-                                </>
-                            )}
-                        </Row>
-                    )}
                 </div>
             </Container>
         </div>

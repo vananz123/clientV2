@@ -25,7 +25,7 @@ import * as departmentServices from '@/api/departmentServices';
 import { useNavigate } from 'react-router-dom';
 const AddressForm = lazy(() => import('@/conponents/AddressForm'));
 import { Department, StatusForm } from '@/type';
-import { EditOutlined, PlusOutlined, ArrowLeftOutlined, GoogleOutlined } from '@ant-design/icons';
+import { EditOutlined, PlusOutlined, ArrowLeftOutlined, EnvironmentTwoTone } from '@ant-design/icons';
 import { selectCartDetail } from '@/app/feature/cart/reducer';
 import { selectUser } from '@/app/feature/user/reducer';
 import { useQuery } from '@tanstack/react-query';
@@ -107,8 +107,6 @@ function Purchase() {
         }
         return a;
     };
-    console.log(checkStock(1, cart.items));
-    console.log(cart.items);
     const showDrawerAddress = () => {
         setOpenDrawAddress(true);
     };
@@ -142,8 +140,6 @@ function Purchase() {
             setCurrentDepartmentId(e.target.value);
         }
     };
-    console.log(listDepartment);
-    console.log(currentDepartmentId);
     const createOrder = async () => {
         if (user != undefined && currentAddress != undefined && type != 'Chọn phương thức thanh toán') {
             const res = await orderServices.create(
@@ -153,7 +149,6 @@ function Purchase() {
                 Number(typeShipping),
                 currentDepartmentId ? Number(currentDepartmentId) : 0,
             );
-            console.log(res)
             if (res.isSuccessed === true) {
                 if (res.resultObj?.paymentTypeName === 'Thanh toán VNPAY') {
                     window.location.assign(res.resultObj.returnUrl);
@@ -163,7 +158,6 @@ function Purchase() {
             }
         }
     };
-    console.log(listDepartment);
     let items: DescriptionsProps['items'] = [
         {
             key: 'phoneNumber',
@@ -179,7 +173,7 @@ function Purchase() {
     if (typeof currentAddress === 'undefined') {
         items = [];
     }
-    let time = new Date();
+    
     return (
         <Container>
             <Button
@@ -215,7 +209,7 @@ function Purchase() {
                                                 <div className="m-2">
                                                     <p>{e.address}</p>
                                                     <a className="text-blue-700" href={e.linkGoogleMap} target="_blank">
-                                                        <GoogleOutlined /> Chỉ đường
+                                                        <EnvironmentTwoTone /> Chỉ đường
                                                     </a>
                                                 </div>
                                             </div>
@@ -422,50 +416,6 @@ function Purchase() {
                     }}
                 ></Button>
             </Drawer>
-            <div className="p-5">
-                <div className="flex justify-start my-3">
-                    <p className="text-[18px] font-bold">Hệ thống cửa hàng</p>
-                </div>
-                {typeof listDepartment !== 'undefined' && (
-                    <Row gutter={[16, 16]}>
-                        {listDepartment.length > 0 && (
-                            <>
-                                {listDepartment.map((e) => (
-                                    <Col className="gutter-row" xs={24} lg={6} xl={6} key={e.id}>
-                                        <div className="mt-4 grid grid-cols-1 tablet:grid-cols-2 gap-2">
-                                            <div className="flex p-2">
-                                                <div className="m-2">
-                                                    <p className="font-medium mb-1">{e.province}</p>
-                                                    <p>{e.address}</p>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-end justify-between">
-                                                <div className="ml-4">
-                                                    {time.getHours() >= 9 && time.getHours() <= 21 ? (
-                                                        <div>
-                                                            <span className="text-[#3bb346] font-medium">Mở cửa</span>
-                                                        </div>
-                                                    ) : (
-                                                        <div>
-                                                            <span className="text-[#f93920] font-medium">Đóng cửa</span>
-                                                        </div>
-                                                    )}
-                                                    <span>09:00-21:00</span>
-                                                </div>
-                                                <div className="font-semibold flex items-center">
-                                                    <a className="text-blue-700" href={e.linkGoogleMap} target="_blank">
-                                                        <GoogleOutlined /> Chỉ đường
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Col>
-                                ))}
-                            </>
-                        )}
-                    </Row>
-                )}
-            </div>
         </Container>
     );
 }

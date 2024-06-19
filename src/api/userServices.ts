@@ -39,24 +39,6 @@ export const getRoles = async () => {
         return resError;
     }
 };
-export const assginRoles = async (id:string,value:string) => {
-    try {
-        const res = await request.put(`/user/roles`,{id:id,roleName:value});
-        const resultObj: RoleType[] = res.resultObj;
-        const resp: Result = {
-            error: '',
-            isSuccessed: res.isSuccessed,
-            message: res.message,
-            statusCode: 200,
-            resultObj: resultObj,
-        };
-        return resp;
-    } catch (error: any) {
-        console.log(error.response.data);
-        const resError: Result = error.response.data;
-        return resError;
-    }
-};
 export const getAllUser = async (roleName:string) => {
     try {
         const res = await request.get(`/user/role/${encodeURIComponent(roleName)}`);
