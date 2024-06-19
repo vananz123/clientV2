@@ -25,7 +25,7 @@ import * as departmentServices from '@/api/departmentServices';
 import { useNavigate } from 'react-router-dom';
 const AddressForm = lazy(() => import('@/conponents/AddressForm'));
 import { Department, StatusForm } from '@/type';
-import { EditOutlined, PlusOutlined, ArrowLeftOutlined, GoogleOutlined } from '@ant-design/icons';
+import { EditOutlined, PlusOutlined, ArrowLeftOutlined, EnvironmentTwoTone } from '@ant-design/icons';
 import { selectCartDetail } from '@/app/feature/cart/reducer';
 import { selectUser } from '@/app/feature/user/reducer';
 import { useQuery } from '@tanstack/react-query';
@@ -209,7 +209,7 @@ function Purchase() {
                                                 <div className="m-2">
                                                     <p>{e.address}</p>
                                                     <a className="text-blue-700" href={e.linkGoogleMap} target="_blank">
-                                                        <GoogleOutlined /> Chỉ đường
+                                                        <EnvironmentTwoTone /> Chỉ đường
                                                     </a>
                                                 </div>
                                             </div>

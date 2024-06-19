@@ -6,7 +6,7 @@ const { Footer } = Layout;
 import Logo2 from '/logo.png';
 import { useQuery } from '@tanstack/react-query';
 import * as departmentServices from '@/api/departmentServices';
-import { GoogleOutlined } from '@ant-design/icons';
+import { EnvironmentTwoTone } from '@ant-design/icons';
 const time = new Date();
 const FooterC = React.memo(() => {
     const { data: listDepartment } = useQuery({
@@ -47,7 +47,7 @@ const FooterC = React.memo(() => {
                                                 </div>
                                                 <div className="font-semibold flex items-center">
                                                     <a className="text-blue-700" href={e.linkGoogleMap} target="_blank">
-                                                        <GoogleOutlined /> Chỉ đường
+                                                        <EnvironmentTwoTone /> Chỉ đường
                                                     </a>
                                                 </div>
                                             </div>
