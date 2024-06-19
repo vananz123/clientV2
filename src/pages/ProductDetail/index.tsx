@@ -4,11 +4,10 @@ import { ProductItem } from '@/type';
 import React, { lazy, useEffect } from 'react';
 import * as productServices from '@/api/productServices';
 import * as cartServices from '@/api/cartServices';
-import * as departmentServices from '@/api/departmentServices';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
 import { Col, Badge, Typography, Row, Image, Button, notification, Flex, Segmented } from 'antd';
-import { ArrowLeftOutlined, GoogleOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 type NotificationType = 'success' | 'error';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -22,7 +21,6 @@ const ProductDetailImage = lazy(() => import('./ProductDetailImage'));
 const ProductDetailReview = lazy(() => import('./ProductDetailReview'));
 const ProductDetailSimilarProduct = lazy(() => import('./ProductDetailSimilarProduct'));
 const ProductDetailInfo = lazy(() => import('./ProductDetailInfo'));
-
 interface OptionSize {
     label: string;
     value: number;
@@ -67,11 +65,6 @@ function ProductDetail() {
             description: mess,
         });
     };
-    const { data: listDepartment } = useQuery({
-        queryKey: [`list-department`],
-        queryFn: () => departmentServices.getAllDepartment(),
-    });
-    let time = new Date();
     useEffect(() => {
         if (data && data.items && data.items.length > 0) setCurrentProductItem(data.items[0]);
     }, [data]);
@@ -251,65 +244,12 @@ function ProductDetail() {
                             </div>
                         </Container>
                         <ProductDetailReview productId={data.id} />
-                        {data.similarProduct && data.similarProduct?.length > 0 ? (
+                        {data.similarProduct && data.similarProduct?.length > 0 && (
                             <ProductDetailSimilarProduct similarProduct={data.similarProduct} />
-                        ) : (
-                            ''
                         )}
+
                         <Container>
                             <ProductDetailViewer />
-                            <div>
-                                <div className="flex justify-start my-3">
-                                    <p className="text-[18px] font-bold text-[#003868] font-serif">Hệ thống cửa hàng</p>
-                                </div>
-                                {typeof listDepartment !== 'undefined' && (
-                                    <Row className="flex justify-around" gutter={[16, 16]}>
-                                        {listDepartment.length > 0 && (
-                                            <>
-                                                {listDepartment.map((e) => (
-                                                    <Col className="gutter-row" xs={24} lg={6} xl={6} key={e.id}>
-                                                        <div className="mt-4 grid grid-cols-1 tablet:grid-cols-2 gap-2">
-                                                            <div className="flex p-2">
-                                                                <div className="m-2">
-                                                                    <p className="font-medium mb-1">{e.province}</p>
-                                                                    <p>{e.address}</p>
-                                                                </div>
-                                                            </div>
-                                                            <div className="flex items-end justify-between">
-                                                                <div className="ml-4">
-                                                                    {time.getHours() >= 9 && time.getHours() <= 21 ? (
-                                                                        <div>
-                                                                            <span className="text-[#3bb346] font-medium">
-                                                                                Mở cửa
-                                                                            </span>
-                                                                        </div>
-                                                                    ) : (
-                                                                        <div>
-                                                                            <span className="text-[#f93920] font-medium">
-                                                                                Đóng cửa
-                                                                            </span>
-                                                                        </div>
-                                                                    )}
-                                                                    <span>09:00-21:00</span>
-                                                                </div>
-                                                                <div className="font-semibold flex items-center">
-                                                                    <a
-                                                                        className="text-blue-700"
-                                                                        href={e.linkGoogleMap}
-                                                                        target="_blank"
-                                                                    >
-                                                                        <GoogleOutlined /> Chỉ đường
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </Col>
-                                                ))}
-                                            </>
-                                        )}
-                                    </Row>
-                                )}
-                            </div>
                         </Container>
                     </>
                 )

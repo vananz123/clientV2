@@ -4,23 +4,73 @@ import Container from '@/conponents/Container';
 import React from 'react';
 const { Footer } = Layout;
 import Logo2 from '/logo.png';
-const FooterC = React.memo( ()=> {
+import { useQuery } from '@tanstack/react-query';
+import * as departmentServices from '@/api/departmentServices';
+import { GoogleOutlined } from '@ant-design/icons';
+const time = new Date();
+const FooterC = React.memo(() => {
+    const { data: listDepartment } = useQuery({
+        queryKey: [`list-department`],
+        queryFn: () => departmentServices.getAllDepartment(),
+    });
     return (
         <Container>
-            <Footer className='text-center border-t-[1px] border-[#858585] p-2 md:p-5' >
+            <div>
+                <div className="flex justify-start my-3">
+                    <p className="text-[18px] font-bold text-[#003868] font-serif">Hệ thống cửa hàng</p>
+                </div>
+                {typeof listDepartment !== 'undefined' && (
+                    <Row className="flex justify-around" gutter={[16, 16]}>
+                        {listDepartment.length > 0 && (
+                            <>
+                                {listDepartment.map((e) => (
+                                    <Col className="gutter-row" xs={24} md={12} lg={10} xl={10} key={e.id}>
+                                        <div className="my-2 grid grid-cols-1 tablet:grid-cols-2 gap-2 bg-white p-2 rounded">
+                                            <div className="flex p-2">
+                                                <div className="m-2">
+                                                    <p className="font-medium mb-1">{e.province}</p>
+                                                    <p>{e.address}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-end justify-between">
+                                                <div className="ml-4">
+                                                    {time.getHours() >= 9 && time.getHours() <= 21 ? (
+                                                        <div>
+                                                            <span className="text-[#3bb346] font-medium">Mở cửa</span>
+                                                        </div>
+                                                    ) : (
+                                                        <div>
+                                                            <span className="text-[#f93920] font-medium">Đóng cửa</span>
+                                                        </div>
+                                                    )}
+                                                    <span>09:00-21:00</span>
+                                                </div>
+                                                <div className="font-semibold flex items-center">
+                                                    <a className="text-blue-700" href={e.linkGoogleMap} target="_blank">
+                                                        <GoogleOutlined /> Chỉ đường
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Col>
+                                ))}
+                            </>
+                        )}
+                    </Row>
+                )}
+            </div>
+            <Footer className="text-center border-t-[1px] border-[#858585] p-2 md:p-5">
                 <Row gutter={[8, 8]} align={'top'} justify={'start'}>
                     <Col xs={24} md={24} lg={8} xl={6}>
-                        <div className='text-left w-full lg:w-[80%] text-stone-500'>
-                            <img
-                                style={{ width: '100px', marginLeft: '0px', opacity: 1 }}
-                                src={Logo2}
-                                alt="la store"
-                            />
-                            <p className='p-0 m-[4px] text-stone-500'>
+                        <div className="text-left w-full lg:w-[80%] text-stone-500">
+                            <img style={{ width: '100px', marginLeft: '0px', opacity: 1 }} src={Logo2} alt="la store" />
+                            <p className="p-0 m-[4px] text-stone-500">
                                 © 2017 Công Ty Cổ Phần Vàng Bạc Đá Quý Phú Nhuận
                             </p>
-                            <div className='p-[5px] m-0 text-stone-500'>
-                                <p className='p-0 m-0 text-stone-500'>170E Phan Đăng Lưu, P.3, Q.Phú Nhuận, TP.Hồ Chí Minh</p>
+                            <div className="p-[5px] m-0 text-stone-500">
+                                <p className="p-0 m-0 text-stone-500">
+                                    170E Phan Đăng Lưu, P.3, Q.Phú Nhuận, TP.Hồ Chí Minh
+                                </p>
                                 ĐT:{' '}
                                 <a href="tel:0356636960" style={{ color: 'blue' }}>
                                     0356636960
@@ -29,7 +79,7 @@ const FooterC = React.memo( ()=> {
                                 <a href="fax:02839951702" style={{ color: 'blue' }}>
                                     028 3995 1702
                                 </a>
-                                <p className='p-0 m-0 text-stone-500'>
+                                <p className="p-0 m-0 text-stone-500">
                                     <a
                                         style={{ color: 'blue' }}
                                         href="https://cdn.pnj.io/images/quan-he-co-dong/2024/8c-20240131-PNJ-GCNDKDN-lan-36-CBTT.pdf"
@@ -47,8 +97,8 @@ const FooterC = React.memo( ()=> {
                                     </a>
                                 </p>
                             </div>
-                            <div className='p-[5px] m-0 text-stone-500'>
-                                <p className='p-0 m-0 text-stone-500'>
+                            <div className="p-[5px] m-0 text-stone-500">
+                                <p className="p-0 m-0 text-stone-500">
                                     Email:{' '}
                                     <a href="mailto: 2051052074linh@ou.edu.vn" style={{ color: 'blue' }}>
                                         2051052074linh@ou.edu.vn
@@ -67,9 +117,9 @@ const FooterC = React.memo( ()=> {
                         </div>
                     </Col>
                     <Col xs={24} md={24} lg={8} xl={6}>
-                        <div className='flex justify-between' >
+                        <div className="flex justify-between">
                             <Space direction="vertical" align="start">
-                                <h3 className='text-left font-bold'>KẾT NỐI VỚI CHÚNG TÔI</h3>
+                                <h3 className="text-left font-bold">KẾT NỐI VỚI CHÚNG TÔI</h3>
                                 <Flex gap="4px 0" wrap="wrap">
                                     <Tag className="footer-tag">
                                         <a href="https://www.youtube.com/@HoChiMinhCityOpenUniversity" target="_blank">
@@ -130,9 +180,7 @@ const FooterC = React.memo( ()=> {
                                         </a>
                                     </Tag>
                                 </Flex>
-                                <h3 className='text-left font-bold'>
-                                    QUAN TÂM THÌ HÃY KẾT NỐI ZALO
-                                </h3>
+                                <h3 className="text-left font-bold">QUAN TÂM THÌ HÃY KẾT NỐI ZALO</h3>
                                 <p style={{ textAlign: 'left', padding: 0 }}>Nhận các thông tin khuyến mãi hấp dẫn</p>
                                 <div style={{ textAlign: 'left', padding: 0, margin: 0 }}>
                                     <a href="https://zalo.me/0356636960" target="_blank">
@@ -162,9 +210,9 @@ const FooterC = React.memo( ()=> {
                         </div>
                     </Col>
                     <Col xs={24} md={24} lg={8} xl={6}>
-                        <div className='flex justify-between text-center'>
-                            <Space className='w-full lg:w-[80%]' direction="vertical" align="start">
-                                <h3 className='text-left font-bold'>CÁCH THỨC THANH TOÁN</h3>
+                        <div className="flex justify-between text-center">
+                            <Space className="w-full lg:w-[80%]" direction="vertical" align="start">
+                                <h3 className="text-left font-bold">CÁCH THỨC THANH TOÁN</h3>
                                 <div>
                                     <ul style={{ display: 'flex' }}>
                                         <li>
@@ -188,7 +236,7 @@ const FooterC = React.memo( ()=> {
                                     </ul>
                                 </div>
                                 <iframe
-                                    className='h-[250px] border-0 mt-2'
+                                    className="h-[250px] border-0 mt-2"
                                     loading="lazy"
                                     allowFullScreen
                                     referrerPolicy="no-referrer-when-downgrade"
@@ -198,11 +246,11 @@ const FooterC = React.memo( ()=> {
                         </div>
                     </Col>
                     <Col xs={24} md={24} lg={8} xl={6}>
-                        <div className='flex justify-between text-center'>
+                        <div className="flex justify-between text-center">
                             <Space direction="vertical" align="start">
-                                <h3 className='text-left font-bold'>PHẢN HỒI, GÓP Ý, KHIẾU NẠI</h3>
+                                <h3 className="text-left font-bold">PHẢN HỒI, GÓP Ý, KHIẾU NẠI</h3>
                                 <div>
-                                    <p className='text-left mt-[5px] text-stone-500'>
+                                    <p className="text-left mt-[5px] text-stone-500">
                                         Phản hồi nóng về chất lượng sản phẩm và dịch vụ. Đội ngũ Kiểm Soát Chất Lượng
                                         của chúng tôi sẵn sàng lắng nghe quý khách.
                                     </p>
@@ -214,6 +262,6 @@ const FooterC = React.memo( ()=> {
             </Footer>
         </Container>
     );
-})
+});
 
 export default FooterC;
