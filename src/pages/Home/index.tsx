@@ -90,7 +90,7 @@ function Home() {
     }, [handleScroll]);
     return (
         <div>
-            <div className="carouselHome">
+            <div className="w-full overflow-hidden h-auto">
                 <Slider autoplay>
                     <div style={contentStyle}>
                         <img
@@ -123,12 +123,12 @@ function Home() {
                     </a>
                 </div>
                 <div className="p-2">
-                    <a href="/product">
+                    <a href="/product/2">
                         <img src="/fixbanner-euphoria.jpg" alt="BST Family" />
                     </a>
                 </div>
                 <div className="p-2">
-                    <a href="/product">
+                    <a href="/product/2">
                         <img src="/catalog-duyendang-494x247CTA.jpg" alt="BST Family" />
                     </a>
                 </div>
