@@ -33,28 +33,17 @@ const styleQC: React.CSSProperties = {
     left: 0,
     width: '100%',
     height: '100%',
-    zIndex:100,
+    zIndex: 100,
     display: 'flex',
-    justifyContent:'center',
-    alignItems:'center',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-}
+};
 function Home() {
     const { data: user } = useAppSelector(selectUser);
     const [productsNew, setProductsNew] = React.useState<Product[]>();
     const [productsHot, setProductsHot] = React.useState<Product[]>();
     const [products, setProducts] = React.useState<Product[]>();
-    const [showAd, setShowAd] = React.useState(true);
-    const handleCloseAd = () => {
-        setShowAd(false);
-    };
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setShowAd(false);
-        }, 5000);
-
-        return () => clearTimeout(timer); 
-    }, []);
 
     const { data: listProductByUser } = useQuery({
         queryKey: ['load-list-product-by-user'],
@@ -108,17 +97,43 @@ function Home() {
             getProductPaging(3);
             getProductPagingWatch(2);
         }
-    },[]);
+    }, []);
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [handleScroll]);
+    const [showAd, setShowAd] = React.useState(true);
+    const handleCloseAd = () => {
+        localStorage.setItem('showAd', 'false');
+        setShowAd(false);
+    };
+    useEffect(() => {
+        const storedShowAd = localStorage.getItem('showAd');
+        if (storedShowAd === 'false') {
+            setShowAd(false);
+        }
+        const timer = setTimeout(() => {
+            setShowAd(false);
+        }, 5000);
+
+        return () => clearTimeout(timer);
+    }, []);
     return (
         <div>
             {showAd && (
                 <div className="ad-container" style={styleQC}>
-                    <img className='max-w-[80%] xl:max-w-[30%] h-auto' src="https://st-media-template.antsomi.com/upload/2024/06/03/2a32c589-e58c-4128-8d66-4941cb4ffec7.png" alt="Bìa quảng cáo" />
-                    <button className='cursor-pointer fixed top-[170px] xl:top-[200px] right-[30px] xl:right-[650px]' onClick={handleCloseAd}><CloseCircleOutlined className='text-[25px] bg-orange-300 rounded-full opacity-45' /></button>
+                    <div className="relative max-w-[80%] md:max-w-[30%] lg:max-w-[70%] xl:max-w-[30%]  h-auto">
+                        <img
+                            src="https://st-media-template.antsomi.com/upload/2024/06/03/2a32c589-e58c-4128-8d66-4941cb4ffec7.png"
+                            alt="Bìa quảng cáo"
+                        />
+                        <button
+                            className="absolute cursor-pointer top-[0px] xl:top-[0px] right-[0px] lg:right-[0px]"
+                            onClick={handleCloseAd}
+                        >
+                            <CloseCircleOutlined className="text-[25px] bg-orange-300 rounded-full opacity-45" />
+                        </button>
+                    </div>
                 </div>
             )}
             <div className="w-full overflow-hidden h-auto">

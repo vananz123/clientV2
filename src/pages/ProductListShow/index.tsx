@@ -3,18 +3,33 @@ import { useParams } from 'react-router-dom';
 import * as productServices from '@/api/productServices';
 import React, { useCallback, useEffect } from 'react';
 import { Product, Filter, Sort } from '@/type';
-import { useAppSelector } from '@/app/hooks';
+import {  useAppSelector } from '@/app/hooks';
 import { selectCategories } from '@/app/feature/category/reducer';
-import { Button, Col, Flex, Result, Row, Select, Pagination, PaginationProps, Space, Tooltip, Checkbox } from 'antd';
+import {
+    Button,
+    Col,
+    Flex,
+    Result,
+    Row,
+    Select,
+    Pagination,
+    PaginationProps,
+    Space,
+    Tooltip,
+    Checkbox,
+    Breadcrumb
+} from 'antd';
 import ProductCard from '@/conponents/ProductCard';
 import { OPTIONS_PRICE, OPTIONS_MATERIAL, OPTIONS_SORT } from '@/common/common';
 import SkeletonCard from '@/conponents/SkeletonCard';
 import Container from '@/conponents/Container';
+import { HomeOutlined, UserAddOutlined } from '@ant-design/icons';
 const pageSize: number = 8;
 function ProductListShow() {
     const { id } = useParams();
     const [products, setProducts] = React.useState<Product[]>();
     const cate = useAppSelector(selectCategories).data;
+    console.log(cate)
     const [page, setPage] = React.useState<number>(1);
     const [sortOder, setSortOder] = React.useState<Sort>('ascending');
     const [optionPrice, setOptionPrice] = React.useState<number[]>([]);
@@ -153,7 +168,32 @@ function ProductListShow() {
     return (
         <>
             <Container>
-                <h3>{titleContent}</h3>
+                <Breadcrumb
+                    className="mb-2"
+                    items={[
+                        {
+                            href: '/',
+                            title: <HomeOutlined />,
+                        },
+                        {
+                            href: '',
+                            title: (
+                                <>
+                                    <UserAddOutlined />
+                                    <span>
+                                        {id &&
+                                            (cate !== undefined
+                                                ? cate.filter((cate) => cate.id === Number(id)).map((cate) => cate.name)
+                                                : '')}
+                                    </span>
+                                </>
+                            ),
+                        },
+                        {
+                            title: <>{titleContent}</>,
+                        },
+                    ]}
+                />
                 <Flex justify="space-between" gap={16} style={{ marginBottom: '10px' }}>
                     <Space wrap>
                         <Select
@@ -190,13 +230,14 @@ function ProductListShow() {
                             checked={isPromotion}
                             style={{ width: 120 }}
                             disabled={id === 'promotion'}
-                            onChange={()=> setIsPromotion(!isPromotion)}
-                            
-                        >Có khuyến mãi</Checkbox>
+                            onChange={() => setIsPromotion(!isPromotion)}
+                        >
+                            Có khuyến mãi
+                        </Checkbox>
                     </Space>
                     <Select
                         value={sortOder}
-                        autoFocus = {false}
+                        autoFocus={false}
                         style={{ width: 125 }}
                         onChange={handleChangeSort}
                         options={OPTIONS_SORT}
@@ -239,7 +280,7 @@ function ProductListShow() {
                                 xl={6}
                                 className="gutter-row"
                             >
-                                <SkeletonCard className='w-full h-[260px] md:h-[350px]' />
+                                <SkeletonCard className="w-full h-[260px] md:h-[350px]" />
                             </Col>
                         ))}
                     </Row>

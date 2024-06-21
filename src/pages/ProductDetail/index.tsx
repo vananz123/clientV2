@@ -6,8 +6,16 @@ import * as productServices from '@/api/productServices';
 import * as cartServices from '@/api/cartServices';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
-import { Col, Badge, Row, Image, Button, notification, Flex, Segmented, Modal, Space } from 'antd';
-import { ArrowLeftOutlined, ClockCircleTwoTone, CustomerServiceTwoTone, LikeTwoTone, MailTwoTone } from '@ant-design/icons';
+import { Col, Badge, Row, Image, Button, notification, Flex, Segmented, Modal, Space, Breadcrumb } from 'antd';
+import {
+    ArrowLeftOutlined,
+    ClockCircleTwoTone,
+    CustomerServiceTwoTone,
+    HomeOutlined,
+    LikeTwoTone,
+    MailTwoTone,
+    UserOutlined,
+} from '@ant-design/icons';
 type NotificationType = 'success' | 'error';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -119,6 +127,27 @@ function ProductDetail() {
                 data && (
                     <>
                         <Container>
+                            <Breadcrumb
+                                className='mb-2'
+                                items={[
+                                    {
+                                        href: '',
+                                        title: <HomeOutlined />,
+                                    },
+                                    {
+                                        href: '',
+                                        title: (
+                                            <>
+                                                <UserOutlined/>
+                                                <span>Application List</span>
+                                            </>
+                                        ),
+                                    },
+                                    {
+                                        title: 'Application',
+                                    },
+                                ]}
+                            />
                             <Button
                                 type="text"
                                 icon={<ArrowLeftOutlined />}
@@ -158,7 +187,7 @@ function ProductDetail() {
                                             >
                                                 <Slider
                                                     {...settings}
-                                                    className="flex space-x-3 text-[10px] xl:text-[14px] w-[310px] xl:w-[500px]"
+                                                    className="cursor-pointer flex space-x-3 text-[10px] xl:text-[14px] w-[310px] xl:w-[500px]"
                                                 >
                                                     <div className="space-x-2">
                                                         <LikeTwoTone />
@@ -187,7 +216,9 @@ function ProductDetail() {
                                         >
                                             <Space className="block">
                                                 <div className="flex space-x-2 py-4">
-                                                    <div><LikeTwoTone /></div>
+                                                    <div>
+                                                        <LikeTwoTone />
+                                                    </div>
                                                     <div className="flex-1">
                                                         <span className="font-medium">
                                                             Được trải nghiệm thực tế sản phẩm, lựa chọn đúng hơn.
@@ -199,7 +230,9 @@ function ProductDetail() {
                                                     </div>
                                                 </div>
                                                 <div className="flex space-x-2 py-4">
-                                                    <div><CustomerServiceTwoTone /></div>
+                                                    <div>
+                                                        <CustomerServiceTwoTone />
+                                                    </div>
                                                     <div className="flex-1">
                                                         <span className="font-medium">
                                                             Bạn lo lắng khi không biết sản phẩm nào phù hợp? LAStore có
@@ -212,7 +245,9 @@ function ProductDetail() {
                                                     </div>
                                                 </div>
                                                 <div className="flex space-x-2 py-4">
-                                                    <div><MailTwoTone /></div>
+                                                    <div>
+                                                        <MailTwoTone />
+                                                    </div>
                                                     <div className="flex-1">
                                                         <span className="font-medium">
                                                             Bạn gặp khó khi gặp lỗi hỏng, LAStore có Trung tâm bảo vệ
@@ -226,7 +261,7 @@ function ProductDetail() {
                                                     </div>
                                                 </div>
                                                 <div className="flex space-x-2 py-4">
-                                                    <div className='text-[15px]'>
+                                                    <div className="text-[15px]">
                                                         <ClockCircleTwoTone />
                                                     </div>
                                                     <div className="flex-1">
@@ -234,9 +269,8 @@ function ProductDetail() {
                                                             Bạn bận, LAStore phục vụ từ sáng tới khuya.
                                                         </span>
                                                         <p className="mt-2 text-sm">
-                                                            Khách hàng bận bịu. Cán bộ, nhân viên LAStore càng phải
-                                                            phục vụ ngoài giờ để trải nghiệm của khách hàng được thông
-                                                            suốt.
+                                                            Khách hàng bận bịu. Cán bộ, nhân viên LAStore càng phải phục
+                                                            vụ ngoài giờ để trải nghiệm của khách hàng được thông suốt.
                                                         </p>
                                                     </div>
                                                 </div>
