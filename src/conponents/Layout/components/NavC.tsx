@@ -59,7 +59,6 @@ const NavC: React.FC<Props> = memo(({ type = 'forDesktop', closeDrawer }) => {
                 arr.push(item);
             });
         }
-
         return arr;
     };
     const item: MenuProps['items'] = [...renderCateItem(), getItem('Khuyến mãi', '/product/promotion')];
