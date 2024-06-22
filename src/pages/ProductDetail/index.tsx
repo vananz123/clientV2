@@ -6,15 +6,13 @@ import * as productServices from '@/api/productServices';
 import * as cartServices from '@/api/cartServices';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
-import { Col, Badge, Row, Image, Button, notification, Flex, Segmented, Modal, Space, Breadcrumb } from 'antd';
+import { Col, Badge, Row, Image, Button, notification, Flex, Segmented, Modal, Space } from 'antd';
 import {
     ArrowLeftOutlined,
     ClockCircleTwoTone,
     CustomerServiceTwoTone,
-    HomeOutlined,
     LikeTwoTone,
     MailTwoTone,
-    UserOutlined,
 } from '@ant-design/icons';
 type NotificationType = 'success' | 'error';
 import { useNavigate } from 'react-router-dom';
@@ -51,7 +49,7 @@ function ProductDetail() {
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const { data: user } = useAppSelector(selectUser);
     const { data, isLoading } = useQuery({
-        queryKey: [`product-detail-${id}`],
+        queryKey: [`product-detail`],
         queryFn: () => productServices.getProductDetail(Number(id)),
     });
     const [currentProductItem, setCurrentProductItem] = React.useState<ProductItem>();
@@ -127,27 +125,6 @@ function ProductDetail() {
                 data && (
                     <>
                         <Container>
-                            <Breadcrumb
-                                className='mb-2'
-                                items={[
-                                    {
-                                        href: '',
-                                        title: <HomeOutlined />,
-                                    },
-                                    {
-                                        href: '',
-                                        title: (
-                                            <>
-                                                <UserOutlined/>
-                                                <span>Application List</span>
-                                            </>
-                                        ),
-                                    },
-                                    {
-                                        title: 'Application',
-                                    },
-                                ]}
-                            />
                             <Button
                                 type="text"
                                 icon={<ArrowLeftOutlined />}

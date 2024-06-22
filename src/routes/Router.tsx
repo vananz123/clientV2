@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Suspense, lazy } from 'react';
 const Home = lazy(() => import('@/pages/Home'));
 const ProductListShow = lazy(() => import('@/pages/ProductListShow'));
@@ -98,12 +99,13 @@ const Router: React.FC = () => {
                     ),
                 },
                 {
-                    path: 'product/',
+                    path: 'product',
                     element: (
                         <Suspense>
                             <ProductListShow />
                         </Suspense>
                     ),
+                    
                 },
                 {
                     path: 'product/:id',

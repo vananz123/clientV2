@@ -29,7 +29,6 @@ function ProductListShow() {
     const { id } = useParams();
     const [products, setProducts] = React.useState<Product[]>();
     const cate = useAppSelector(selectCategories).data;
-    console.log(cate)
     const [page, setPage] = React.useState<number>(1);
     const [sortOder, setSortOder] = React.useState<Sort>('ascending');
     const [optionPrice, setOptionPrice] = React.useState<number[]>([]);
