@@ -49,7 +49,7 @@ function ProductDetail() {
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const { data: user } = useAppSelector(selectUser);
     const { data, isLoading } = useQuery({
-        queryKey: [`product-detail`],
+        queryKey: [`product-detail`,id],
         queryFn: () => productServices.getProductDetail(Number(id)),
     });
     const [currentProductItem, setCurrentProductItem] = React.useState<ProductItem>();
