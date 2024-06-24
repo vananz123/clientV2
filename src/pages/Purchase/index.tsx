@@ -30,6 +30,7 @@ import { selectCartDetail } from '@/app/feature/cart/reducer';
 import { selectUser } from '@/app/feature/user/reducer';
 import { useQuery } from '@tanstack/react-query';
 import Container from '@/conponents/Container';
+import { ChangeCurrence } from '@/utils/utils';
 const { Title, Paragraph } = Typography;
 export type TypeFormAddress = 'ADD' | 'EDIT';
 function Purchase() {
@@ -419,14 +420,4 @@ function Purchase() {
         </Container>
     );
 }
-const ChangeCurrence = (number: number | undefined) => {
-    if (number) {
-        const formattedNumber = number.toLocaleString('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-        });
-        return formattedNumber;
-    }
-    return 0;
-};
 export default Purchase;

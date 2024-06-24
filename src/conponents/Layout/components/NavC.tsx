@@ -32,7 +32,7 @@ const NavC: React.FC<Props> = memo(({ type = 'forDesktop', closeDrawer }) => {
     const renderSubCateItem = (_cate: Category[]) => {
         const arr: MenuItem[] = [];
         _cate.forEach((element: Category) => {
-            const item = getItem(element.name, `/product/${element.id}`);
+            const item = getItem(element.name, `/product?categoryId=${element.id}`);
             arr.push(item);
         });
         return arr;
@@ -45,14 +45,14 @@ const NavC: React.FC<Props> = memo(({ type = 'forDesktop', closeDrawer }) => {
                     <>
                         <span
                             onClick={() => {
-                                Navigate(`/product/${element.id}`);
+                                Navigate(`/product?categoryId=${element.id}`);
                                 handleCloseDrawer();
                             }}
                         >
                             {element.name}
                         </span>
                     </>,
-                    `/product/${element.id}`,
+                    `/product?categoryId=${element.id}`,
                     '',
                     renderSubCateItem(element.subCategory),
                 );
@@ -61,7 +61,7 @@ const NavC: React.FC<Props> = memo(({ type = 'forDesktop', closeDrawer }) => {
         }
         return arr;
     };
-    const item: MenuProps['items'] = [...renderCateItem(), getItem('Khuyến mãi', '/product/promotion')];
+    const item: MenuProps['items'] = [...renderCateItem(), getItem('Khuyến mãi', '/product?isPromotion=1')];
     const handleCloseDrawer = () => {
         closeDrawer(false);
     };

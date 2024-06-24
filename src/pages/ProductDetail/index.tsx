@@ -30,6 +30,7 @@ const ProductDetailImage = lazy(() => import('./ProductDetailImage'));
 const ProductDetailReview = lazy(() => import('./ProductDetailReview'));
 const ProductDetailSimilarProduct = lazy(() => import('./ProductDetailSimilarProduct'));
 const ProductDetailInfo = lazy(() => import('./ProductDetailInfo'));
+import { ChangeCurrence } from '@/utils/utils';
 interface OptionSize {
     label: string;
     value: number;
@@ -383,14 +384,4 @@ function ProductDetail() {
         </section>
     );
 }
-const ChangeCurrence = (number: number | undefined) => {
-    if (number) {
-        const formattedNumber = number.toLocaleString('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-        });
-        return formattedNumber;
-    }
-    return 0;
-};
 export default ProductDetail;

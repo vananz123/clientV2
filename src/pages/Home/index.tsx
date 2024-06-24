@@ -47,7 +47,7 @@ function Home() {
 
     const { data: listProductByUser } = useQuery({
         queryKey: ['load-list-product-by-user'],
-        queryFn: () => productServices.getAllProductByUser().then((data) => data.items),
+        queryFn: () => productServices.getAllProductByUser().then((data) => data.resultObj.items),
         enabled: !!user,
     });
     const getProductPaging = async (status: number) => {
@@ -166,17 +166,17 @@ function Home() {
             </div>
             <div className="flex justify-center mt-2">
                 <div className="p-2">
-                    <a href="/product/2">
+                    <a href="/product?category=2">
                         <img src="/fixbanner_Family.webp" alt="BST Family" />
                     </a>
                 </div>
                 <div className="p-2">
-                    <a href="/product/2">
+                    <a href="/product?category=2">
                         <img src="/fixbanner-euphoria.webp" alt="BST Family" />
                     </a>
                 </div>
                 <div className="p-2">
-                    <a href="/product/2">
+                    <a href="/product?category=2">
                         <img src="/catalog-duyendang-494x247CTA.webp" alt="BST Family" />
                     </a>
                 </div>
@@ -186,19 +186,19 @@ function Home() {
                     <SliderC title="Dành riêng cho bạn" products={listProductByUser} />
                 )}
                 {productsHot && (
-                    <HomeProductListShow products={productsHot} link="/product/hot" title="Có Thể Bạn Sẽ Thích" />
+                    <HomeProductListShow products={productsHot} link="/product?productStatus=3" title="Có Thể Bạn Sẽ Thích" />
                 )}
                 {productsNew && <SliderC products={productsNew} title="Sản phẩm mới" />}
                 {productsHot && (
-                    <HomeProductListShow products={productsHot} link="/product/hot" title="Sản phẩm bán chạy" />
+                    <HomeProductListShow products={productsHot} link="/product?productStatus=3" title="Sản phẩm bán chạy" />
                 )}
-                {productsNew && <HomeProductListShow products={productsNew} link="/product/new" title="Sản phẩm mới" />}
+                {productsNew && <HomeProductListShow products={productsNew} link="/product?productStatus=2" title="Sản phẩm mới" />}
             </Container>
             <div style={contentStyle}>
                 <img style={imgStyles} src="./watch-t5-24-1200x450CTA.webp" alt="" />
             </div>
             <Container>
-                {products && <HomeProductListShow products={products} link="/product/2" title="Đồng Hồ" />}
+                {products && <HomeProductListShow products={products} link="/product?categoryId=2" title="Đồng Hồ" />}
                 <div>
                     <ProductDetailViewer />
                 </div>

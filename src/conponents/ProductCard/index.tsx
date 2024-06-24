@@ -7,6 +7,7 @@ import { Card, Typography } from 'antd';
 import React from 'react';
 import useProductViewerStore from '@/hooks/useProductViewerStore';
 const { Paragraph } = Typography;
+import { ChangeCurrence } from '@/utils/utils';
 type ProductCardType = 'forCard' | 'forList';
 interface Props {
     product: Product | undefined;
@@ -129,14 +130,5 @@ const ProductCard: React.FC<Props> = ({ product, type = 'forCard'}) => {
         </Link>
     );
 };
-const ChangeCurrence = (number: number | undefined) => {
-    if (number) {
-        const formattedNumber = number.toLocaleString('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-        });
-        return formattedNumber;
-    }
-    return 0;
-};
+
 export default ProductCard;

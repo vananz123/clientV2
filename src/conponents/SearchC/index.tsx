@@ -19,7 +19,7 @@ const SearchC: React.FC = memo(() => {
     const debounce = useDebounce({ value: searchValue, deplay: 1000 });
     const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
         if (info?.source == 'input') {
-            navigate(`/product/${value}`);
+            navigate(`/product?productName=${value}&page=1`);
         }
         if (info?.source == 'clear') {
             setData([]);

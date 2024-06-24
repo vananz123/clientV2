@@ -11,16 +11,18 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
 import { selectOrderStatus ,changeOrderStatus} from '@/app/feature/order-status/reducer';
 import { STATUS_ORDER } from '@/common/common';
+import { ChangeCurrence } from '@/utils/utils';
 const UserOrderListLoading = lazy(() => import('./UserOrderListLoading'));
 function UserOrderList() {
     const Navigate = useNavigate();
     const dispatch  = useAppDispatch()
     const {name:statusName} = useAppSelector(selectOrderStatus);
     const { data: user } = useAppSelector(selectUser);
+    const id = user ? user.id : ''
     const { data, isLoading } = useQuery({
-        queryKey: [`load-user-order-list-${statusName}`],
-        queryFn: () => orderServices.getOrderByUserId(user ? user.id : '', statusName),
-        enabled: !!statusName,
+        queryKey: [`load-user-order-list`,id,statusName],
+        queryFn: () => orderServices.getOrderByUserId( id, statusName),
+        enabled: !!id,
     });
     const onChange = (key: string | undefined) => {
         if (key) dispatch(changeOrderStatus(key));
@@ -103,15 +105,5 @@ const getLateArray = (os: OrderStatus[] | undefined) => {
         return os[os.length - 1].name;
     }
     return 'error';
-};
-const ChangeCurrence = (number: number | undefined) => {
-    if (number) {
-        const formattedNumber = number.toLocaleString('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-        });
-        return formattedNumber;
-    }
-    return 0;
 };
 export default UserOrderList;
