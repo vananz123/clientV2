@@ -188,11 +188,11 @@ function Home() {
                 {productsHot && (
                     <HomeProductListShow products={productsHot} link="/product?productStatus=3" title="Có Thể Bạn Sẽ Thích" />
                 )}
-                {productsNew && <SliderC products={productsNew} title="Sản phẩm mới" />}
+                {/* {productsNew && <SliderC products={productsNew} title="Sản phẩm mới" />} */}
+                {productsNew && <HomeProductListShow products={productsNew} link="/product?productStatus=2" title="Sản phẩm mới" />}
                 {productsHot && (
                     <HomeProductListShow products={productsHot} link="/product?productStatus=3" title="Sản phẩm bán chạy" />
                 )}
-                {productsNew && <HomeProductListShow products={productsNew} link="/product?productStatus=2" title="Sản phẩm mới" />}
             </Container>
             <div style={contentStyle}>
                 <img style={imgStyles} src="./watch-t5-24-1200x450CTA.webp" alt="" />

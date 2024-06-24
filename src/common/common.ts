@@ -74,7 +74,8 @@ export const OPTIONS_MATERIAL :OptionBase[]= [
     {label:"AL",value:"AL"},
     {label:"ROLEX",value:"ROLEX"},
     {label:"PNJ",value:"PNJ"},
-    {label:"Seiko",value:"Seiko"}
+    {label:"Seiko",value:"Seiko"},
+    {label:"PNJSilver",value:"PNJSilver"}
 ]
 export const OPTIONS_SORT : OptionSort[]=[
     {

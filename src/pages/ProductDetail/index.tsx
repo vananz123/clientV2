@@ -275,7 +275,7 @@ function ProductDetail() {
                                         </div>
                                         {typeof currentProductItem !== 'undefined' && (
                                             <>
-                                                <div className="mb-5">
+                                                <div className="mb-2">
                                                     {currentProductItem.type == undefined ? (
                                                         <>
                                                             <span
