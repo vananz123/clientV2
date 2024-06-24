@@ -174,7 +174,7 @@ function Purchase() {
     if (typeof currentAddress === 'undefined') {
         items = [];
     }
-    
+
     return (
         <Container>
             <Button
@@ -260,9 +260,9 @@ function Purchase() {
                     </Col>
                 </Col>
                 <Col className="gutter-row" span={8} xs={24} lg={8} xl={8}>
+                    <Title level={4}>Sản phẩm trong đơn</Title>
                     {cart.items.map((e) => (
-                        <div className="rounded bg-[#fafafa] ">
-                            <Title level={5}>Sản phẩm trong đơn</Title>
+                        <div className="rounded bg-[#fafafa] p-6 pt-0">
                             <div className="flex justify-between">
                                 <div className="w-full">
                                     <Paragraph
@@ -333,7 +333,8 @@ function Purchase() {
                             </Row>
                         </div>
                     ))}
-                    <Descriptions title="Chi Tiết Đơn Hàng" bordered column={1}>
+                    <Title level={4}>Chi tiết đơn hàng</Title>
+                    <Descriptions bordered column={1}>  
                         <Descriptions.Item label="Giá Sản Phẩm">
                             {ChangeCurrence(cart.totalPriceBeforeDiscount)}
                         </Descriptions.Item>
