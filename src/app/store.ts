@@ -9,7 +9,6 @@ import storage from "redux-persist/lib/storage";
 import cartReducer from "./feature/cart/reducer";
 import cateReducer from "./feature/category/reducer";
 import userReducer from "./feature/user/reducer";
-import themeReducer from "./feature/theme/reducer";
 import orderStatusReducer from "./feature/order-status/reducer";
 const persistConfig = {
   key: "la-store-website",
@@ -21,7 +20,6 @@ const rootReducer = combineReducers({
   cart:cartReducer,
   categories:cateReducer,
   user:userReducer,
-  theme:themeReducer,
   orderStatus:orderStatusReducer
 });
 

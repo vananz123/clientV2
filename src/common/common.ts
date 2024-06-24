@@ -64,32 +64,6 @@ export const OPTIONS_PRODUCT_STATUS: SelectProps['options'] = [
         label: 'UnActive',
     },
 ];
-export const FILTERS_PRODUCT_STATUS= [
-    {
-        value: 0,
-        text: 'InActive',
-    },
-    {
-        value: 1,
-        text: 'Active',
-    },
-    {
-        value: 2,
-        text: 'New',
-    },
-    {
-        value: 3,
-        text: 'Hot',
-    },
-    {
-        value: 4,
-        text: 'Sale',
-    },
-    {
-        value: 5,
-        text: 'UnActive',
-    },
-];
 export const OPTIONS_PRICE: OptionPrice[] = [
     {label:"Dưới 2 triệu",value:1},
     {label:"2 triệu đến 6 triệu",value:2},
@@ -132,7 +106,6 @@ export const OPTIONS_SKU: SelectProps['options'] = [
         label: 'Size',
     },
 ];
-export const OPTIONS_PROMOTION_TYPE = [{ label: 'percentage', value: 'percentage' },{ label: 'fixed', value: 'fixed' }];
 export const STATUS_ORDER = [
     {
         key: 'Đang xử lý',
