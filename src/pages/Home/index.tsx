@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { Product } from '@/type';
 import React, { useCallback, useEffect } from 'react';
 import * as productServices from '@/api/productServices';
 import ProductDetailViewer from '../ProductDetail/ProductDetailViewer';
-import { Filter } from '@/type';
 import Container from '@/conponents/Container';
 import SliderC from '@/conponents/SliderC';
 import { useAppSelector } from '@/app/hooks';
@@ -14,6 +12,8 @@ import { useQuery } from '@tanstack/react-query';
 import HomeProductListShow from './HomeProductListShow';
 import { Carousel } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
+import HomeLoadingListCard from './HomeLoadingListCard';
+import { useImmer } from 'use-immer';
 const contentStyle: React.CSSProperties = {
     margin: 0,
     height: 'auto',
@@ -41,63 +41,54 @@ const styleQC: React.CSSProperties = {
 };
 function Home() {
     const { data: user } = useAppSelector(selectUser);
-    const [productsNew, setProductsNew] = React.useState<Product[]>();
-    const [productsHot, setProductsHot] = React.useState<Product[]>();
-    const [products, setProducts] = React.useState<Product[]>();
-
+    const [scroll, setScroll] = useImmer<number>(0);
     const { data: listProductByUser } = useQuery({
         queryKey: ['load-list-product-by-user'],
         queryFn: () => productServices.getAllProductByUser().then((data) => data.resultObj.items),
         enabled: !!user,
     });
-    const getProductPaging = async (status: number) => {
-        const filter: Filter = {
-            page: 1,
-            sortOder: 'ascending',
-            productStatus: status,
-            pageSize: 4,
-        };
-        const res = await productServices.getProductPagingByFilter(filter);
-        if (res.statusCode == 200) {
-            if (status === 2) {
-                setProductsNew(res.resultObj.items);
-            }
-            if (status === 3) {
-                setProductsHot(res.resultObj.items);
-            }
-        }
-    };
-    const getProductPagingWatch = async (id: number) => {
-        const filter: Filter = {
-            page: 1,
-            categoryId: id,
-            pageSize: 4,
-            sortOder: 'ascending',
-        };
-        const res = await productServices.getProductPagingByFilter(filter);
-        if (res.statusCode == 200) {
-            setProducts(res.resultObj.items);
-        }
-    };
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                getProductPaging(2);
-                getProductPaging(3);
-                getProductPagingWatch(2);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        fetchData();
-    }, []);
+    const { data: productsNew } = useQuery({
+        queryKey: ['load-list-product-new'],
+        queryFn: () =>
+            productServices
+                .getProductPagingByFilter({
+                    page: 1,
+                    sortOder: 'ascending',
+                    productStatus: 3,
+                    pageSize: 4,
+                })
+                .then((data) => data.resultObj.items),
+        enabled: scroll >= 700,
+    });
+    const { data: productsHot } = useQuery({
+        queryKey: ['load-list-product-hot'],
+        queryFn: () =>
+            productServices
+                .getProductPagingByFilter({
+                    page: 1,
+                    sortOder: 'ascending',
+                    productStatus: 2,
+                    pageSize: 4,
+                })
+                .then((data) => data.resultObj.items),
+        enabled: scroll >= 400,
+    });
+    const { data: productsWatch } = useQuery({
+        queryKey: ['load-list-product-watch'],
+        queryFn: () =>
+            productServices
+                .getProductPagingByFilter({
+                    page: 1,
+                    categoryId: 2,
+                    pageSize: 4,
+                    sortOder: 'ascending',
+                })
+                .then((data) => data.resultObj.items),
+        enabled: scroll >= 3000,
+    });
     const handleScroll = useCallback(() => {
-        if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight) {
-            getProductPaging(2);
-            getProductPaging(3);
-            getProductPagingWatch(2);
-        }
-    }, []);
+        setScroll(window.innerHeight + document.documentElement.scrollTop + 1);
+    }, [setScroll]);
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
@@ -111,8 +102,8 @@ function Home() {
         const storedShowAd = localStorage.getItem('showAd');
         if (storedShowAd === 'false') {
             setShowAd(false);
-        }else{
-            setShowAd(true)
+        } else {
+            setShowAd(true);
             const timer = setTimeout(() => {
                 setShowAd(false);
                 localStorage.setItem('showAd', 'false');
@@ -120,6 +111,7 @@ function Home() {
             return () => clearTimeout(timer);
         }
     }, []);
+    console.log('re');
     return (
         <div>
             {showAd && (
@@ -185,20 +177,35 @@ function Home() {
                 {user && listProductByUser && listProductByUser.length > 0 && (
                     <SliderC title="Dành riêng cho bạn" products={listProductByUser} />
                 )}
-                {productsHot && (
-                    <HomeProductListShow products={productsHot} link="/product?productStatus=3" title="Có Thể Bạn Sẽ Thích" />
+                {productsHot ? (
+                    <HomeProductListShow
+                        products={productsHot}
+                        link="/product?productStatus=3"
+                        title="Có Thể Bạn Sẽ Thích"
+                    />
+                ) : (
+                    <HomeLoadingListCard />
                 )}
-                {/* {productsNew && <SliderC products={productsNew} title="Sản phẩm mới" />} */}
-                {productsNew && <HomeProductListShow products={productsNew} link="/product?productStatus=2" title="Sản phẩm mới" />}
+                {productsNew && (
+                    <HomeProductListShow products={productsNew} link="/product?productStatus=2" title="Sản phẩm mới" />
+                )}
                 {productsHot && (
-                    <HomeProductListShow products={productsHot} link="/product?productStatus=3" title="Sản phẩm bán chạy" />
+                    <HomeProductListShow
+                        products={productsHot}
+                        link="/product?productStatus=3"
+                        title="Sản phẩm bán chạy"
+                    />
                 )}
             </Container>
             <div style={contentStyle}>
                 <img style={imgStyles} src="./watch-t5-24-1200x450CTA.webp" alt="" />
             </div>
             <Container>
-                {products && <HomeProductListShow products={products} link="/product?categoryId=2" title="Đồng Hồ" />}
+                {productsWatch ? (
+                    <HomeProductListShow products={productsWatch} link="/product?categoryId=2" title="Đồng Hồ" />
+                ) : (
+                    <HomeLoadingListCard />
+                )}
                 <div>
                     <ProductDetailViewer />
                 </div>
