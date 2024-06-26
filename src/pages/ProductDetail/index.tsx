@@ -1,62 +1,59 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from 'react-router';
 import { ProductItem } from '@/type';
-import React, { lazy, useEffect } from 'react';
+import { lazy, useEffect } from 'react';
 import * as productServices from '@/api/productServices';
 import * as cartServices from '@/api/cartServices';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectUser } from '@/app/feature/user/reducer';
-import { Col, Badge, Row, Image, Button, notification, Flex, Segmented, Modal, Space } from 'antd';
-import {
-    ArrowLeftOutlined,
-    ClockCircleTwoTone,
-    CustomerServiceTwoTone,
-    LikeTwoTone,
-    MailTwoTone,
-} from '@ant-design/icons';
-type NotificationType = 'success' | 'error';
+import { Col, Badge, Row, Image, Button, Flex, Segmented } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import ProductDetailLoading from './ProductDetailLoading';
 import { loadCartDetail } from '@/app/feature/cart/action';
 import Container from '@/conponents/Container';
 import InputQuatity from '@/conponents/InputQuatity';
 import ProductDetailGuaranty from './ProductDetailGuaranty';
 import ProductDetailViewer from './ProductDetailViewer';
-import Slider from '@ant-design/react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 const ProductDetailImage = lazy(() => import('./ProductDetailImage'));
 const ProductDetailReview = lazy(() => import('./ProductDetailReview'));
 const ProductDetailSimilarProduct = lazy(() => import('./ProductDetailSimilarProduct'));
 const ProductDetailInfo = lazy(() => import('./ProductDetailInfo'));
+const ProductdetailPolicy = lazy(() => import('./ProductdetailPolicy'));
 import { ChangeCurrence } from '@/utils/utils';
+import { useImmer } from 'use-immer';
+import { AxiosError } from 'axios';
+import { Result } from '@/api/ResType';
+import { useNotification } from '@/hooks';
 interface OptionSize {
     label: string;
     value: number;
     disabled?: boolean;
 }
-const settings = {
-    infinite: true,
-    slidesToShow: 3,
-    slidesToScroll: 2,
-    autoplay: true,
-};
-
+interface Body {
+    userId: string;
+    productItemId: number;
+    quantity: number;
+}
+const baseUrl = import.meta.env.VITE_BASE_URL;
 function ProductDetail() {
     const Navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const { contextHolder, openNotification } = useNotification();
     const { id } = useParams();
-    const baseUrl = import.meta.env.VITE_BASE_URL;
+
     const { data: user } = useAppSelector(selectUser);
-    const { data, isLoading } = useQuery({
-        queryKey: [`product-detail`,id],
-        queryFn: () => productServices.getProductDetail(Number(id)),
-    });
-    const [currentProductItem, setCurrentProductItem] = React.useState<ProductItem>();
-    const [quantity, setQuantity] = React.useState(1);
+    const [currentProductItem, setCurrentProductItem] = useImmer<ProductItem | undefined>(undefined);
+    const [quantity, setQuantity] = useImmer(1);
     const optionSize: OptionSize[] = [];
     const listImage: string[] = [];
+    const { data, isLoading } = useQuery({
+        queryKey: [`product-detail`, id],
+        queryFn: () => productServices.getProductDetail(Number(id)),
+    });
     if (data) {
         const arr: string[] = data.urlImage.split('*');
         const arrFilter = arr.filter((s) => s !== '');
@@ -74,16 +71,9 @@ function ProductDetail() {
             });
         }
     }
-    const [api, contextHolder] = notification.useNotification();
-    const openNotificationWithIcon = (type: NotificationType, mess: string) => {
-        api[type]({
-            message: 'Thông báo',
-            description: mess,
-        });
-    };
     useEffect(() => {
         if (data && data.items && data.items.length > 0) setCurrentProductItem(data.items[0]);
-    }, [data]);
+    }, [data, setCurrentProductItem]);
     const GoBack = () => {
         Navigate(-1);
     };
@@ -96,27 +86,36 @@ function ProductDetail() {
             }
         }
     };
+    const addToCart = useMutation({
+        mutationKey: ['add-to-cart', currentProductItem?.id],
+        mutationFn: (body: Body) => cartServices.addCart(body.userId, body.productItemId, body.quantity),
+        onSuccess: (data) => {
+            if (data.isSuccessed === true && user) {
+                dispatch(loadCartDetail({ userId: user.id as string }));
+                openNotification('success', 'Thêm thành công!');
+            }
+        },
+        onError: (error: AxiosError<Result>) => {
+            openNotification('error', error.response?.data.message);
+        },
+    });
     const handleAddToCart = async () => {
         if (typeof user !== 'undefined') {
-            if (typeof currentProductItem !== 'undefined') {
-                const res = await cartServices.addCart(user.id, currentProductItem.id, quantity);
-                if (res.isSuccessed === true) {
-                    dispatch(loadCartDetail({ userId: user.id as string }));
-                    openNotificationWithIcon('success', 'Thêm thành công!');
-                } else {
-                    openNotificationWithIcon('error', res.message);
-                }
+            if (typeof currentProductItem !== 'undefined' && user) {
+                const body: Body = {
+                    userId: user.id,
+                    productItemId: currentProductItem.id,
+                    quantity: quantity,
+                };
+                addToCart.mutateAsync(body);
             } else {
-                openNotificationWithIcon('error', 'error');
+                openNotification('error', 'không có sản phẩm nào được chọn');
             }
         } else {
             Navigate('/auth/login');
         }
     };
-    const [openModal, setOpen] = React.useState(false);
-    const handleCancel = () => {
-        setOpen(false);
-    };
+
     return (
         <section>
             {contextHolder}
@@ -151,115 +150,13 @@ function ProductDetail() {
                                         <div className="bg-[#fafafa] rounded">
                                             <Image width={'100%'} src={`${baseUrl + data.urlThumbnailImage}`} />
                                         </div>
-                                        <div className="mt-3">
-                                            <div className="flex items-center space-x-3 mb-2">
-                                                <span className="text-[20px] font-semibold">LAStore</span>
-                                                <span className="text-[12px] xl:text-base from-stone-500">
-                                                    Là nơi để bạn và người thân tin tưởng lựa chọn
-                                                </span>
-                                            </div>
-                                            <div
-                                                onClick={() => {
-                                                    setOpen(true);
-                                                }}
-                                            >
-                                                <Slider
-                                                    {...settings}
-                                                    className="cursor-pointer flex space-x-3 text-[10px] xl:text-[14px] w-[310px] xl:w-[500px]"
-                                                >
-                                                    <div className="space-x-2">
-                                                        <LikeTwoTone />
-                                                        <span className=" ml-2">Trải nghiệm</span>
-                                                    </div>
-                                                    <div className="space-x-2">
-                                                        <CustomerServiceTwoTone />
-                                                        <span className=" ml-2">Tận tâm tư vấn</span>
-                                                    </div>
-                                                    <div className="space-x-2">
-                                                        <MailTwoTone />
-                                                        <span className="ml-2">Trung tâm bảo vệ</span>
-                                                    </div>
-                                                    <div className="space-x-2">
-                                                        <ClockCircleTwoTone />
-                                                        <span className="ml-2">Phục vụ 24/7</span>
-                                                    </div>
-                                                </Slider>
-                                            </div>
-                                        </div>
-                                        <Modal
-                                            title="Tự tin mua sắm cùng LAStore"
-                                            open={openModal}
-                                            onCancel={handleCancel}
-                                            footer={''}
-                                        >
-                                            <Space className="block">
-                                                <div className="flex space-x-2 py-4">
-                                                    <div>
-                                                        <LikeTwoTone />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <span className="font-medium">
-                                                            Được trải nghiệm thực tế sản phẩm, lựa chọn đúng hơn.
-                                                        </span>
-                                                        <p className="mt-2 text-sm">
-                                                            Không còn bọc nilon, hạn chế quyền được trải nghiệm trước
-                                                            mua hàng của người dùng.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex space-x-2 py-4">
-                                                    <div>
-                                                        <CustomerServiceTwoTone />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <span className="font-medium">
-                                                            Bạn lo lắng khi không biết sản phẩm nào phù hợp? LAStore có
-                                                            đội ngũ tư vấn tận tâm và có chuyên môn.
-                                                        </span>
-                                                        <p className="mt-2 text-sm">
-                                                            Giúp khách hàng lựa chọn sản phẩm đúng nhu cầu là trách
-                                                            nhiệm đầu tiên của Nhân viên tư vấn tại LAStore.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex space-x-2 py-4">
-                                                    <div>
-                                                        <MailTwoTone />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <span className="font-medium">
-                                                            Bạn gặp khó khi gặp lỗi hỏng, LAStore có Trung tâm bảo vệ
-                                                            quyền lợi khách hàng
-                                                        </span>
-                                                        <p className="mt-2 text-sm">
-                                                            Để không bỏ sót bất kỳ một trải nghiệm không tốt nào của
-                                                            khách hàng, Ban Lãnh Đạo Tập đoàn có chuyên trang bảo vệ
-                                                            quyền lợi khách hàng.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex space-x-2 py-4">
-                                                    <div className="text-[15px]">
-                                                        <ClockCircleTwoTone />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <span className="font-medium">
-                                                            Bạn bận, LAStore phục vụ từ sáng tới khuya.
-                                                        </span>
-                                                        <p className="mt-2 text-sm">
-                                                            Khách hàng bận bịu. Cán bộ, nhân viên LAStore càng phải phục
-                                                            vụ ngoài giờ để trải nghiệm của khách hàng được thông suốt.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </Space>
-                                        </Modal>
                                         <span style={{ position: 'absolute', top: '5px', right: '5px' }}>
                                             {data?.status === 2 && <Badge.Ribbon text="New" color="red"></Badge.Ribbon>}
                                             {data?.status === 3 && (
                                                 <Badge.Ribbon text="Hot" color="yellow"></Badge.Ribbon>
                                             )}
                                         </span>
+                                        <ProductdetailPolicy />
                                     </Col>
                                     <Col xs={8} sm={8} md={8} lg={4} xl={4}>
                                         <ProductDetailImage listImage={listImage} seo={data.seoTitle} />
@@ -348,6 +245,7 @@ function ProductDetail() {
                                                     />
                                                     <Button
                                                         type="primary"
+                                                        loading={addToCart.isPending}
                                                         danger
                                                         onClick={() => {
                                                             handleAddToCart();

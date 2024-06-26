@@ -16,7 +16,7 @@ const GoogleButton = () => {
                 setAccessToken(data.resultObj.accessToken);
                 setTimeout(() => {
                     Navigate(-1);
-                }, 200);
+                }, 150);
             }
         },
     });

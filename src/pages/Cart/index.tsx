@@ -24,42 +24,52 @@ import { Link } from 'react-router-dom';
 import { selectUser } from '@/app/feature/user/reducer';
 import Container from '@/conponents/Container';
 import { useNavigate } from 'react-router-dom';
+import { ChangeCurrence } from '@/utils/utils';
+import { useMutation } from '@tanstack/react-query';
+import { useImmer } from 'use-immer';
 const baseUrl = import.meta.env.VITE_BASE_URL;
 function Cart() {
     const dispatch = useAppDispatch();
     const user = useAppSelector(selectUser).data;
     const { isLoading, data } = useAppSelector(selectCartDetail);
     const [currentCart, setCurrentCart] = React.useState<Cart>();
-    const [open, setOpen] = React.useState(false);
-    const [confirmLoading, setConfirmLoading] = React.useState(false);
+    const [open, setOpen] = useImmer(false);
     console.log(data);
     const Navigate = useNavigate();
     const showModal = (cart: Cart) => {
         setOpen(true);
         setCurrentCart(cart);
     };
-    const handleOk = () => {
-        setConfirmLoading(true);
-        setTimeout(async () => {
-            setOpen(false);
-            if (currentCart != undefined) {
-                const res = await cartServices.deleteCart(currentCart?.id);
-                if (res.isSuccessed == true) {
-                    dispatch(loadCartDetail({ userId: user?.id as string }));
-                }
+    const delToCart = useMutation({
+        mutationKey: ['del-to-cart', currentCart?.id],
+        mutationFn: (cartId: number) => cartServices.deleteCart(cartId),
+        onSuccess: (data) => {
+            if (data.isSuccessed === true && user) {
+                dispatch(loadCartDetail({ userId: user?.id as string }));
+                setOpen(false)
             }
-            setConfirmLoading(false);
-        }, 100);
+        },
+    });
+    const updateToCart = useMutation({
+        mutationKey: ['update-to-cart', currentCart?.id],
+        mutationFn: (body: { cartId: number; quantity: number }) => cartServices.updateCart(body.cartId, body.quantity),
+        onSuccess: (data) => {
+            if (data.isSuccessed === true && user) {
+                dispatch(loadCartDetail({ userId: user?.id as string }));
+            }
+        },
+    });
+    const handleOk = () => {
+        if (currentCart) delToCart.mutateAsync(currentCart?.id);
     };
     const handleCancel = () => {
         setOpen(false);
     };
     const increase = async (e: Cart) => {
-        if (typeof e !== 'undefined') {
+        if (e) {
             const newQuantity = e?.quantity + 1;
             if (newQuantity <= e?.stock) {
-                const res = await cartServices.updateCart(e?.id, newQuantity);
-                if (res.isSuccessed == true) dispatch(loadCartDetail({ userId: user?.id as string }));
+                updateToCart.mutateAsync({ cartId: e.id, quantity: newQuantity });
             }
         }
     };
@@ -205,7 +215,7 @@ function Cart() {
                                                                         </Space.Compact>
                                                                     </div>
                                                                 </div>
-                                                                <div className='pt-3'>
+                                                                <div className="pt-3">
                                                                     <p className="font-bold">
                                                                         Tổng: {ChangeCurrence(e?.total)}{' '}
                                                                     </p>
@@ -246,12 +256,11 @@ function Cart() {
                                                 block
                                                 type="primary"
                                                 danger
-                                                
                                                 disabled={
                                                     data.items.length <= 0 ||
                                                     data.items.some((s) => s.stock == 0 || s.stock < s.quantity)
                                                 }
-                                                className='mt-4 font-medium'
+                                                className="mt-4 font-medium"
                                             >
                                                 Đặt hàng
                                             </Button>
@@ -265,7 +274,7 @@ function Cart() {
                         title="Notification"
                         open={open}
                         onOk={handleOk}
-                        confirmLoading={confirmLoading}
+                        confirmLoading={delToCart.isPending}
                         onCancel={handleCancel}
                     >
                         Do you want to detele!
@@ -275,14 +284,4 @@ function Cart() {
         </Container>
     );
 }
-const ChangeCurrence = (number: number | undefined) => {
-    if (number) {
-        const formattedNumber = number.toLocaleString('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-        });
-        return formattedNumber;
-    }
-    return 0;
-};
 export default Cart;

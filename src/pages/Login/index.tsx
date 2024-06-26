@@ -5,10 +5,11 @@ import * as loginServices from '@/api/loginServices';
 import * as userServices from '@/api/userServices';
 import type { Result } from '@/api/ResType';
 import { Link, useNavigate } from 'react-router-dom';
-import Logo from '/logo.png'
+import Logo from '/logo.png';
 import GoogleButton from '@/conponents/GoogleButton';
 import { useAuthStore } from '@/hooks';
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 export type LoginType = {
     email?: string;
     password?: string;
@@ -16,25 +17,26 @@ export type LoginType = {
 function Login() {
     const [error, setError] = React.useState<Result>();
     const Navigate = useNavigate();
-    const { setAccessToken} = useAuthStore()
+    const { setAccessToken } = useAuthStore();
     const [open, setOpen] = React.useState(false);
     const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
     const [messageApi, contextHolder] = message.useMessage();
     const login = useMutation({
-        mutationKey:['login'],
-        mutationFn:(body:LoginType)=> loginServices.login(body),
-        onSuccess:(data)=>{
-            if(data.isSuccessed === true){
-                setAccessToken(data.resultObj.accessToken)
-                setTimeout(()=>{
-                    Navigate(-1)
-                },200)
-            }else{
-                setError(data);
+        mutationKey: ['login'],
+        mutationFn: (body: LoginType) => loginServices.login(body),
+        onSuccess: (data) => {
+            if (data.isSuccessed === true) {
+                setAccessToken(data.resultObj.accessToken);
+                setTimeout(() => {
+                    Navigate(-1);
+                }, 150);
             }
-        }
-    })
-    const onFinish: FormProps<LoginType>['onFinish'] =async (values) => {
+        },
+        onError: (error: AxiosError<Result>) => {
+            setError(error.response?.data);
+        },
+    });
+    const onFinish: FormProps<LoginType>['onFinish'] = async (values) => {
         login.mutateAsync(values);
     };
     const onFinishForgot: FormProps<LoginType>['onFinish'] = async (values) => {
@@ -66,8 +68,11 @@ function Login() {
         >
             <div>
                 {error != undefined ? <Alert message="Error" description={error.message} type="error" showIcon /> : ''}
-                <div className='text-center flex justify-center'>
-                   <Link to='/'> <img className='w-[100px] h-[100px]' src={Logo} alt='la'/></Link>
+                <div className="text-center flex justify-center">
+                    <Link to="/">
+                        {' '}
+                        <img className="w-[100px] h-[100px]" src={Logo} alt="la" />
+                    </Link>
                 </div>
                 <Form
                     name="basic"
@@ -87,19 +92,22 @@ function Login() {
 
                     <Form.Item<LoginType>
                         name="password"
-                        rules={[{ required: true, message: 'Please input your password!' },() => ({
-                            validator(_, value) {
-                                if (value.length >= 6) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(new Error('The password must have length better 6!'));
-                            },
-                        }),]}
+                        rules={[
+                            { required: true, message: 'Please input your password!' },
+                            () => ({
+                                validator(_, value) {
+                                    if (value.length >= 6) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(new Error('The password must have length better 6!'));
+                                },
+                            }),
+                        ]}
                     >
                         <Input.Password prefix={<LockOutlined />} />
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" block>
+                        <Button type="primary" loading={login.isPending} htmlType="submit" block>
                             Submit
                         </Button>
                         <Flex justify="space-between">
@@ -120,14 +128,12 @@ function Login() {
                         </Flex>
                     </Form.Item>
                 </Form>
-                <GoogleButton/>
+                <GoogleButton />
             </div>
             <Modal
                 style={{ width: 300 }}
                 title="Forgot password"
                 open={open}
-                //onOk={handleOk}
-                //confirmLoading={confirmLoading}
                 onCancel={() => {
                     setOpen(false);
                 }}
