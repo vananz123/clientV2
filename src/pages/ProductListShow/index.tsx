@@ -44,6 +44,19 @@ function ProductListShow() {
     const onChange: PaginationProps['onChange'] = (pageNumber) => {
         setQueryString('page', pageNumber.toString());
     };
+    // const checkcate = (id:number)=> {
+    //     cate.forEach(e => {
+    //         if(e.id === id){
+    //             return e
+    //         }else{
+    //             e.subCategory.forEach(ee=> {
+    //                 if(ee.id ===id){
+    //                     return ee
+    //                 }
+    //             })
+    //         }
+    //     })
+    // }
     return (
         <>
             <Container>
@@ -110,4 +123,5 @@ function ProductListShow() {
         </>
     );
 }
+
 export default ProductListShow;

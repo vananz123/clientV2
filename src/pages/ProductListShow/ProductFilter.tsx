@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Filter, Sort } from '@/type';
-import { Checkbox, Flex, Select, Space, Tooltip } from 'antd';
+import { Button, Checkbox, Flex, Select, Space, Tooltip } from 'antd';
 import { OPTIONS_PRICE, OPTIONS_MATERIAL, OPTIONS_SORT } from '@/common/common';
 import React from 'react';
 import { ArrayToString } from '@/utils/utils';
+import { LabeledValue } from 'antd/es/select';
 interface Props {
     filter: Filter;
     setQueryString: (name: string, value: string) => void;
@@ -42,31 +43,64 @@ const ProductFilter: React.FC<Props> = ({ filter, setQueryString, removeQueryStr
         value: string;
     }
     const options: ItemProps[] = [];
-    if (filter.optionPrice && filter.optionMaterial) {
-        const combinedArray = filter.optionPrice.map((number) => number.toString()).concat(filter.optionMaterial);
-        options.push({
-            label: `${combinedArray}`,
-            value: `${combinedArray}`,
-        });
-    } else if (filter.optionPrice) {
-        options.push({
-            label: `${filter.optionPrice}`,
-            value: `${filter.optionPrice}`,
-        });
-    } else {
-        if (filter.optionMaterial) {
+    if (filter.optionPrice) {
+        filter.optionPrice.forEach((element) => {
+            const name = OPTIONS_PRICE.find((x) => x.value == element)?.label;
             options.push({
-                label: `${filter.optionMaterial}`,
-                value: `${filter.optionMaterial}`,
+                label: `${name}`,
+                value: `${element}`,
             });
-        }
+        });
     }
+    if (filter.optionMaterial) {
+        filter.optionMaterial.forEach((element) => {
+            options.push({
+                label: `${element}`,
+                value: `${element}`,
+            });
+        });
+    }
+    const onDe = (value: string | number | LabeledValue) => {
+        const parse = Number(value);
+        if (parse) {
+            if (typeof value !== 'undefined') {
+                const valueQueryFilter = filter.optionPrice?.filter((x) => x !== parse);
+                if (valueQueryFilter) {
+                    removeQueryString('page');
+                    const valueQuery = ArrayToString(valueQueryFilter);
+                    setQueryString('optionPrice', valueQuery);
+                }
+            }
+        } else {
+            if (typeof value !== 'undefined') {
+                const valueQueryFilter = filter.optionMaterial?.filter((x) => x !== value);
+                if (valueQueryFilter) {
+                    removeQueryString('page');
+                    const valueQuery = ArrayToString(valueQueryFilter);
+                    setQueryString('optionMaterial', valueQuery);
+                }
+            }
+        }
+    };
     console.log(options);
     return (
         <div>
             {filter.optionPrice || filter.optionMaterial ? (
                 <Space>
-                    <Select mode="multiple" className="w-full mb-1" value={options} options={options} onChange={onChangeOpPrice} />
+                    <Select
+                        mode="multiple"
+                        className="w-full mb-1"
+                        value={options}
+                        options={options}
+                        onDeselect={onDe}
+                        onChange={onChangeOpPrice}
+                        dropdownRender={(menu) => (
+                            <>
+                                {menu}
+                                <Button>Xóa tất cả</Button>
+                            </>
+                        )}
+                    />
                 </Space>
             ) : (
                 ''
