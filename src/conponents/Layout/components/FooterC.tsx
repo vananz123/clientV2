@@ -20,7 +20,7 @@ const FooterC = React.memo(() => {
                     <p className="text-[18px] font-bold text-[#003868] font-serif">Hệ thống cửa hàng</p>
                 </div>
                 {typeof listDepartment !== 'undefined' && (
-                    <Row className="flex justify-around" gutter={[16, 16]}>
+                    <Row className="flex justify-around pb-5" gutter={[16, 16]}>
                         {listDepartment.length > 0 && (
                             <>
                                 {listDepartment.map((e) => (
