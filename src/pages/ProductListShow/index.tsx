@@ -1,42 +1,34 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as productServices from '@/api/productServices';
-import { Product, Filter, Sort } from '@/type';
+import { Product, Filter, Sort, Category } from '@/type';
 import { useAppSelector } from '@/app/hooks';
 import { selectCategories } from '@/app/feature/category/reducer';
-import {
-    Button,
-    Col,
-    Result,
-    Row,
-    Pagination,
-    PaginationProps,
-    Breadcrumb,
-} from 'antd';
+import { Button, Col, Result, Row, Pagination, PaginationProps, Breadcrumb } from 'antd';
 import ProductCard from '@/conponents/ProductCard';
 import SkeletonCard from '@/conponents/SkeletonCard';
 import Container from '@/conponents/Container';
-import { HomeOutlined } from '@ant-design/icons';
+import {  HomeOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import useQueryString from '@/hooks/useQueryString';
 import ProductFilter from './ProductFilter';
 const pageSize: number = 12;
 function ProductListShow() {
     const cate = useAppSelector(selectCategories).data;
-    console.log(cate)
-    const { queryString, setQueryString ,removeQueryString} = useQueryString();
-    const filter:Filter ={
-        categoryId:Number(queryString.categoryId) || undefined,
+    console.log(cate);
+    const { queryString, setQueryString, removeQueryString } = useQueryString();
+    const filter: Filter = {
+        categoryId: Number(queryString.categoryId) || undefined,
         page: Number(queryString.page) || 1,
-        sortOder: queryString.sortOder as Sort || 'ascending',
+        sortOder: (queryString.sortOder as Sort) || 'ascending',
         pageSize: pageSize,
         optionPrice: queryString.optionPrice ? queryString.optionPrice.split(',').map(Number) : undefined,
         optionMaterial: queryString.optionMaterial ? queryString.optionMaterial.split(',') : undefined,
-        isPromotion: queryString.isPromotion ? (queryString.isPromotion === '1'? true : false) : undefined,
+        isPromotion: queryString.isPromotion ? (queryString.isPromotion === '1' ? true : false) : undefined,
         productStatus: Number(queryString.productStatus) || undefined,
         productName: queryString.productName || undefined,
     };
     const { data: resulf } = useQuery({
-        queryKey: ['load-list-product', filter,filter.categoryId],
+        queryKey: ['load-list-product', filter, filter.categoryId],
         queryFn: () => productServices.getProductPagingByFilter(filter),
     });
     const products = resulf?.resultObj.items;
@@ -44,19 +36,22 @@ function ProductListShow() {
     const onChange: PaginationProps['onChange'] = (pageNumber) => {
         setQueryString('page', pageNumber.toString());
     };
-    // const checkcate = (id:number)=> {
-    //     cate.forEach(e => {
-    //         if(e.id === id){
-    //             return e
-    //         }else{
-    //             e.subCategory.forEach(ee=> {
-    //                 if(ee.id ===id){
-    //                     return ee
-    //                 }
-    //             })
-    //         }
-    //     })
-    // }
+    console.log(queryString.isPromotion)
+    const getCategoryName = (id: number, cate:Category[]) => {
+        if (!id || !cate) return '';
+        for (const category of cate) {
+            if (category.id === id) {
+                return category.name;
+            } else{
+                for (const sub of category.subCategory) {
+                    if (sub.id === id) {
+                        return sub.name;
+                    }
+                }
+            }
+        }
+        return '';
+    };
     return (
         <>
             <Container>
@@ -68,11 +63,16 @@ function ProductListShow() {
                             title: <HomeOutlined />,
                         },
                         {
-                            title: <>{queryString.categoryId ||queryString.productName}</>,
+                            title: (
+                                <>
+                                    {getCategoryName(Number(filter.categoryId), cate)}
+                                    {queryString.productName}
+                                </>
+                            ),
                         },
                     ]}
                 />
-                <ProductFilter filter={filter}  setQueryString={setQueryString} removeQueryString={removeQueryString}/>
+                <ProductFilter filter={filter} setQueryString={setQueryString} removeQueryString={removeQueryString} />
                 {products != undefined ? (
                     <>
                         {products.length > 0 ? (
@@ -94,8 +94,13 @@ function ProductListShow() {
                                     ))}
                                 </Row>
                                 <div style={{ marginTop: 24, marginBottom: 24, textAlign: 'center' }}>
-                                <Pagination onChange={onChange} current={filter.page} pageSize={pageSize} total={totalRecord} />
-                            </div>
+                                    <Pagination
+                                        onChange={onChange}
+                                        current={filter.page}
+                                        pageSize={pageSize}
+                                        total={totalRecord}
+                                    />
+                                </div>
                             </>
                         ) : (
                             <Result title="No resulf" extra={<Button type="primary">See more</Button>} />

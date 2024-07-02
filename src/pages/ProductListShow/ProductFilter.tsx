@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Filter, Sort } from '@/type';
-import { Button, Checkbox, Flex, Select, Space, Tooltip } from 'antd';
+import { Button, Checkbox, Flex, Select, Space } from 'antd';
 import { OPTIONS_PRICE, OPTIONS_MATERIAL, OPTIONS_SORT } from '@/common/common';
 import React from 'react';
 import { ArrayToString } from '@/utils/utils';
@@ -82,6 +82,10 @@ const ProductFilter: React.FC<Props> = ({ filter, setQueryString, removeQueryStr
             }
         }
     };
+    const clearFilters = () => {
+        removeQueryString('optionPrice');
+        removeQueryString('optionMaterial');
+      };
     console.log(options);
     return (
         <div>
@@ -97,7 +101,7 @@ const ProductFilter: React.FC<Props> = ({ filter, setQueryString, removeQueryStr
                         dropdownRender={(menu) => (
                             <>
                                 {menu}
-                                <Button>Xóa tất cả</Button>
+                                <Button className='ml-5' onClick={clearFilters}>Xóa tất cả</Button>
                             </>
                         )}
                     />
@@ -116,25 +120,9 @@ const ProductFilter: React.FC<Props> = ({ filter, setQueryString, removeQueryStr
                         maxTagCount="responsive"
                         onChange={onChangeOpPrice}
                     />
-                    {/* <Select
-                        mode="multiple"
-                        style={{ width: 150 }}
-                        options={OPTIONS_PRICE}
-                        autoFocus={false}
-                        showSearch={false}
-                        value={filter.optionPrice}
-                        onChange={onChangeOpPrice}
-                        placeholder="Price"
-                        maxTagCount="responsive"
-                        maxTagPlaceholder={(omittedValues) => (
-                            <Tooltip title={omittedValues.map(({ label }) => label).join(', ')}>
-                                <span>Hover Me</span>
-                            </Tooltip>
-                        )}
-                    /> */}
                     <Select
                         mode="multiple"
-                        style={{ width: 150 }}
+                        style={{ width: 200 }}
                         autoFocus={false}
                         showSearch={false}
                         options={OPTIONS_MATERIAL}
@@ -142,11 +130,7 @@ const ProductFilter: React.FC<Props> = ({ filter, setQueryString, removeQueryStr
                         onChange={onChangeOpSize}
                         placeholder="Brand"
                         maxTagCount="responsive"
-                        maxTagPlaceholder={(omittedValues) => (
-                            <Tooltip title={omittedValues.map(({ label }) => label).join(', ')}>
-                                <span>Hover Me</span>
-                            </Tooltip>
-                        )}
+                    
                     />
                     <Checkbox checked={filter.isPromotion} style={{ width: 150 }} onChange={onChangePromotion}>
                         Có khuyến mãi

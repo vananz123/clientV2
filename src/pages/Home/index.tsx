@@ -73,6 +73,19 @@ function Home() {
                 .then((data) => data.resultObj.items),
         enabled: scroll >= 400,
     });
+    const { data: productKM } = useQuery({
+        queryKey: ['load-list-product-km'],
+        queryFn: () =>
+            productServices
+                .getProductPagingByFilter({
+                    page: 1,
+                    sortOder: 'ascending',
+                    isPromotion: true,
+                    pageSize: 8,
+                })
+                .then((data) => data.resultObj.items),
+        enabled: scroll >= 400,
+    });
     const { data: productsWatch } = useQuery({
         queryKey: ['load-list-product-watch'],
         queryFn: () =>
@@ -173,7 +186,7 @@ function Home() {
                     </a>
                 </div>
             </div>
-            <Container>
+            <Container className="bg-cyan-50">
                 {user && listProductByUser && listProductByUser.length > 0 && (
                     <SliderC title="Dành riêng cho bạn" products={listProductByUser} />
                 )}
@@ -196,6 +209,7 @@ function Home() {
                         title="Sản phẩm bán chạy"
                     />
                 )}
+                <div className='mb-5'>{productKM && <SliderC products={productKM} title="Sản phẩm khuyến mãi" />}</div>
             </Container>
             <div style={contentStyle}>
                 <img style={imgStyles} src="./watch-t5-24-1200x450CTA.webp" alt="" />
