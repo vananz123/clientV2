@@ -95,14 +95,14 @@ const SearchC: React.FC = memo(() => {
                                         {searchHistory.map((e) => (
                                             <Link
                                                 to={`/product?productName=${e}&page=1 `}
-                                                className="text-sky-500 block"
+                                                className="text-sky-500 block ml-2"
                                             >
                                                 <p>
                                                     {e} <SearchOutlined />
                                                 </p>
                                             </Link>
                                         ))}
-                                        <div className="flex items-center bg-cyan-50 mb-3 mt-3">
+                                        <div className="flex items-center bg-cyan-50 mb-3 mt-2">
                                             <div>
                                                 <AlertFilled className="text-cyan-400" />
                                             </div>

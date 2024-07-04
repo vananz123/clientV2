@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from 'react-router';
-import { ProductItem } from '@/type';
+import { Category, ProductItem } from '@/type';
 import { lazy, useEffect } from 'react';
 import * as productServices from '@/api/productServices';
 import * as cartServices from '@/api/cartServices';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { selectCategories } from '@/app/feature/category/reducer';
 import { selectUser } from '@/app/feature/user/reducer';
-import { Col, Badge, Row, Image, Button, Flex, Segmented } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Col, Badge, Row, Image, Button, Flex, Segmented, Breadcrumb } from 'antd';
+import { ArrowLeftOutlined, HomeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import ProductDetailLoading from './ProductDetailLoading';
@@ -44,8 +45,12 @@ function ProductDetail() {
     const dispatch = useAppDispatch();
     const { contextHolder, openNotification } = useNotification();
     const { id } = useParams();
-
     const { data: user } = useAppSelector(selectUser);
+    const { data: listProductByUser } = useQuery({
+        queryKey: ['load-list-product-by-user'],
+        queryFn: () => productServices.getAllProductByUser().then((data) => data.resultObj.items),
+        enabled: !!user,
+    });
     const [currentProductItem, setCurrentProductItem] = useImmer<ProductItem | undefined>(undefined);
     const [quantity, setQuantity] = useImmer(1);
     const optionSize: OptionSize[] = [];
@@ -115,7 +120,22 @@ function ProductDetail() {
             Navigate('/auth/login');
         }
     };
-
+    const cate = useAppSelector(selectCategories).data;
+    const getCategoryName = (id: number, cate: Category[]) => {
+        if (!id || !cate) return '';
+        for (const category of cate) {
+            if (category.id === id) {
+                return category.name;
+            } else {
+                for (const sub of category.subCategory) {
+                    if (sub.id === id) {
+                        return sub.name;
+                    }
+                }
+            }
+        }
+        return '';
+    };
     return (
         <section>
             {contextHolder}
@@ -136,6 +156,32 @@ function ProductDetail() {
                             >
                                 Trở lại
                             </Button>
+                            <Breadcrumb
+                                className="mb-2"
+                                items={[
+                                    {
+                                        href: '/',
+                                        title: <HomeOutlined />,
+                                    },
+                                    {
+                                        href: `/product?categoryId=${data.categoryId}`,
+                                        title: (
+                                            <>
+                                                <span className="text-[#0065ee]">
+                                                    {getCategoryName(data.categoryId, cate)}
+                                                </span>
+                                            </>
+                                        ),
+                                    },
+                                    {
+                                        title: (
+                                            <>
+                                                <span className="text-[#0065ee]">{data.name}</span>
+                                            </>
+                                        ),
+                                    },
+                                ]}
+                            />
                             <div>
                                 <Row gutter={[12, 12]}>
                                     <Col
@@ -274,7 +320,10 @@ function ProductDetail() {
                         )}
 
                         <Container>
-                            <ProductDetailViewer />
+                            {user && listProductByUser && listProductByUser.length > 0 && (
+                                <ProductDetailViewer />
+                            )}
+                            
                         </Container>
                     </>
                 )

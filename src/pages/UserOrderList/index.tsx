@@ -38,7 +38,7 @@ function UserOrderList() {
                     Navigate(-1);
                 }}
             >
-                Go back
+                Trở lại
             </Button>
             <Tabs activeKey={statusName} items={STATUS_ORDER} onChange={onChange} />
             {isLoading ? (
