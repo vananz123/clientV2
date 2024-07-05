@@ -348,7 +348,6 @@ function UserOrderDetail() {
                                     <span className="block">Đánh giá</span>
                                     <Form.Item<Review> name="rate">
                                         <Rate
-                                            defaultValue={2}
                                             className="shadow-red-800 hover:shadow-lg"
                                             tooltips={['Terrible', 'Bad', 'Normal', 'Good', 'Wonderful']}
                                         />
