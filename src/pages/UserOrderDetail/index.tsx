@@ -33,10 +33,8 @@ type TimeLineProps = {
     label?: string;
     children: string;
 };
-const desc = ['terrible', 'bad', 'normal', 'good', 'wonderful'];
 type ConfirmType = 'CANCELED' | 'SUCCESSED' | 'RETURNED';
 function UserOrderDetail() {
-    const [value, setValue] = React.useState(0);
     const { id } = useParams();
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const { Paragraph } = Typography;
@@ -349,7 +347,11 @@ function UserOrderDetail() {
                                     </Form.Item>
                                     <span className="block">Đánh giá</span>
                                     <Form.Item<Review> name="rate">
-                                        <Rate defaultValue={2} className='shadow-red-800 hover:shadow-lg' tooltips={['Terrible', 'Bad', 'Normal', 'Good', 'Wonderful']} />
+                                        <Rate
+                                            defaultValue={2}
+                                            className="shadow-red-800 hover:shadow-lg"
+                                            tooltips={['Terrible', 'Bad', 'Normal', 'Good', 'Wonderful']}
+                                        />
                                     </Form.Item>
                                     <Form.Item>
                                         <Button type="primary" htmlType="submit" style={{ width: '100px' }}>
