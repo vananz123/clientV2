@@ -26,8 +26,16 @@ const SearchC: React.FC = memo(() => {
             const searchHistory = localStorage.getItem('searchHistory');
             if (searchHistory != null) {
                 const searchHistoryArr: string[] = JSON.parse(searchHistory);
-                searchHistoryArr.push(searchValue);
-                localStorage.setItem('searchHistory', JSON.stringify(searchHistoryArr));
+                const index = searchHistoryArr.indexOf(searchValue)
+                console.log(index)
+                if( index !== -1){
+                    const newArr= searchHistoryArr.filter(x => x !== searchHistoryArr[index])
+                    newArr.push(searchValue);
+                    localStorage.setItem('searchHistory', JSON.stringify(newArr));
+                }else{
+                    searchHistoryArr.push(searchValue);
+                    localStorage.setItem('searchHistory', JSON.stringify(searchHistoryArr));
+                }
             } else {
                 localStorage.setItem('searchHistory', JSON.stringify([searchValue]));
             }
