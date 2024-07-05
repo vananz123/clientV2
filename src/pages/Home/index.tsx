@@ -54,7 +54,7 @@ function Home() {
                 .getProductPagingByFilter({
                     page: 1,
                     sortOder: 'ascending',
-                    productStatus: 3,
+                    productStatus: 2,
                     pageSize: 4,
                 })
                 .then((data) => data.resultObj.items),
@@ -67,7 +67,20 @@ function Home() {
                 .getProductPagingByFilter({
                     page: 1,
                     sortOder: 'ascending',
-                    productStatus: 2,
+                    productStatus: 3,
+                    pageSize: 4,
+                })
+                .then((data) => data.resultObj.items),
+        enabled: scroll >= 400,
+    });
+    const { data: productsSale } = useQuery({
+        queryKey: ['load-list-product-sale'],
+        queryFn: () =>
+            productServices
+                .getProductPagingByFilter({
+                    page: 1,
+                    sortOder: 'ascending',
+                    productStatus: 4,
                     pageSize: 4,
                 })
                 .then((data) => data.resultObj.items),
@@ -190,10 +203,10 @@ function Home() {
                 {user && listProductByUser && listProductByUser.length > 0 && (
                     <SliderC title="Dành riêng cho bạn" products={listProductByUser} />
                 )}
-                {productsHot ? (
+                {productsSale ? (
                     <HomeProductListShow
-                        products={productsHot}
-                        link="/product?productStatus=3"
+                        products={productsSale}
+                        link="/product?productStatus=4"
                         title="Có Thể Bạn Sẽ Thích"
                     />
                 ) : (

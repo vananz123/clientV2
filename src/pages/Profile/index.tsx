@@ -26,7 +26,7 @@ function Profile() {
                         GoBack();
                     }}
                 >
-                    Go back
+                    Trở lại
                 </Button>
                <div className='lg:hidden'>
                     <Button type='primary' onClick={()=> Navigate('/order')}>
