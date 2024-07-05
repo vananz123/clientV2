@@ -96,7 +96,7 @@ function UserOrderDetail() {
         setCurrentOD(e);
         if (e?.review == null) {
             form.setFieldValue('comment', '');
-            form.setFieldValue('rate', 0);
+            form.setFieldValue('rate', 1);
         } else {
             form.setFieldsValue(e.review);
         }
@@ -155,7 +155,7 @@ function UserOrderDetail() {
         {
             key: 'department',
             label: 'Phương thức nhận hàng',
-            children: `${order?.shippingName ==='Nhận hàng cửa hàng' ? order.department.address : order?.shippingName}`,
+            children: `${order?.shippingName === 'Nhận hàng cửa hàng' ? order.department.address : order?.shippingName}`,
         },
         {
             key: 'orderTotal',
@@ -345,8 +345,12 @@ function UserOrderDetail() {
                                     >
                                         <Input.TextArea placeholder="Content" />
                                     </Form.Item>
+                                    <span className="block">Đánh giá</span>
                                     <Form.Item<Review> name="rate">
-                                        <Rate />
+                                        <Rate
+                                            className="shadow-red-800 hover:shadow-lg"
+                                            tooltips={['Terrible', 'Bad', 'Normal', 'Good', 'Wonderful']}
+                                        />
                                     </Form.Item>
                                     <Form.Item>
                                         <Button type="primary" htmlType="submit" style={{ width: '100px' }}>
