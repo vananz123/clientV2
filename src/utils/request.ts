@@ -1,6 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
-import.meta.env.BASE_URL
-export type BaseUrl = 'https://localhost:7005'
 const baseUrl =import.meta.env.VITE_BASE_URL
 const request = axios.create({
     baseURL:`${baseUrl}/api`
@@ -54,15 +53,15 @@ export const get = async (path: string, options: object = {}) => {
     const response = await request.get(path, options);
     return response.data;
 };
-export const post = async (path: string, data: any, options: object = {}) => {
+export const post = async (path: string, data: any = undefined, options: object = {}) => {
     const response = await request.post(path, data, options);
     return response.data;
 };
-export const put = async (path: string, data?: any, options: object = {}) => {
+export const put = async (path: string, data:any = undefined, options: object = {}) => {
     const response = await request.put(path, data, options);
     return response.data;
 };
-export const patch = async (path: string, data: any, options: object = {}) => {
+export const patch = async (path: string, data: any = undefined, options: object = {}) => {
     const response = await request.patch(path, data, options);
     return response.data;
 };

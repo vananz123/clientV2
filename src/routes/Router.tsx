@@ -1,29 +1,25 @@
-import Dashboard from '@/pages/Admin/Dashboard';
-import Home from '@/pages/Home';
-import ProductListShow from '@/pages/ProductListShow';
-import { ProductList, ProductEdit, ProductAdd } from '@/pages/Admin/Product';
-import { CategoriesList, CategoryEdit, CategoryAdd } from '@/pages/Admin/Category';
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import ProductDetail from '@/pages/ProductDetail';
-import { useRoutes, Navigate } from 'react-router-dom';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { Suspense, lazy } from 'react';
+const Home = lazy(() => import('@/pages/Home'));
+const ProductListShow = lazy(() => import('@/pages/ProductListShow'));
+const Login = lazy(() => import('@/pages/Login'));
+const Register = lazy(() => import('@/pages/Register'));
+const ProductDetail = lazy(() => import('@/pages/ProductDetail'));
+import { useRoutes } from 'react-router-dom';
 import DefaultLayout from '@/conponents/Layout/DefaultLayout';
-import AdminLayout from '@/conponents/Layout/AdminLayout';
 import AuthGuard from './AuthGuard';
 import GuestGuard from './GuestGuard';
 import RoleGuard from './RoleGuard';
-import Profile from '@/pages/Profile';
-import Cart from '@/pages/Cart';
-import Purchase from '@/pages/Purchase';
+const Profile = lazy(() => import('@/pages/Profile'));
+const Cart = lazy(() => import('@/pages/Cart'));
+const Purchase = lazy(()=> import('@/pages/Purchase'));
 import Checkout from '@/pages/Pay/Checkout';
 import CheckoutVnpay from '@/pages/Pay/CheckoutVnpay';
-import { OrderConfirm, OrderList } from '@/pages/Admin/Order';
-import ProductListSearch from '@/pages/ProductListSearch';
-import UserOrderDetail from '@/pages/UserOrderDetail';
-import { PromotionAdd, PromotionEdit, PromotionList } from '@/pages/Admin/Promotion';
-import ForgotPassword from '@/pages/ForgotPassword';
-import UserList from '@/pages/Admin/User/UserList';
-const Router: React.FC<{}> = () => {
+const UserOrderDetail = lazy(() => import('@/pages/UserOrderDetail'));
+const UserOrderList = lazy(() => import('@/pages/UserOrderList'));
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
+const Page404 = lazy(() => import('@/pages/Page404/Page404'));
+const Router: React.FC = () => {
     return useRoutes([
         {
             path: 'auth',
@@ -32,7 +28,10 @@ const Router: React.FC<{}> = () => {
                     path: 'reset-password',
                     element: (
                         <GuestGuard>
-                            <ForgotPassword />
+                            <Suspense>
+                                {' '}
+                                <ForgotPassword />
+                            </Suspense>
                         </GuestGuard>
                     ),
                 },
@@ -40,7 +39,10 @@ const Router: React.FC<{}> = () => {
                     path: 'login',
                     element: (
                         <GuestGuard>
-                            <Login />
+                            <Suspense>
+                                {' '}
+                                <Login />
+                            </Suspense>
                         </GuestGuard>
                     ),
                 },
@@ -48,70 +50,106 @@ const Router: React.FC<{}> = () => {
                     path: 'register',
                     element: (
                         <GuestGuard>
-                            <Register />
+                            <Suspense>
+                                {' '}
+                                <Register />
+                            </Suspense>
                         </GuestGuard>
                     ),
                 },
             ],
         },
         {
+            path: '*',
+            element: <DefaultLayout />,
+            children: [{ path: '*', element: <Page404 /> }],
+        },
+        {
             path: '/',
             element: <DefaultLayout />,
             children: [
                 {
-                    index: true,
-                    element: <Navigate to={'/'} replace />,
-                },
-                {
-                    path: "/home",
-                    element: <Home />,
+                    path: '/',
+                    element: (
+                        <Suspense>
+                            <Home />
+                        </Suspense>
+                    ),
                 },
                 {
                     path: 'cart',
                     element: (
                         <AuthGuard>
-                            <RoleGuard role="customer">
-                                <Cart />
+                            <RoleGuard role={['customer']}>
+                                <Suspense>
+                                    <Cart />
+                                </Suspense>
                             </RoleGuard>
                         </AuthGuard>
                     ),
-                },{
+                },
+                {
                     path: 'purchase',
                     element: (
                         <AuthGuard>
-                            <RoleGuard role="customer">
-                                <Purchase />
+                            <RoleGuard role={['customer']}>
+                               <Suspense> <Purchase /></Suspense>
                             </RoleGuard>
                         </AuthGuard>
                     ),
                 },
                 {
-                    path: 'product/:id',
-                    element: <ProductListShow />,
+                    path: 'product',
+                    element: (
+                        <Suspense>
+                            <ProductListShow />
+                        </Suspense>
+                    ),
+                    
                 },
                 {
                     path: 'product/detail/:id',
-                    element: <ProductDetail />,
-                },
-                {
-                    path: 'product/search/:keyword',
-                    element: <ProductListSearch />,
+                    element: (
+                        <Suspense>
+                            <ProductDetail />
+                        </Suspense>
+                    ),
                 },
                 {
                     path: 'profile',
                     element: (
                         <AuthGuard>
-                            <RoleGuard role="customer">
-                                <Profile />
+                            <RoleGuard role={['customer']}>
+                                <Suspense>
+                                    {' '}
+                                    <Profile />
+                                </Suspense>
                             </RoleGuard>
                         </AuthGuard>
                     ),
-                },{
-                    path: 'profile/order-detail/:id',
+                },
+                {
+                    path: 'order',
                     element: (
                         <AuthGuard>
-                            <RoleGuard role="customer">
-                                <UserOrderDetail />
+                            <RoleGuard role={['customer']}>
+                                <Suspense>
+                                    {' '}
+                                    <UserOrderList />
+                                </Suspense>
+                            </RoleGuard>
+                        </AuthGuard>
+                    ),
+                },
+                {
+                    path: 'order/detail/:id',
+                    element: (
+                        <AuthGuard>
+                            <RoleGuard role={['customer']}>
+                                <Suspense>
+                                    {' '}
+                                    <UserOrderDetail />
+                                </Suspense>
                             </RoleGuard>
                         </AuthGuard>
                     ),
@@ -120,7 +158,7 @@ const Router: React.FC<{}> = () => {
                     path: 'checkout/:id',
                     element: (
                         <AuthGuard>
-                            <RoleGuard role="customer">
+                            <RoleGuard role={['customer']}>
                                 <Checkout />
                             </RoleGuard>
                         </AuthGuard>
@@ -130,76 +168,12 @@ const Router: React.FC<{}> = () => {
                     path: 'checkout-vnpay',
                     element: (
                         <AuthGuard>
-                            <RoleGuard role="customer">
+                            <RoleGuard role={['customer']}>
                                 <CheckoutVnpay />
                             </RoleGuard>
                         </AuthGuard>
                     ),
-                }
-            ],
-        },
-        {
-            path: 'admin',
-            element: (
-                <AuthGuard>
-                    <RoleGuard role="admin">
-                        <AdminLayout />
-                    </RoleGuard>
-                </AuthGuard>
-            ),
-            children: [
-                {
-                    index: true,
-                    element: <Navigate to={'/admin'} replace />,
                 },
-                {
-                    path: 'dashboard',
-                    element: <Dashboard />,
-                },
-                {
-                    path: 'product',
-                    element: <ProductList />,
-                },
-                {
-                    path: 'product-add',
-                    element: <ProductAdd />,
-                },
-                {
-                    path: 'product-edit/:id',
-                    element: <ProductEdit />,
-                },
-                {
-                    path: 'categories',
-                    element: <CategoriesList />,
-                },
-                {
-                    path: 'category-add',
-                    element: <CategoryAdd />,
-                },
-                {
-                    path: 'category-edit/:id',
-                    element: <CategoryEdit />,
-                },
-                {
-                    path: 'order',
-                    element: <OrderList />,
-                },
-                {
-                    path: 'order/detail/:id',
-                    element: <OrderConfirm />,
-                },{
-                    path: 'promotion',
-                    element: <PromotionList />,
-                },{
-                    path: 'promotion-add',
-                    element: <PromotionAdd />,
-                },{
-                    path: 'promotion-edit/:id',
-                    element: <PromotionEdit />,
-                },{
-                    path: 'user',
-                    element: <UserList />,
-                }
             ],
         },
     ]);

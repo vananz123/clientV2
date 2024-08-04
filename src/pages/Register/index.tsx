@@ -1,9 +1,6 @@
 import React from 'react';
-import { Button, Checkbox, Form, type FormProps, Input, Space, Alert, Row, Col } from 'antd';
+import { Button, Form, type FormProps, Input, Alert, Row, Col } from 'antd';
 import { UserOutlined, LockOutlined, InfoCircleOutlined, MailOutlined } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { signIn } from '@/feature/user/userSlice';
-import * as loginServices from '@/api/loginServices';
 import * as userServices from '@/api/userServices';
 import { Result } from '@/api/ResType';
 import { Link, useNavigate } from 'react-router-dom';
@@ -16,11 +13,9 @@ export type RegisterUser = {
     password: string;
     confirmPassword: string;
 };
-
 function Register() {
     const [message, setMessage] = React.useState<Result>();
     const navigator = useNavigate();
-    const dispatch = useAppDispatch();
     const onFinish: FormProps<RegisterUser>['onFinish'] = async (values) => {
         console.log(values);
         const register = await userServices.Register(values);
@@ -96,9 +91,9 @@ function Register() {
                     <Form.Item<RegisterUser>
                         name="userName"
                         tooltip="What do you want others to call you?"
-                        rules={[{ required: true, message: 'Please input userName!', whitespace: true }]}
+                        rules={[{ required: true, message: 'Please input display name!', whitespace: true }]}
                     >
-                        <Input placeholder="User name" prefix={<UserOutlined />} />
+                        <Input placeholder="Display name" prefix={<UserOutlined />} />
                     </Form.Item>
                     <Form.Item<RegisterUser>
                         name="email"
@@ -115,7 +110,17 @@ function Register() {
                     </Form.Item>
                     <Form.Item<RegisterUser>
                         name="password"
-                        rules={[{ required: true, message: 'Please input your password!' }]}
+                        rules={[
+                            { required: true, message: 'Please input your password!' },
+                            () => ({
+                                validator(_, value) {
+                                    if (value.length >= 6) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(new Error('The password must have length better 6!'));
+                                },
+                            }),
+                        ]}
                     >
                         <Input.Password placeholder="Password" prefix={<LockOutlined />} />
                     </Form.Item>

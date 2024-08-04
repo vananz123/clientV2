@@ -1,12 +1,11 @@
 import queryString from 'query-string';
-import React, { useEffect } from 'react';
 import * as userServices from '@/api/userServices';
-import { Button, Checkbox, Form, type FormProps, Input, Space, Alert, Modal, message } from 'antd';
+import { Button, Form, type FormProps, Input, message } from 'antd';
 import { RegisterUser } from '../Register';
 import { useNavigate } from 'react-router-dom';
 import { LockOutlined } from '@ant-design/icons';
 function ForgotPassword() {
-    let p = queryString.parse(window.location.search);
+    const p = queryString.parse(window.location.search);
     const Navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
     const onFinish: FormProps<RegisterUser>['onFinish'] = async (values) => {
@@ -48,7 +47,7 @@ function ForgotPassword() {
                     name="password"
                     rules={[{ required: true, message: 'Please input your password!'}]}
                 >
-                    <Input.Password minLength={8} placeholder="New password" prefix={<LockOutlined />} />
+                    <Input.Password minLength={6} placeholder="New password" prefix={<LockOutlined />} />
                 </Form.Item>
                 <Form.Item
                     name="confirmPassword"

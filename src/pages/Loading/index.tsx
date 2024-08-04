@@ -1,8 +1,7 @@
 
 import { Layout, theme } from 'antd';
 const { Content, Header, } = Layout;
-import { Outlet } from 'react-router-dom';
-function Loading({ children }: any) {
+function Loading() {
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();

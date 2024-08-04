@@ -1,42 +1,54 @@
-import type { Action, ThunkAction } from "@reduxjs/toolkit"
-import { combineSlices, configureStore } from "@reduxjs/toolkit"
-import { setupListeners } from "@reduxjs/toolkit/query"
-import { userSlice } from "@/feature/user/userSlice"
-import { cateSlice } from "@/feature/category/cateSlice"
-import { cartSlice } from "@/feature/cart/cartSlice"
-// `combineSlices` automatically combines the reducers using
-// their `reducerPath`s, therefore we no longer need to call `combineReducers`.
-const rootReducer = combineSlices(userSlice,cateSlice,cartSlice)
-// Infer the `RootState` type from the root reducer
-export type RootState = ReturnType<typeof rootReducer>
+import {
+  Action,
+  configureStore,
+  ThunkAction,
+  combineReducers,
+} from "@reduxjs/toolkit";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import cartReducer from "./feature/cart/reducer";
+import cateReducer from "./feature/category/reducer";
+import userReducer from "./feature/user/reducer";
+import orderStatusReducer from "./feature/order-status/reducer";
+const persistConfig = {
+  key: "la-store-website",
+  storage,
+  whitelist: ["auth"],
+};
 
-// The store setup is wrapped in `makeStore` to allow reuse
-// when setting up tests that need the same store config
-export const makeStore = (preloadedState?: Partial<RootState>) => {
-  const store = configureStore({
-    reducer: rootReducer,
-    // Adding the api middleware enables caching, invalidation, polling,
-    // and other useful features of `rtk-query`.
-    // middleware: getDefaultMiddleware => {
-    //   return getDefaultMiddleware().concat(quotesApiSlice.middleware)
-    // },
-    preloadedState,
-  })
-  // configure listeners using the provided defaults
-  // optional, but required for `refetchOnFocus`/`refetchOnReconnect` behaviors
-  setupListeners(store.dispatch)
-  return store
-}
+const rootReducer = combineReducers({
+  cart:cartReducer,
+  categories:cateReducer,
+  user:userReducer,
+  orderStatus:orderStatusReducer
+});
 
-export const store = makeStore()
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// Infer the type of `store`
-export type AppStore = typeof store
-// Infer the `AppDispatch` type from the store itself
-export type AppDispatch = AppStore["dispatch"]
-export type AppThunk<ThunkReturnType = void> = ThunkAction<
-  ThunkReturnType,
+const createStore = () => {
+  return configureStore({
+    reducer: persistedReducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: false,
+      }),
+  });
+};
+
+export let store = createStore();
+
+export const persistor = persistStore(store);
+
+export const refreshStore = () => {
+  store = createStore();
+};
+export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
+export type StoreType = typeof store;
+
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
   RootState,
   unknown,
-  Action
->
+  Action<string>
+>;

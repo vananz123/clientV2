@@ -1,10 +1,11 @@
-import { Menu, MenuProps } from "antd";
-import { useAppSelector } from "@/app/hooks";
-import { selectCate } from "@/feature/category/cateSlice";
-import { useLocation, useNavigate  } from "react-router-dom";
-import { Category } from "@/type";
-import React from "react";
-import Logo from '/public/L.png'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Menu, MenuProps } from 'antd';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { selectCategories } from '@/app/feature/category/reducer';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Category } from '@/type';
+import React, { SetStateAction, memo, useEffect } from 'react';
+import { loadCategories } from '@/app/feature/category/action';
 type MenuItem = Required<MenuProps>['items'][number];
 function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
     return {
@@ -14,47 +15,73 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
         label,
     } as MenuItem;
 }
-
-const NavC:React.FC = ()=>{
-    const cate = useAppSelector(selectCate)
-    const loca = useLocation()
-    const arr = [loca.pathname]
-    const Navigate  =useNavigate()
-    function renderSubCateItem (_cate: Category[]){
-        const arr:MenuItem[] =[]
-        _cate.forEach((element:Category) => {
-            const item = getItem(element.name,`product/${element.id}`)
-            arr.push(item)
+type ResponsiveType = 'forMobile' | 'forDesktop';
+interface Props {
+    type?: ResponsiveType;
+    closeDrawer?: SetStateAction<any>;
+}
+const NavC: React.FC<Props> = memo(({ type = 'forDesktop', closeDrawer }) => {
+    const loca = useLocation();
+    const arr = [loca.pathname];
+    const Navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const { data } = useAppSelector(selectCategories);
+    useEffect(() => {
+        dispatch(loadCategories());
+    }, [dispatch]);
+    const renderSubCateItem = (_cate: Category[]) => {
+        const arr: MenuItem[] = [];
+        _cate.forEach((element: Category) => {
+            const item = getItem(element.name, `/product?categoryId=${element.id}`);
+            arr.push(item);
         });
-        return arr
-    }
-    function renderCateItem () {
-        const arr:MenuItem[] =[]
-        cate.forEach((element:Category) => {
-            const item = getItem(element.name,`product/${element.id}`,'',renderSubCateItem(element.subCategory))
-            arr.push(item)
-        });
-        return arr
-    }
-    //const item:MenuProps['items'] = [getItem('Trang chủ','/home'),getItem('Khuyến mãi','/product/promotion'),getItem('Danh mục','cate','',renderSubItem())]
-    const item:MenuProps['items'] = [...renderCateItem(),getItem('Khuyến mãi','/product/promotion')]
-    const handleClick: MenuProps['onClick'] = (e) =>{
-        Navigate(`${e.key}`)
-    }
+        return arr;
+    };
+    const renderCateItem = () => {
+        const arr: MenuItem[] = [];
+        if (data) {
+            data.forEach((element: Category) => {
+                const item = getItem(
+                    <>
+                        <span
+                            onClick={() => {
+                                Navigate(`/product?categoryId=${element.id}`);
+                                handleCloseDrawer();
+                            }}
+                        >
+                            {element.name}
+                        </span>
+                    </>,
+                    `/product?categoryId=${element.id}`,
+                    '',
+                    renderSubCateItem(element.subCategory),
+                );
+                arr.push(item);
+            });
+        }
+        return arr;
+    };
+    const item: MenuProps['items'] = [...renderCateItem(), getItem('Khuyến mãi', '/product?isPromotion=1')];
+    const handleCloseDrawer = () => {
+        closeDrawer(false);
+    };
+    const handleClick: MenuProps['onClick'] = (e) => {
+        Navigate(`${e.key}`);
+        handleCloseDrawer();
+    };
     return (
         <>
-            <div className="demo-logo" style={{width:100,height:64}}>
-                <img style={{width:'100%',height:'100%'}} src={Logo}/>
-            </div>
-            <Menu
-              theme='light'
-              mode="horizontal"
-              selectedKeys={arr}
-              items={item}
-              style={{ flex: 1, minWidth: 0 }}
-              onClick={handleClick}
-            />
+            {data && (
+                <Menu
+                    theme={'light'}
+                    mode={type === 'forDesktop' ? 'horizontal' : 'inline'}
+                    selectedKeys={arr}
+                    items={item}
+                    style={{ flex: 1, minWidth: 0, marginLeft: 0 }}
+                    onClick={handleClick}
+                />
+            )}
         </>
     );
-}
+});
 export default NavC;

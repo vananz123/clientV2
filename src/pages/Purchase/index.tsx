@@ -1,308 +1,414 @@
-import type { Address, Cart, PaymentMethod, PaymentType } from '@/api/ResType';
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { selectCart } from '@/feature/cart/cartSlice';
-import { BaseUrl } from '@/utils/request';
-import {
-    Avatar,
-    Button,
-    Divider,
-    Input,
-    Select,
-    Card,
-    Col,
-    Descriptions,
-    Empty,
-    InputNumber,
-    List,
-    Modal,
-    Popconfirm,
-    Row,
-    Space,
-    Typography,
-    Drawer,
-    Radio,
-} from 'antd';
-import React, { useEffect } from 'react';
-import { useState } from 'react';
-import type { InputRef, RadioChangeEvent, SelectProps } from 'antd';
+import type { Address, Cart, PaymentMethod, Shipping } from '@/api/ResType';
+import { useAppSelector } from '@/app/hooks';
+import { Button, Divider, Select, Col, Descriptions, Modal, Row, Space, Typography, Drawer, Radio } from 'antd';
+import { Link } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect } from 'react';
+import type { RadioChangeEvent, SelectProps } from 'antd';
 import type { DescriptionsProps } from 'antd';
 import * as userServices from '@/api/userServices';
 import * as orderServices from '@/api/orderServices';
 import * as paymentServices from '@/api/paymentServices';
+import * as departmentServices from '@/api/departmentServices';
 import { useNavigate } from 'react-router-dom';
-import { selectUser } from '@/feature/user/userSlice';
-import AddressForm from '@/conponents/AddressForm';
-import { StatusForm } from '../Admin/Category/Type';
-const { Title } = Typography;
+const AddressForm = lazy(() => import('@/conponents/AddressForm'));
+import { Department, StatusForm } from '@/type';
+import { EditOutlined, PlusOutlined, ArrowLeftOutlined, EnvironmentTwoTone } from '@ant-design/icons';
+import { selectCartDetail } from '@/app/feature/cart/reducer';
+import { selectUser } from '@/app/feature/user/reducer';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import Container from '@/conponents/Container';
+import { ChangeCurrence } from '@/utils/utils';
+const { Title, Paragraph } = Typography;
 export type TypeFormAddress = 'ADD' | 'EDIT';
 function Purchase() {
     const baseUrl = import.meta.env.VITE_BASE_URL;
-    const user = useAppSelector(selectUser);
+    const user = useAppSelector(selectUser).data;
     const navigate = useNavigate();
-    const cart = useAppSelector(selectCart);
+    const cart = useAppSelector(selectCartDetail).data;
     const [status, setStatus] = React.useState<StatusForm>('loading');
-    const [options, setOptions] = React.useState<SelectProps['options']>([]);
-    const [addresses, setAddresses] = React.useState<Address[]>([]);
+    const options: SelectProps['options'] = [];
+    const optionsShipping: SelectProps['options'] = [];
+    const optionsDepartment: SelectProps['options'] = [];
     const [currentAddress, setCurrentAddress] = React.useState<Address>();
     const [currentAddressForm, setCurrentAddressForm] = React.useState<Address>();
-    const [type, setType] = React.useState<string>('');
+    const [type, setType] = React.useState<string>('Chọn phương thức thanh toán');
+    const [typeShipping, setTypeShipping] = React.useState<string>('Chọn phương thức nhận hàng');
+    const [currentDepartmentId, setCurrentDepartmentId] = React.useState<string>();
     const [open, setOpen] = React.useState(false);
-    const [confirmLoading, setConfirmLoading] = React.useState(false);
-    const [modalText, setModalText] = React.useState('Do you want to detele!');
-    const [openDrawAddress, setOpenDrawAddress] = useState(false);
+    const [openDrawAddress, setOpenDrawAddress] = React.useState(false);
     const [typeFormAddress, setTypeFormAddress] = React.useState<TypeFormAddress>('EDIT');
+    const { data: listPaymentMethod } = useQuery({
+        queryKey: [`type-payment-method`],
+        queryFn: () => paymentServices.getPaymentMethodByUserId(user !== undefined ? user.id : ''),
+        enabled: !!user,
+    });
+    const { data: addresses, refetch } = useQuery({
+        queryKey: [`list-addresses`],
+        queryFn: () => userServices.getAddressByUserId(user !== undefined ? user.id : ''),
+        enabled: !!user,
+    });
+    const { data: listShippingMethod } = useQuery({
+        queryKey: [`list-shipping`],
+        queryFn: () => orderServices.shippingGetAll(),
+    });
+    const { data: listDepartment } = useQuery({
+        queryKey: [`list-department`],
+        queryFn: () => departmentServices.getAllDepartment(),
+    });
+    if (listPaymentMethod) {
+        listPaymentMethod.map((e: PaymentMethod) => {
+            options.push({
+                value: e.id.toString(),
+                label: e.name,
+            });
+        });
+    }
+    if (listShippingMethod) {
+        listShippingMethod.map((e: Shipping) => {
+            optionsShipping.push({
+                value: e.id.toString(),
+                label: e.name,
+            });
+        });
+    }
+
+    if (listDepartment) {
+        listDepartment.map((e: Department) => {
+            optionsDepartment.push({
+                value: e.id.toString(),
+                label: e.name,
+            });
+        });
+    }
+    const checkStock = (id: number, inventory: Cart[] | undefined) => {
+        let a = true;
+        if (inventory) {
+            inventory.forEach((e: Cart) =>
+                e.inventories.forEach((element) => {
+                    if (element.departmentId === id) {
+                        if (Number(element.stock) >= Number(e.quantity)) {
+                            a = false;
+                        }
+                    }
+                }),
+            );
+        }
+        return a;
+    };
     const showDrawerAddress = () => {
         setOpenDrawAddress(true);
     };
-
     const onCloseDrawAddress = () => {
         setOpenDrawAddress(false);
+    };
+    const handleChange = (value: string) => {
+        setType(value);
+    };
+    const handleChangeShip = (value: string) => {
+        setTypeShipping(value);
+    };
+    useEffect(() => {
+        if (status != 'loading') refetch();
+    }, [status, refetch]);
+    useEffect(() => {
+        if (addresses && addresses.length > 0) {
+            setCurrentAddress(addresses[0]);
+        }
+    }, [addresses]);
+    const handleCancel = () => {
+        setOpen(false);
+    };
+    const handleChangeAddresses = (e: RadioChangeEvent) => {
+        if (addresses !== undefined) {
+            setCurrentAddress(addresses.find((x) => x.id == Number(e.target.value)));
+        }
+    };
+    const handleChangeDepartment = (e: RadioChangeEvent) => {
+        if (listDepartment !== undefined) {
+            setCurrentDepartmentId(e.target.value);
+        }
+    };
+    const mutationOrder = useMutation({
+        mutationKey: ['mutationOrder'],
+        mutationFn: (body: {
+            userId: string;
+            addressId: number;
+            type: number;
+            typeShipping: number;
+            departmentId: number;
+        }) => orderServices.create(body.userId, body.addressId, body.type, body.typeShipping, body.departmentId),
+        onSuccess: (data) => {
+            if (data.isSuccessed === true) {
+                if (data.resultObj?.paymentTypeName === 'Thanh toán VNPAY') {
+                    window.location.assign(data.resultObj.returnUrl);
+                } else {
+                    navigate(`/checkout/${data.resultObj.orderId}`);
+                }
+            }
+        },
+    });
+    const createOrder = async () => {
+        if (user != undefined && currentAddress != undefined && type != 'Chọn phương thức thanh toán') {
+            mutationOrder.mutateAsync({
+                userId: user.id,
+                addressId: currentAddress.id,
+                type: Number(type),
+                typeShipping: Number(typeShipping),
+                departmentId: currentDepartmentId ? Number(currentDepartmentId) : 0,
+            });
+        }
     };
     let items: DescriptionsProps['items'] = [
         {
             key: 'phoneNumber',
-            label: 'Phone number',
+            label: 'Số Điện Thoại',
             children: `${currentAddress?.phoneNumber}`,
         },
         {
             key: 'address',
-            label: 'Address',
-            children: `${currentAddress?.streetNumber + ', ' + currentAddress?.wardCommune + ', ' + currentAddress?.urbanDistrict + ', ' + currentAddress?.city}`,
+            label: 'Địa chỉ',
+            children: `${currentAddress?.streetNumber + ', ' + currentAddress?.wardCommune + ', ' + currentAddress?.urbanDistrict + ', ' + currentAddress?.province}`,
         },
     ];
     if (typeof currentAddress === 'undefined') {
         items = [];
     }
-    const handleChange = (value: string) => {
-        setType(value);
-    };
-    const getPaymentType = async () => {
-        if (user != undefined) {
-            const res = await paymentServices.getPaymentMethodByUserId(user.id);
-            if (res.isSuccessed == true) {
-                setType(res.resultObj[0].id.toString());
-                let op: SelectProps['options'] = [];
-                res.resultObj.map((e: PaymentMethod) => {
-                    op.push({
-                        value: e.id.toString(),
-                        label: e.name,
-                    });
-                });
-                setOptions(op);
-            }
-        }
-    };
 
-    const getAddress = async () => {
-        if (user != undefined) {
-            const res = await userServices.getAddressByUserId(user.id);
-            if (res.isSuccessed == true) {
-                setAddresses(res.resultObj);
-                setCurrentAddress(res.resultObj[0]);
-            }
-        }
-    };
-    useEffect(() => {
-        getPaymentType();
-        getAddress();
-        if (status != 'loading') {
-            handleCancel();
-        }
-    }, [status]);
-    const showModal = (cart: Cart) => {
-        setOpen(true);
-    };
-
-    const handleOk = () => {
-        setConfirmLoading(true);
-    };
-
-    const handleCancel = () => {
-        setOpen(false);
-    };
-    const handleChangeAddresses = (e: RadioChangeEvent) => {
-        const add = addresses.find((x) => x.id == Number(e.target.value));
-        if (add != undefined) {
-            setCurrentAddress(add);
-        }
-    };
-    const createOrder = async () => {
-        if (user != undefined && currentAddress != undefined && type != '') {
-            const res = await orderServices.create(user.id, currentAddress.id, Number(type));
-            console.log(res);
-            if (res.isSuccessed == true) {
-                if (res.resultObj?.paymentTypeName === 'Thanh toán VNPAY') {
-                    window.location.assign(res.resultObj.returnUrl);
-                } else {
-                    navigate(`/checkout/${res.resultObj.orderId}`);
-                }
-            }
-        }
-    };
     return (
-        <div>
-            <Row gutter={24}>
-                <Col className="gutter-row" span={16} xs={24} md={16} lg={16} xl={16}>
-                    <Title level={3}>Payment type</Title>
-                    <Select
-                        size={'middle'}
-                        value={type}
-                        onChange={handleChange}
-                        style={{ width: 300 }}
-                        options={options}
-                    />
-                    <Descriptions
-                        title="Address Info"
-                        column={1}
-                        items={items}
-                        style={{ marginTop: 10 }}
-                        bordered
-                        extra={(
-                            typeof currentAddress !== 'undefined' ? (
-                                <Button
-                                    type="primary"
-                                    onClick={() => {
-                                        showDrawerAddress();
-                                    }}
-                                >
-                                    Edit
-                                </Button>
-                            ) : (
-                                <Button
-                                    type="primary"
-                                    onClick={() => {
-                                        setCurrentAddressForm(undefined);
-                                        setTypeFormAddress('ADD');
-                                        setOpen(true);
-                                    }}
-                                >
-                                    Add address
-                                </Button>
-                            )
-    )}
-                    />
+        <Container>
+            <Button
+                type="text"
+                icon={<ArrowLeftOutlined />}
+                size="large"
+                style={{ marginBottom: '10px' }}
+                onClick={() => {
+                    navigate(-1);
+                }}
+            >
+                Trở lại
+            </Button>
+            <Row gutter={[24, 24]} className="mb-5 p-5">
+                <Col className="gutter-row" xs={24} lg={14} xl={14}>
+                    <div className="mb-5">
+                        <Title level={4}>Phương Thức Nhận Hàng</Title>
+                        <Select
+                            size={'middle'}
+                            value={typeShipping}
+                            onChange={handleChangeShip}
+                            style={{ width: '100%', marginBottom: 10 }}
+                            options={optionsShipping}
+                        />
+                        <Radio.Group onChange={handleChangeDepartment}>
+                            {typeShipping &&
+                                typeShipping === '2' &&
+                                listDepartment &&
+                                listDepartment.map((e) => (
+                                    <Radio value={e.id} disabled={checkStock(e.id, cart.items)}>
+                                        <div className="flex">
+                                            <div className="m-2">
+                                                <p>{e.address}</p>
+                                                <a className="text-blue-700" href={e.linkGoogleMap} target="_blank">
+                                                    <EnvironmentTwoTone /> Chỉ đường
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </Radio>
+                                ))}
+                        </Radio.Group>
+                    </div>
+                    <div>
+                        <Title level={4}>Phương Thức Thanh Toán</Title>
+                        <Select
+                            size={'middle'}
+                            value={type}
+                            onChange={handleChange}
+                            style={{ width: '100%', marginBottom: 10 }}
+                            options={options}
+                        />
+                        <Descriptions
+                            title="Thông Tin Địa Chỉ"
+                            column={1}
+                            items={items}
+                            style={{ marginTop: 10 }}
+                            bordered
+                            extra={
+                                typeof currentAddress !== 'undefined' ? (
+                                    <Button
+                                        type="primary"
+                                        icon={<EditOutlined />}
+                                        onClick={() => {
+                                            showDrawerAddress();
+                                        }}
+                                    ></Button>
+                                ) : (
+                                    <Button
+                                        type="primary"
+                                        onClick={() => {
+                                            setCurrentAddressForm(undefined);
+                                            setTypeFormAddress('ADD');
+                                            setOpen(true);
+                                        }}
+                                    >
+                                        Thêm Địa Chỉ
+                                    </Button>
+                                )
+                            }
+                        />
+                    </div>
                 </Col>
-                <Col className="gutter-row" span={8} xs={24} md={8} lg={8} xl={8}>
+                <Col className="gutter-row" xs={24} lg={10} xl={10}>
+                    <Title level={4}>Sản phẩm trong đơn</Title>
                     {cart.items.map((e) => (
-                        <Card key={e.id} style={{ width: '100%', marginBottom: 10 }}>
-                            <Row gutter={[8, 8]}>
+                        <div className="rounded bg-[#fafafa] p-6 pt-0">
+                            <div className="flex justify-between">
+                                <div className="w-full">
+                                    <Paragraph
+                                        ellipsis={{
+                                            rows: 1,
+                                        }}
+                                    >
+                                        <Link to={`/product/detail/${e.productId}`}>{e.seoTitle}</Link>
+                                    </Paragraph>
+                                </div>
+                            </div>
+                            <Row gutter={[8, 0]}>
                                 <Col className="gutter-row" span={6}>
-                                    <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: '100%' }} />
+                                    <div className="w-full h-full bg-white rounded">
+                                        <img className="w-full" src={`${baseUrl + e.urlThumbnailImage}`} />
+                                    </div>
                                 </Col>
-                                <Col className="gutter-row" span={10}>
-                                    <Space align="start" direction="vertical">
-                                        <p>{e.seoTitle}</p>
-                                        <p>
-                                            {e?.name} {e?.value}
-                                        </p>
-                                    </Space>
-                                </Col>
-                                <Col span={8}>
-                                    {e.discountRate != null ? (
-                                        <p style={{ textDecoration: 'line-through', color: 'red' }}>
-                                            {ChangeCurrence(e?.priceBeforeDiscount)}
-                                        </p>
-                                    ) : (
-                                        ''
-                                    )}
-                                    <p>{ChangeCurrence(e?.total)}</p>
+                                <Col className="gutter-row" span={18}>
+                                    <div className="w-full h-full sm:p-2">
+                                        <div className="h-full flex flex-col justify-between">
+                                            <div className="w-full">
+                                                {e?.type == undefined ? (
+                                                    <div className="text-[14px] sm:text-[16px] text-red-500 font-medium mr-[5px]">
+                                                        <span>{ChangeCurrence(e?.priceBeforeDiscount)}</span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex flex-row">
+                                                        <div>
+                                                            <span className="text-[14px] sm:text-[16px] text-red-500 font-medium mr-[5px]">
+                                                                {ChangeCurrence(e?.price)}
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                            <span className="text-[10px] sm:text-[12px] text-[#6D6E72] font-medium mr-[5px] line-through">
+                                                                {ChangeCurrence(e?.priceBeforeDiscount)}
+                                                            </span>
+                                                            {e.type === 'fixed' ? (
+                                                                <span className="pro-percent">
+                                                                    {' '}
+                                                                    -{e.valuePromotion}
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-[#E30019] text-[10px] sm:text-[12px] text-center rounded border-[1px] border-[#E30019] px-1">
+                                                                    -{e.valuePromotion}%
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                <div className="mt-2">
+                                                    <span className="mr-3">
+                                                        {e?.name}: {e?.value} {e.sku}
+                                                    </span>
+                                                    <span>x{e.quantity}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </Col>
                             </Row>
-                        </Card>
+                        </div>
                     ))}
-                    <Descriptions title="Order infomation" bordered column={1}>
-                        <Descriptions.Item label="Total price ">
+                    <Title level={4}>Chi tiết đơn hàng</Title>
+                    <Descriptions bordered column={1}>
+                        <Descriptions.Item label="Giá Sản Phẩm">
                             {ChangeCurrence(cart.totalPriceBeforeDiscount)}
                         </Descriptions.Item>
-                        <Descriptions.Item label="Total Discount">
-                            {ChangeCurrence(cart.totalDiscount)}
+                        <Descriptions.Item label="Giá Giảm">{ChangeCurrence(cart.totalDiscount)}</Descriptions.Item>
+                        <Descriptions.Item style={{ color: 'red' }} label="Giá Thanh Toán">
+                            {ChangeCurrence(cart.totalPrice)}
                         </Descriptions.Item>
-                        <Descriptions.Item label="Total payment">{ChangeCurrence(cart.totalPrice)}</Descriptions.Item>
                     </Descriptions>
                     <Button
                         size="large"
                         block
                         type="primary"
-                        style={{ marginTop: 10 }}
-                        disabled={cart.items.length <=0 || cart.items.some(s=> s.stock ==0 || s.stock < s.quantity)}
+                        danger
+                        loading={mutationOrder.isPending}
+                        style={{ marginBottom: 10, marginTop: 10 }}
+                        disabled={
+                            cart.items.length <= 0 ||
+                            cart.items.some(
+                                (s) => s.stock == 0 || s.stock < s.quantity || currentAddress == undefined,
+                            ) ||
+                            type === 'Chọn phương thức thanh toán' ||
+                            typeShipping === 'Chọn phương thức nhận hàng'
+                        }
                         onClick={() => {
                             createOrder();
                         }}
                     >
-                        Payment now!
+                        Đặt hàng ngay
                     </Button>
                 </Col>
             </Row>
-            <Modal
-                title="Notification"
-                open={open}
-                //onOk={handleOk}
-                confirmLoading={confirmLoading}
-                onCancel={handleCancel}
-                footer={''}
-            >
-                <AddressForm
-                    typeForm={typeFormAddress}
-                    address={currentAddressForm}
-                    onSetState={setCurrentAddress}
-                    onSetStatus={setStatus}
-                />
+            <Modal title="Notification" open={open} onCancel={handleCancel} footer={''}>
+                <Suspense>
+                    <AddressForm
+                        typeForm={typeFormAddress}
+                        address={currentAddressForm}
+                        onSetState={setCurrentAddress}
+                        onSetStatus={setStatus}
+                    />
+                </Suspense>
             </Modal>
-            <Drawer title="Address edit" onClose={onCloseDrawAddress} open={openDrawAddress}>
+            <Drawer title="Sửa Địa Chỉ" onClose={onCloseDrawAddress} open={openDrawAddress}>
                 <Radio.Group value={currentAddress?.id} onChange={handleChangeAddresses}>
                     <Space direction="vertical">
-                        {addresses.map((e: Address) => (
-                            <Space>
-                                <Radio key={e?.id} value={e?.id}>
-                                    <p>{e?.phoneNumber}</p>
-                                    <p>
-                                        {e?.streetNumber +
-                                            ', ' +
-                                            e?.wardCommune +
-                                            ', ' +
-                                            e?.urbanDistrict +
-                                            ', ' +
-                                            e?.city}
-                                    </p>
-                                    <Divider />
-                                </Radio>
-                                <Button
-                                    onClick={() => {
-                                        setCurrentAddressForm(e);
-                                        setTypeFormAddress('EDIT');
-                                        setOpen(true);
-                                    }}
-                                >
-                                    Edit
-                                </Button>
-                            </Space>
-                        ))}
+                        {addresses &&
+                            addresses.map((e: Address) => (
+                                <Space>
+                                    <Radio key={e?.id} value={e?.id}>
+                                        <p>{e?.phoneNumber}</p>
+                                        <p>
+                                            {e?.streetNumber +
+                                                ', ' +
+                                                e?.wardCommune +
+                                                ', ' +
+                                                e?.urbanDistrict +
+                                                ', ' +
+                                                e?.province}
+                                        </p>
+                                        <Divider />
+                                    </Radio>
+                                    <Button
+                                        icon={<EditOutlined />}
+                                        onClick={() => {
+                                            setCurrentAddressForm(e);
+                                            setTypeFormAddress('EDIT');
+                                            setOpen(true);
+                                        }}
+                                    ></Button>
+                                </Space>
+                            ))}
                     </Space>
                 </Radio.Group>
                 <Button
                     type="primary"
-                    block
+                    icon={<PlusOutlined />}
+                    shape="round"
+                    size="large"
                     onClick={() => {
                         setCurrentAddressForm(undefined);
                         setTypeFormAddress('ADD');
                         setOpen(true);
                     }}
-                >
-                    Add
-                </Button>
+                ></Button>
             </Drawer>
-        </div>
+        </Container>
     );
 }
-const ChangeCurrence = (number: number) => {
-    if (number) {
-        const formattedNumber = number.toLocaleString('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-            currencyDisplay: 'code',
-        });
-        return formattedNumber;
-    }
-    return 0;
-};
 export default Purchase;

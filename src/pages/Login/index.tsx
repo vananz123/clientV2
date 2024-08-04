@@ -1,12 +1,15 @@
 import React from 'react';
 import { Button, Form, type FormProps, Input, Alert, Modal, message, Flex } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useAppDispatch } from '@/app/hooks';
-import { signIn } from '@/feature/user/userSlice';
 import * as loginServices from '@/api/loginServices';
 import * as userServices from '@/api/userServices';
 import type { Result } from '@/api/ResType';
 import { Link, useNavigate } from 'react-router-dom';
+import Logo from '/logo.png';
+import GoogleButton from '@/conponents/GoogleButton';
+import { useAuthStore } from '@/hooks';
+import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 export type LoginType = {
     email?: string;
     password?: string;
@@ -14,58 +17,47 @@ export type LoginType = {
 function Login() {
     const [error, setError] = React.useState<Result>();
     const Navigate = useNavigate();
-    const dispatch = useAppDispatch();
+    const { setAccessToken } = useAuthStore();
     const [open, setOpen] = React.useState(false);
-    //const [resuft, setResuft] = React.useState<Result>();
-    const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false)
+    const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
     const [messageApi, contextHolder] = message.useMessage();
-    const onFinish: FormProps<LoginType>['onFinish'] = (values) => {
-        const login = async () => {
-            const resuft = await loginServices.login(values);
-            console.log(resuft);
-            if (resuft.statusCode == 200) {
-                localStorage.setItem('accessToken', resuft.resultObj.accessToken);
-                //localStorage.setItem('refreshToken', resuft.resultObj.refreshToken);
-                const userResuft = await userServices.getUser();
-                if (userResuft.isSuccessed == true) {
-                    dispatch(signIn(userResuft.resultObj));
-                    console.log(userResuft);
-                    if (userResuft.resultObj.roles[0] == 'admin') {
-                        Navigate('/admin/product');
-                    } else if (userResuft.resultObj.roles[0] == 'customer') {
-                        Navigate(`/home`);
-                    } else {
-                        setError(userResuft);
-                    }
-                } else {
-                    setError(userResuft);
-                }
-            } else if (resuft) {
-                setError(resuft);
+    const login = useMutation({
+        mutationKey: ['login'],
+        mutationFn: (body: LoginType) => loginServices.login(body),
+        onSuccess: (data) => {
+            if (data.isSuccessed === true) {
+                setAccessToken(data.resultObj.accessToken);
+                setTimeout(() => {
+                    Navigate(-1);
+                }, 150);
             }
-        };
-        login();
+        },
+        onError: (error: AxiosError<Result>) => {
+            setError(error.response?.data);
+        },
+    });
+    const onFinish: FormProps<LoginType>['onFinish'] = async (values) => {
+        login.mutateAsync(values);
     };
-    const onFinishForgot: FormProps<LoginType>['onFinish'] =async (values) => {
-        setLoadingSubmit(true)
-        if(values.email != undefined){
-            const res = await userServices.forgotPass(values.email)
-            if(res.isSuccessed ==true){
-               setLoadingSubmit(false)
-               messageApi.open({
-                type:'success',
-                content: res.resultObj,
-              });
-              setOpen(false)
-            }else{
-                setLoadingSubmit(false)
+    const onFinishForgot: FormProps<LoginType>['onFinish'] = async (values) => {
+        setLoadingSubmit(true);
+        if (values.email != undefined) {
+            const res = await userServices.forgotPass(values.email);
+            if (res.isSuccessed == true) {
+                setLoadingSubmit(false);
                 messageApi.open({
-                    type:'error',
+                    type: 'success',
+                    content: res.resultObj,
+                });
+                setOpen(false);
+            } else {
+                setLoadingSubmit(false);
+                messageApi.open({
+                    type: 'error',
                     content: res.message,
-                  });
+                });
             }
         }
-        
     };
     const onFinishFailed: FormProps<LoginType>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -76,7 +68,12 @@ function Login() {
         >
             <div>
                 {error != undefined ? <Alert message="Error" description={error.message} type="error" showIcon /> : ''}
-                <h2 style={{ textAlign: 'center' }}>LOGIN</h2>
+                <div className="text-center flex justify-center">
+                    <Link to="/">
+                        {' '}
+                        <img className="w-[100px] h-[100px]" src={Logo} alt="la" />
+                    </Link>
+                </div>
                 <Form
                     name="basic"
                     style={{ maxWidth: 600, width: 350, maxHeight: 500, marginTop: '15px' }}
@@ -95,25 +92,31 @@ function Login() {
 
                     <Form.Item<LoginType>
                         name="password"
-                        rules={[{ required: true, message: 'Please input your password!' }]}
+                        rules={[
+                            { required: true, message: 'Please input your password!' },
+                            () => ({
+                                validator(_, value) {
+                                    if (value.length >= 6) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(new Error('The password must have length better 6!'));
+                                },
+                            }),
+                        ]}
                     >
                         <Input.Password prefix={<LockOutlined />} />
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" block>
+                        <Button type="primary" loading={login.isPending} htmlType="submit" block>
                             Submit
                         </Button>
-                        <Flex justify='space-between'>
+                        <Flex justify="space-between">
                             <div>
                                 <Link to="/auth/register">
-                                <Button
-                                    type="link"
-                                >
-                                    Register now!
-                                </Button>
+                                    <Button type="link">Register now!</Button>
                                 </Link>
                             </div>
-                           
+
                             <Button
                                 onClick={() => {
                                     setOpen(true);
@@ -125,21 +128,18 @@ function Login() {
                         </Flex>
                     </Form.Item>
                 </Form>
+                <GoogleButton />
             </div>
             <Modal
                 style={{ width: 300 }}
                 title="Forgot password"
                 open={open}
-                //onOk={handleOk}
-                //confirmLoading={confirmLoading}
                 onCancel={() => {
                     setOpen(false);
                 }}
                 footer=""
             >
-                <div
-                 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                >
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Form
                         name="basic"
                         style={{ maxWidth: 600, width: 350, maxHeight: 500, marginTop: '15px' }}

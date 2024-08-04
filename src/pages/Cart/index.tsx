@@ -1,205 +1,287 @@
 import type { Cart } from '@/api/ResType';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { addToCart, selectCart, selectStatus } from '@/feature/cart/cartSlice';
-import { BaseUrl } from '@/utils/request';
-import { DeleteOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { loadCartDetail } from '@/app/feature/cart/action';
+import { selectCartDetail } from '@/app/feature/cart/reducer';
+import { DeleteOutlined, MinusOutlined, PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import {
+    Typography,
     Alert,
     Avatar,
     Button,
-    Card,
     Col,
     Descriptions,
     Empty,
     InputNumber,
-    List,
     Modal,
-    Popconfirm,
     Row,
     Space,
     Spin,
 } from 'antd';
 import React from 'react';
-
+const { Paragraph } = Typography;
 import * as cartServices from '@/api/cartServices';
 import { Link } from 'react-router-dom';
+import { selectUser } from '@/app/feature/user/reducer';
+import Container from '@/conponents/Container';
+import { useNavigate } from 'react-router-dom';
+import { ChangeCurrence } from '@/utils/utils';
+import { useMutation } from '@tanstack/react-query';
+import { useImmer } from 'use-immer';
+const baseUrl = import.meta.env.VITE_BASE_URL;
 function Cart() {
-    const baseUrl =import.meta.env.VITE_BASE_URL
     const dispatch = useAppDispatch();
-    const cart = useAppSelector(selectCart);
+    const user = useAppSelector(selectUser).data;
+    const { isLoading, data } = useAppSelector(selectCartDetail);
     const [currentCart, setCurrentCart] = React.useState<Cart>();
-    const [open, setOpen] = React.useState(false);
-    const [confirmLoading, setConfirmLoading] = React.useState(false);
-    const [modalText, setModalText] = React.useState('Do you want to detele!');
-    const [loadingHandleQuantity, setLoadingHandleQuantity] = React.useState(false);
+    const [open, setOpen] = useImmer(false);
+    console.log(data);
+    const Navigate = useNavigate();
     const showModal = (cart: Cart) => {
         setOpen(true);
         setCurrentCart(cart);
     };
-
-    const handleOk = () => {
-        setConfirmLoading(true);
-        setTimeout(async () => {
-            setOpen(false);
-            if (currentCart != undefined) {
-                const res = await cartServices.deleteCart(currentCart?.id);
-                if (res.isSuccessed == true) {
-                    dispatch(addToCart(res.resultObj));
-                }
+    const delToCart = useMutation({
+        mutationKey: ['del-to-cart', currentCart?.id],
+        mutationFn: (cartId: number) => cartServices.deleteCart(cartId),
+        onSuccess: (data) => {
+            if (data.isSuccessed === true && user) {
+                dispatch(loadCartDetail({ userId: user?.id as string }));
+                setOpen(false)
             }
-            setConfirmLoading(false);
-        }, 200);
+        },
+    });
+    const updateToCart = useMutation({
+        mutationKey: ['update-to-cart', currentCart?.id],
+        mutationFn: (body: { cartId: number; quantity: number }) => cartServices.updateCart(body.cartId, body.quantity),
+        onSuccess: (data) => {
+            if (data.isSuccessed === true && user) {
+                dispatch(loadCartDetail({ userId: user?.id as string }));
+            }
+        },
+    });
+    const handleOk = () => {
+        if (currentCart) delToCart.mutateAsync(currentCart?.id);
     };
-
     const handleCancel = () => {
         setOpen(false);
     };
     const increase = async (e: Cart) => {
-        if (typeof e !== 'undefined') {
-            let newQuantity = e?.quantity + 1;
-            if(newQuantity <= e?.stock){
-                setLoadingHandleQuantity(true);
-                setTimeout(async () => {
-                    const res = await cartServices.updateCart(e?.id, newQuantity);
-                    if (res.isSuccessed == true) {
-                        dispatch(addToCart(res.resultObj));
-                        setLoadingHandleQuantity(false)
-                    }else{
-                        setLoadingHandleQuantity(false)
-                    }
-                }, 200);
+        if (e) {
+            const newQuantity = e?.quantity + 1;
+            if (newQuantity <= e?.stock) {
+                updateToCart.mutateAsync({ cartId: e.id, quantity: newQuantity });
             }
         }
     };
     const decline = async (e: Cart) => {
         if (typeof e !== 'undefined' && e.quantity > 0) {
-            setLoadingHandleQuantity(true);
-            let newQuantity = e?.quantity - 1;
-            setTimeout(async () => {
-                const res = await cartServices.updateCart(e?.id, newQuantity);
-                if (res.isSuccessed == true) {
-                    dispatch(addToCart(res.resultObj));
-                    setLoadingHandleQuantity(false)
-                }else{
-                    setLoadingHandleQuantity(false)
-                }
-            }, 200);
-            
+            const newQuantity = e?.quantity - 1;
+            const res = await cartServices.updateCart(e?.id, newQuantity);
+            if (res.isSuccessed == true) {
+                dispatch(loadCartDetail({ userId: user?.id as string }));
+            }
         }
     };
     return (
-        <div>
-            <Spin spinning={loadingHandleQuantity}>
-                <Row gutter={24}>
-                    <Col className="gutter-row" span={16} xs={24} md={16} lg={16} xl={16}>
-                        {cart.items.length == 0 ? (
+        <Container>
+            <Button
+                type="text"
+                icon={<ArrowLeftOutlined />}
+                size="small"
+                style={{ marginBottom: '10px' }}
+                onClick={() => {
+                    Navigate(-1);
+                }}
+            >
+                Mua thêm sảm phẩm
+            </Button>
+            {data && (
+                <>
+                    <Spin spinning={isLoading}>
+                        {data.items.length == 0 ? (
                             <>
-                                <Empty
-                                    image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                                    imageStyle={{ height: 60 }}
-                                >
-                                    <Link to={'/product/all'}>
-                                        <Button type="primary">Shopping now !</Button>
+                                <Empty imageStyle={{ height: 60 }}>
+                                    <Link to={'/'}>
+                                        <Button type="primary">Mua Hàng Ngay!</Button>
                                     </Link>
                                 </Empty>
                             </>
                         ) : (
-                            cart.items.map((e) => (
-                                <Card key={e.id} style={{ width: '100%', marginBottom: 10 }}>
-                                    <Row gutter={[8, 8]}>
-                                        <Col className="gutter-row" span={6}>
-                                            <img src={`${baseUrl + e.urlThumbnailImage}`} style={{ width: '100%' }} />
-                                        </Col>
-                                        <Col className="gutter-row" span={10}>
-                                            <Space align="start" direction="vertical">
-                                                <p>{e.seoTitle}</p>
-                                                <p>
-                                                    {e?.name} {e?.value}
-                                                </p>
-                                                {e.stock == 0? <Alert type='error' message="Product out of stock! Please delete proudct"/>: ''}
-                                                {e.stock < e.quantity ? <Alert type='error' message="Product kh đủ!"/>: ''}
-                                                <Space.Compact size='small'>
-                                                    <Button
-                                                        onClick={() => {
-                                                            decline(e);
-                                                        }}
-                                                        icon={ <MinusOutlined />}
-                                                    />
-                                                    <InputNumber min={1} max={e?.stock} style={{width:70}} value={e.quantity} />
-    
-                                                    <Button
-                                                        onClick={() => {
-                                                            increase(e);
-                                                        }}
-                                                        icon={<PlusOutlined />}
-                                                    />
-                                                </Space.Compact>
-                                            </Space>
-                                        </Col>
-                                        <Col span={6}>
-                                            {e.discountRate != null ? (
-                                                <p style={{ textDecoration: 'line-through', color: 'red' }}>
-                                                    {ChangeCurrence(e?.priceBeforeDiscount* e?.quantity)}
-                                                </p>
-                                            ) : (
-                                                ''
-                                            )}
-                                            <p>{ChangeCurrence(e?.total)}</p>
-                                        </Col>
-                                        <Col span={2}>
-                                            <Avatar
-                                                onClick={() => {
-                                                    showModal(e);
-                                                }}
-                                                style={{ cursor: 'pointer', position: 'absolute', top: 10, right: 0 }}
-                                                shape="square"
-                                                icon={<DeleteOutlined />}
-                                            ></Avatar>
-                                        </Col>
-                                    </Row>
-                                </Card>
-                            ))
+                            <>
+                                <Row gutter={24}>
+                                    <Col className="gutter-row" xs={24} md={24} lg={16} xl={16}>
+                                        {data.items.map((e) => (
+                                            <div className="rounded bg-[#fafafa] p-2 md:p-5 mb-3">
+                                                <div className="flex justify-between">
+                                                    <div className="w-[300px] md:w-full">
+                                                        <Paragraph
+                                                            ellipsis={{
+                                                                rows: 1,
+                                                            }}
+                                                        >
+                                                            <Link to={`/product/detail/${e.productId}`}>
+                                                                {e.seoTitle}
+                                                            </Link>
+                                                        </Paragraph>
+                                                    </div>
+                                                    <div>
+                                                        <Avatar
+                                                            onClick={() => {
+                                                                showModal(e);
+                                                            }}
+                                                            style={{
+                                                                cursor: 'pointer',
+                                                                backgroundColor: 'red',
+                                                            }}
+                                                            shape="square"
+                                                            icon={<DeleteOutlined />}
+                                                        ></Avatar>
+                                                    </div>
+                                                </div>
+                                                <Row gutter={[8, 0]}>
+                                                    <Col className="gutter-row" xs={6} lg={4}>
+                                                        <div className="w-full h-full bg-white rounded">
+                                                            <img
+                                                                className="w-full"
+                                                                src={`${baseUrl + e.urlThumbnailImage}`}
+                                                            />
+                                                        </div>
+                                                    </Col>
+                                                    <Col className="gutter-row" xs={18} lg={20}>
+                                                        <div className="w-full h-full sm:p-2">
+                                                            <div className="h-full flex flex-col justify-between">
+                                                                <div className="w-full">
+                                                                    {e?.type == undefined ? (
+                                                                        <div className="text-[14px] sm:text-[16px] text-red-500 font-medium mr-[5px]">
+                                                                            <span>
+                                                                                {ChangeCurrence(e?.priceBeforeDiscount)}
+                                                                            </span>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className="flex flex-row">
+                                                                            <div>
+                                                                                <span className="text-[14px] sm:text-[16px] text-red-500 font-medium mr-[5px]">
+                                                                                    {ChangeCurrence(e?.price)}
+                                                                                </span>
+                                                                            </div>
+                                                                            <div>
+                                                                                <span className="text-[10px] sm:text-[12px] text-[#6D6E72] font-medium mr-[5px] line-through">
+                                                                                    {ChangeCurrence(
+                                                                                        e?.priceBeforeDiscount,
+                                                                                    )}
+                                                                                </span>
+                                                                                {e.type === 'fixed' ? (
+                                                                                    <span className="pro-percent">
+                                                                                        {' '}
+                                                                                        -{e.valuePromotion}
+                                                                                    </span>
+                                                                                ) : (
+                                                                                    <span className="text-[#E30019] text-[10px] sm:text-[12px] text-center rounded border-[1px] border-[#E30019] px-1">
+                                                                                        -{e.valuePromotion}%
+                                                                                    </span>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                <div className="flex justify-start gap-4 pt-3">
+                                                                    {e.name && (
+                                                                        <>
+                                                                            <p>
+                                                                                {e?.name}: {e?.value} {e.sku}
+                                                                            </p>
+                                                                        </>
+                                                                    )}
+                                                                    <div>
+                                                                        <Space.Compact size="small">
+                                                                            <Button
+                                                                                onClick={() => {
+                                                                                    decline(e);
+                                                                                }}
+                                                                                icon={<MinusOutlined />}
+                                                                            />
+                                                                            <InputNumber
+                                                                                min={1}
+                                                                                max={e?.stock}
+                                                                                style={{ width: 40 }}
+                                                                                value={e.quantity}
+                                                                            />
+                                                                            <Button
+                                                                                onClick={() => {
+                                                                                    increase(e);
+                                                                                }}
+                                                                                icon={<PlusOutlined />}
+                                                                            />
+                                                                        </Space.Compact>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="pt-3">
+                                                                    <p className="font-bold">
+                                                                        Tổng: {ChangeCurrence(e?.total)}{' '}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <>
+                                                                {e.stock == 0 && (
+                                                                    <Alert
+                                                                        type="error"
+                                                                        message="Product out of stock! Please delete proudct"
+                                                                    />
+                                                                )}
+                                                                {e.stock < e.quantity && (
+                                                                    <Alert type="error" message="Product kh đủ!" />
+                                                                )}
+                                                            </>
+                                                        </div>
+                                                    </Col>
+                                                </Row>
+                                            </div>
+                                        ))}
+                                    </Col>
+                                    <Col className="gutter-row" xs={24} md={24} lg={8} xl={8}>
+                                        <Descriptions title="Thông Tin Sản Phẩm" bordered column={1}>
+                                            <Descriptions.Item label="Giá Sản Phẩm ">
+                                                {ChangeCurrence(data.totalPriceBeforeDiscount)}
+                                            </Descriptions.Item>
+                                            <Descriptions.Item label="Giá Giảm">
+                                                {ChangeCurrence(data.totalDiscount)}
+                                            </Descriptions.Item>
+                                            <Descriptions.Item style={{ color: 'red' }} label="Giá Thanh Toán">
+                                                {ChangeCurrence(data.totalPrice)}
+                                            </Descriptions.Item>
+                                        </Descriptions>
+                                        <Link to={`/purchase`}>
+                                            <Button
+                                                size="large"
+                                                block
+                                                type="primary"
+                                                danger
+                                                disabled={
+                                                    data.items.length <= 0 ||
+                                                    data.items.some((s) => s.stock == 0 || s.stock < s.quantity)
+                                                }
+                                                className="mt-4 font-medium"
+                                            >
+                                                Đặt hàng
+                                            </Button>
+                                        </Link>
+                                    </Col>
+                                </Row>
+                            </>
                         )}
-                    </Col>
-                    <Col className="gutter-row" span={8} xs={24} md={8} lg={8} xl={8}>
-                        <Descriptions title="Order infomation" bordered column={1}>
-                            <Descriptions.Item label="Total price ">
-                                {ChangeCurrence(cart.totalPriceBeforeDiscount)}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Total Discount">
-                                {ChangeCurrence(cart.totalDiscount)}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Total payment">{ChangeCurrence(cart.totalPrice)}</Descriptions.Item>
-                        </Descriptions>
-                        <Link to={`/purchase`}>
-                            <Button size="large" block type="primary" disabled={cart.items.length <=0 || cart.items.some(s=> s.stock ==0 || s.stock < s.quantity)} style={{ marginTop: 10 }}>
-                                Purchase now!
-                            </Button>
-                        </Link>
-                    </Col>
-                </Row>
-            </Spin>
-            <Modal
-                title="Notification"
-                open={open}
-                onOk={handleOk}
-                confirmLoading={confirmLoading}
-                onCancel={handleCancel}
-            >
-                <p>{modalText}</p>
-            </Modal>
-        </div>
+                    </Spin>
+                    <Modal
+                        title="Notification"
+                        open={open}
+                        onOk={handleOk}
+                        confirmLoading={delToCart.isPending}
+                        onCancel={handleCancel}
+                    >
+                        Do you want to detele!
+                    </Modal>
+                </>
+            )}
+        </Container>
     );
 }
-const ChangeCurrence = (number: number) => {
-    if (number) {
-        const formattedNumber = number.toLocaleString('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-            currencyDisplay: 'code',
-        });
-        return formattedNumber;
-    }
-    return 0;
-};
 export default Cart;

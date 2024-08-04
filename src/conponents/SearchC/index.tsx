@@ -1,112 +1,176 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDebounce } from '@/hooks';
-import { Input, Popover, Space } from 'antd';
-import { useAppSelector } from '@/app/hooks';
-import { selectCate } from '@/feature/category/cateSlice';
+import {  Input, Popover } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
 import * as productServices from '@/api/productServices';
 import type { InputRef } from 'antd';
-import React, { SetStateAction, useEffect, useRef } from 'react';
-import { Product } from '@/pages/Admin/Product/ProductList';
-import { BaseUrl } from '@/utils/request';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-enum status {
-    productName = 1,
-    categoryName = 2,
-}
-const SearchC: React.FC<{
-    typeSearch: number;
-    onSetState: SetStateAction<any>;
-}> = ({ typeSearch, onSetState }) => {
+import React, { memo, useEffect, useRef } from 'react';
+import { Product } from '@/type';
+import { Link, useNavigate } from 'react-router-dom';
+import { Filter } from '@/type';
+import ProductCard from '../ProductCard';
+import { AlertFilled, SearchOutlined, ThunderboltFilled } from '@ant-design/icons';
+import { useMutation } from '@tanstack/react-query';
+import { useImmer } from 'use-immer';
+const SearchC: React.FC = memo(() => {
     const { Search } = Input;
-    const baseUrl: BaseUrl = 'https://localhost:7005';
     const [searchValue, setSearchValue] = React.useState('');
+    const [searchHistory, setSearchHistory] = useImmer<string[]>([]);
     const navigate = useNavigate();
-    const [data, setData] = React.useState<Product[]>([]);
+    const [data, setData] = React.useState<Product[]>();
     const inputRef = useRef<InputRef>(null);
-    const debounce = useDebounce({ value: searchValue, deplay: 1000 });
+    const debounce = useDebounce({ value: searchValue, deplay: 500 });
     const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
         if (info?.source == 'input') {
-            navigate(`/product/${value}`);
+            const searchHistory = localStorage.getItem('searchHistory');
+            if (searchHistory != null) {
+                const searchHistoryArr: string[] = JSON.parse(searchHistory);
+                const index = searchHistoryArr.indexOf(searchValue)
+                console.log(index)
+                if( index !== -1){
+                    const newArr= searchHistoryArr.filter(x => x !== searchHistoryArr[index])
+                    newArr.push(searchValue);
+                    localStorage.setItem('searchHistory', JSON.stringify(newArr));
+                }else{
+                    searchHistoryArr.push(searchValue);
+                    localStorage.setItem('searchHistory', JSON.stringify(searchHistoryArr));
+                }
+            } else {
+                localStorage.setItem('searchHistory', JSON.stringify([searchValue]));
+            }
+            navigate(`/product?productName=${value}&page=1`);
         }
         if (info?.source == 'clear') {
             setData([]);
-            onSetState([]);
         }
     };
-    const onChangeInput: SearchProps['onChange'] = (value) => {
-        setSearchValue(value.target.value);
-    };
+    const search = useMutation({
+        mutationKey: ['search'],
+        mutationFn: (filter: Filter) => productServices.getProductPagingByFilter(filter),
+        onSuccess(data) {
+            setData(data.resultObj.items);
+        },
+        onError:(()=>{
+            setData([])
+        })
+    });
+    const storedHistory = localStorage.getItem('searchHistory');
     useEffect(() => {
-        const Search = async () => {
-            if (debounce != '') {
-                const result = await productServices.getProductPagingBySeoTitle(debounce, 1, 100);
-                if (result.statusCode == 200) {
-                    setData(result.resultObj.items);
-                    onSetState(result.resultObj.items);
-                }
-            }
-        };
-        Search();
-    }, [debounce]);
+        if (storedHistory != null) {
+            const s = JSON.parse(storedHistory) as string[];
+            setSearchHistory(s.reverse().slice(0, 5));
+        }
+    }, [storedHistory, setSearchHistory]);
+    useEffect(() => {
+        if (!searchValue.trim()) {
+            setData([]);
+            return;
+        }
+        if (debounce != '') {
+            const filter: Filter = {
+                page: 1,
+                pageSize: 5,
+                sortOder: 'ascending',
+                productName: debounce?.toString(),
+            };
+            search.mutateAsync(filter);
+        }
+    }, [debounce,searchValue]);
+    const onChangeInput: SearchProps['onChange'] = (value) => {
+        const searchValue = value.target.value;
+        setSearchValue(searchValue);
+    };
     return (
         <>
-            <Popover
-                content={
-                    <>
-                        {data.length > 0 ? (
-                            data?.map((e: Product) => (
-                                <div>
-                                    <Link to={`product/detail/${e.id}`}>
-                                        <Space>
+            <div>
+                <Popover
+                    content={
+                        <div className="popover-search">
+                            {data && data.length > 1 ? (
+                                <>
+                                    <span className="font-medium text-[16px]">Tìm kiếm</span>
+                                    {data.map((e: Product) => (
+                                        <div className="mb-2" key={e.id}>
+                                            <ProductCard product={e} type="forList" />
+                                        </div>
+                                    ))}
+                                </>
+                            ) : (
+                                <div className="p-2">
+                                    <span className="font-medium text-[16px]">Tìm kiếm gần đây</span>
+                                    <ul>
+                                        {searchHistory.map((e) => (
+                                            <Link
+                                                to={`/product?productName=${e}&page=1 `}
+                                                className="text-sky-500 block ml-2"
+                                            >
+                                                <p>
+                                                    {e} <SearchOutlined />
+                                                </p>
+                                            </Link>
+                                        ))}
+                                        <div className="flex items-center bg-cyan-50 mb-3 mt-2">
                                             <div>
-                                                <img style={{ width: 70 }} src={baseUrl + e.urlThumbnailImage} />
+                                                <AlertFilled className="text-cyan-400" />
                                             </div>
-                                            <div>
-                                                <p>{e.seoTitle}</p>
-                                                <p>{ChangeCurrence(e.price)}</p>
+                                            <span className="pl-2 text-[12px]">
+                                                Tăng thời gian phục vụ khách hàng đến 24h00, trở thành chuỗi cửa hàng
+                                                bán lẻ Phục vụ khách hàng lâu nhất
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <span className="font-medium text-base">Khuyến mãi nổi bật</span>
+                                            <div className="m-2">
+                                                <a
+                                                    className="flex border-b-[1px] border-gray-300 p-3"
+                                                    href="/product?categoryId=3&isPromotion=1"
+                                                >
+                                                    Khuyến Mãi Khi Mua Nhẫn <ThunderboltFilled className="text-[red]" />
+                                                </a>
+                                                <a
+                                                    className="flex border-b-[1px] border-gray-300 p-3"
+                                                    href="/product?categoryId=4&isPromotion=1"
+                                                >
+                                                    Khuyến Mãi Khi Mua Dây Chuyền{' '}
+                                                    <ThunderboltFilled className="text-[red]" />
+                                                </a>
+                                                <a
+                                                    className="flex border-b-[1px] border-gray-300 p-3"
+                                                    href="/product?categoryId=9&isPromotion=1"
+                                                >
+                                                    Khuyến Mãi Bông Tai <ThunderboltFilled className="text-[red]" />
+                                                </a>
+                                                <a className="flex p-3" href="/product?categoryId=2&isPromotion=1">
+                                                    Khuyến Mãi Đồng Hồ <ThunderboltFilled className="text-[red]" />
+                                                </a>
                                             </div>
-                                        </Space>
-                                    </Link>
+                                        </div>
+                                    </ul>
                                 </div>
-                            ))
-                        ) : (
-                            <div style={{ width: 350, height: 70, textAlign: 'center' }}>Not found</div>
-                        )}
-                        {searchValue != '' ? (
-                            <div style={{ width: 350, textAlign: 'center' }}>
-                                <Link to={`/product/${searchValue}`}>Hiển thị tất cả</Link>
-                            </div>
-                        ) : (
-                            ''
-                        )}
-                    </>
-                }
-                title={'search'}
-                trigger={'click'}
-            >
-                <Search
-                    placeholder="Tên sản phẩm"
-                    style={{ display: 'block' }}
-                    allowClear
-                    //enterButton="Search"
-                    ref={inputRef}
-                    size="middle"
-                    onSearch={onSearch}
-                    onChange={onChangeInput}
-                />
-            </Popover>
+                            )}
+                        </div>
+                    }
+                    trigger={'click'}
+                    placement="bottom"
+                    
+                >
+                    <div className="mt-1 w-auto">
+                        <Search
+                            loading={search.isPending}
+                            placeholder="Tên sản phẩm"
+                            className="block"
+                            allowClear
+                            autoFocus={false}
+                            ref={inputRef}
+                            size="middle"
+                            onSearch={onSearch}
+                            onChange={onChangeInput}
+                        />
+                    </div>
+                </Popover>
+            </div>
         </>
     );
-};
-const ChangeCurrence = (number: number | undefined) => {
-    if (number) {
-        const formattedNumber = number.toLocaleString('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-            currencyDisplay: 'code',
-        });
-        return formattedNumber;
-    }
-    return 0;
-};
+});
 export default SearchC;

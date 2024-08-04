@@ -1,30 +1,19 @@
-import React, { useEffect } from "react"
-import { useAppDispatch } from '@/app/hooks';
-import { addToCart,emptyCart } from "@/feature/cart/cartSlice";
-import { signIn ,initialize,initializeActive} from '@/feature/user/userSlice';
-import * as userServices from '@/api/userServices'
-import * as cartServices from '@/api/cartServices'
-function AuthProvider ({children}:any){
-    const dispatch = useAppDispatch()
-    useEffect(()=>{
-        const loadData = async ()=>{
-            const accessToken = localStorage.getItem('accessToken')
-            if(accessToken == undefined){
-                dispatch(initialize())
-                dispatch(emptyCart())
-            }else{
-                const user = await userServices.getUser()
-                if(user.isSuccessed ==true){
-                    dispatch(initializeActive(user.resultObj))
-                    const cartApi = await cartServices.getCart(user.resultObj.id)
-                    if(cartApi.isSuccessed == true){
-                        dispatch(addToCart(cartApi.resultObj))
-                    }
-                }
-            }
-        }
-        loadData()
-    },[])
-    return <>{children}</>
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { loadUser } from '@/app/feature/user/action';
+import { selectUser } from '@/app/feature/user/reducer';
+import Loading from '@/pages/Loading';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { useAuthStore } from '@/hooks';
+const clientId = import.meta.env.VITE_PUBLIC_GOOGLE_CLIENT_ID;
+function AuthProvider({ children }: any) {
+    const dispatch = useAppDispatch();
+    const { isLoading } = useAppSelector(selectUser);
+    const {isToken} = useAuthStore()
+    useEffect(() => {
+        if (isToken) dispatch(loadUser());
+    }, [dispatch,isToken]);
+    return <>{isLoading ? <Loading /> : <GoogleOAuthProvider clientId={clientId}>{children}</GoogleOAuthProvider>}</>;
 }
-export default AuthProvider
+export default AuthProvider;
